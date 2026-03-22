@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 """
 PBGR (Price to Book Growth Ratio) 데이터 생성기
-- 현재가/자본/주식수: yfinance (전일 종가 기준)
+- 전체 데이터: 네이버 파이낸스 (한국 종목 전용)
 - ROE·요구수익률: config.json
 """
 import json
 import re
 import urllib.request
-import numpy as np
-import yfinance as yf
-from datetime import datetime, timezone, timedelta
 import calendar
+from datetime import datetime, timezone, timedelta
 
 # ─── config 로드 ──────────────────────────────────────────
 with open("config.json", encoding="utf-8") as f:
@@ -19,115 +17,123 @@ with open("config.json", encoding="utf-8") as f:
 KR_CFG = CONFIG["kr"]
 
 # ─── 날짜값 계산 ──────────────────────────────────────────
-def date_value(base_date, today=None):
+def date_value(base_date_str, today=None):
+    """기준일(YYYY-MM-DD 또는 YYYY.MM)로부터 경과 월 (일할 포함)"""
     if today is None:
         today = datetime.now()
-    months = (today.year - base_date.year) * 12 + (today.month - base_date.month)
+    # YYYY.MM 형식 → YYYY-MM-01로 변환
+    if '.' in base_date_str:
+        y, m = base_date_str.split('.')[:2]
+        base = datetime(int(y), int(m), 31 if int(m) in [1,3,5,7,8,10,12] else 30)
+        # 월말로
+        import calendar as cal
+        last_day = cal.monthrange(int(y), int(m))[1]
+        base = datetime(int(y), int(m), last_day)
+    else:
+        base = datetime.strptime(base_date_str, "%Y-%m-%d")
+    months = (today.year - base.year) * 12 + (today.month - base.month)
     days_in_month = calendar.monthrange(today.year, today.month)[1]
     frac = (today.day - 1) / days_in_month
     return months + frac
 
-# ─── yfinance: 전일 종가 + 자본 + 주식수 ─────────────────
-def get_naver_price(naver_code):
-    """네이버 polling API로 현재 종가"""
-    url = f"https://polling.finance.naver.com/api/realtime/domestic/stock/{naver_code}"
+# ─── 네이버 파이낸스 수집 ─────────────────────────────────
+def naver_fetch(code):
+    url = f"https://finance.naver.com/item/main.naver?code={code}"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR"})
+    with urllib.request.urlopen(req, timeout=15) as res:
+        return res.read().decode("euc-kr", errors="ignore")
+
+def get_naver_price(code):
+    """실시간 현재가 (polling API)"""
+    url = f"https://polling.finance.naver.com/api/realtime/domestic/stock/{code}"
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=10) as res:
         data = json.loads(res.read())
     return int(data["datas"][0]["closePrice"].replace(",", ""))
 
-def get_naver_bps(naver_code):
-    """네이버에서 BPS 스크래핑"""
-    import urllib.request as ur, re
-    url = f"https://finance.naver.com/item/main.naver?code={naver_code}"
-    req = ur.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR"})
-    with ur.urlopen(req, timeout=15) as res:
+def get_naver_shares(code):
+    """상장주식수 (기업개요)"""
+    url = f"https://finance.naver.com/item/coinfo.naver?code={code}"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR"})
+    with urllib.request.urlopen(req, timeout=15) as res:
         html = res.read().decode("euc-kr", errors="ignore")
-    idx = html.find("BPS()")
-    if idx < 0: return None
-    m = re.search(r"<td[^>]*>\s*[\r\n\t ]*([0-9,]+)\s*[\r\n\t ]*</td>", html[idx:idx+500])
-    return int(m.group(1).replace(",","")) if m else None
+    idx = html.find("상장주식수")
+    if idx < 0:
+        return None
+    m = re.search(r"<em[^>]*>([0-9,]+)</em>", html[idx:idx+200])
+    return int(m.group(1).replace(",", "")) if m else None
 
-def get_roe_history(ticker_code, n=3):
-    """최근 n년 ROE 계산 (순이익/자본)"""
-    t = yf.Ticker(ticker_code)
-    bs = t.balance_sheet
-    inc = t.income_stmt
+def get_naver_financials(code):
+    """
+    연도별 BPS, EPS, ROE 수집.
+    반환: { '2024.12': {'bps':..., 'eps':..., 'roe':...}, ... }
+    연도 순서: 오래된것→최신 (확정치만, E 제외)
+    """
+    html = naver_fetch(code)
+
+    # cop_analysis 섹션에서 연간 연도 헤더 추출
+    start = html.find("cop_analysis")
+    end = html.find("</table>", start)
+    section = html[start:end]
+    ths = re.findall(r"<th[^>]*>(.*?)</th>", section, re.DOTALL)
+    years = []
+    for th in ths:
+        clean = re.sub(r"<[^>]+>", "", th).strip()
+        m = re.match(r"(\d{4}\.\d{2})", clean)
+        if m:
+            years.append(clean)  # 'E' 표기 포함
+    annual_years = years[:4]  # 첫 4개가 연간
+
+    def extract_series(kw):
+        idx = html.find(kw)
+        if idx < 0:
+            return []
+        chunk = html[idx:idx+800].replace("\n", "").replace("\t", "")
+        return re.findall(r"<td[^>]*>\s*([0-9,.-]+)\s*</td>", chunk)[:4]
+
+    bps_raw = extract_series("BPS()")
+    eps_raw = extract_series("EPS()")
+    roe_raw = extract_series("ROE")
+
+    result = {}
+    def safe_int(s):
+        try: return int(re.sub(r'[^0-9-]', '', s))
+        except: return None
+    def safe_float(s):
+        try: return float(re.sub(r'[^0-9.-]', '', s))
+        except: return None
+
+    for i, yr in enumerate(annual_years):
+        bps = safe_int(bps_raw[i]) if i < len(bps_raw) else None
+        eps = safe_int(eps_raw[i]) if i < len(eps_raw) else None
+        roe = safe_float(roe_raw[i]) if i < len(roe_raw) else None
+        result[yr] = {"bps": bps, "eps": eps, "roe": roe}
+
+    return result
+
+def is_estimate(yr):
+    """E(추정치) 여부 판별 - HTML 엔티티 포함"""
+    return "E)" in yr or "&#40;E&#41;" in yr
+
+def get_latest_actual(financials):
+    """E(추정치) 제외한 가장 최근 연도·데이터 반환"""
+    actual = {yr: v for yr, v in financials.items() if not is_estimate(yr)}
+    if not actual:
+        return None, {}
+    latest_yr = sorted(actual.keys())[-1]
+    return latest_yr, actual[latest_yr]
+
+def get_roe_history(financials):
+    """최근 3년 실제 ROE 이력 (E 제외)"""
+    actual = [(yr, v) for yr, v in sorted(financials.items()) if not is_estimate(yr)]
     history = []
-    for col in list(bs.columns)[:n]:
-        try:
-            eq = None
-            for field in ["Common Stock Equity", "Stockholders Equity"]:
-                if field in bs.index:
-                    v = bs.loc[field, col]
-                    if not np.isnan(v) and v > 0:
-                        eq = float(v)
-                        break
-            ni = float(inc.loc["Net Income", col]) if "Net Income" in inc.index else None
-            if eq and ni is not None:
-                history.append({"year": col.year, "roe_pct": round(ni / eq * 100, 2)})
-        except:
-            pass
+    for yr, v in actual[-3:]:
+        if v.get("roe") is not None:
+            history.append({"year": yr, "roe_pct": v["roe"]})
     avg = round(sum(h["roe_pct"] for h in history) / len(history), 2) if history else 0.0
     return {"history": history, "avg_pct": avg}
 
-def get_yf_data(ticker_code, base_date=None):
-    t = yf.Ticker(ticker_code)
-    info = t.info
-
-    # 전일 종가
-    # history로 마지막 거래일 종가 (previousClose보다 정확)
-    try:
-        hist = yf.Ticker(ticker_code).history(period="5d")
-        price = float(hist["Close"].dropna().iloc[-1]) if not hist.empty else None
-    except:
-        price = None
-    price = price or info.get("regularMarketPreviousClose") or info.get("previousClose") or info.get("currentPrice")
-
-    # Balance sheet (최신 결산 or 기준일 이전)
-    bs = t.balance_sheet
-    if base_date:
-        available = [dt for dt in bs.columns if dt.to_pydatetime().replace(tzinfo=None) <= base_date]
-        col = max(available) if available else bs.columns[0]
-    else:
-        col = bs.columns[0]
-
-    equity = None
-    for field in ["Common Stock Equity", "Stockholders Equity"]:
-        if field in bs.index:
-            v = bs.loc[field, col]
-            if not np.isnan(v):
-                equity = float(v)
-                break
-
-    # 주식수: Share Issued (상장주식수) 우선, 없으면 Ordinary+Preferred, 없으면 info
-    share_issued = float(bs.loc["Share Issued", col]) if "Share Issued" in bs.index else 0
-    ordinary = float(bs.loc["Ordinary Shares Number", col]) if "Ordinary Shares Number" in bs.index else 0
-    preferred = float(bs.loc["Preferred Shares Number", col]) if "Preferred Shares Number" in bs.index else 0
-
-    shares = share_issued if share_issued > 1e6 else None
-    shares = shares or ((ordinary + preferred) if ordinary > 1e6 else None)
-    shares = shares or info.get("sharesOutstanding") or info.get("impliedSharesOutstanding")
-
-    base_dt = col.to_pydatetime().replace(tzinfo=None)
-
-    ni_list = []
-    inc = t.income_stmt
-    if "Net Income" in inc.index:
-        ni_list = [float(v) for v in inc.loc["Net Income"].dropna().values[:2]]
-
-    roe_auto = info.get("returnOnEquity")  # 소수 표현
-
-    return {
-        "price": price,
-        "equity": equity,
-        "shares": shares,
-        "base_dt": base_dt,
-        "ni_list": ni_list,
-        "roe_auto": roe_auto,
-    }
-
-# ─── PBGR 계산: 한국 모델 ────────────────────────────────
+# ─── PBGR 계산 ───────────────────────────────────────────
 def calc_kr(price, equity_100m, roe_pct, shares, dv, req_return):
     if not all([price, equity_100m, roe_pct, shares]):
         return None
@@ -159,61 +165,47 @@ def main():
         "assets": []
     }
 
-    # ── 한국 종목 ──────────────────────────────────────────
     req_kr = KR_CFG["required_return"]
-    for ticker_naver, cfg in KR_CFG["assets"].items():
-        ticker_yf = ticker_naver + ".KS"
+
+    for ticker, cfg in KR_CFG["assets"].items():
         name = cfg["name"]
         roe_pct = cfg["roe"]
-        print(f"  [KR] {name} ({ticker_yf}) ...", end=" ", flush=True)
+        print(f"  [KR] {name} ({ticker}) ...", end=" ", flush=True)
         try:
-            # 종가: 네이버 우선 (yfinance KR 종가 오류 많음)
-            try:
-                price = get_naver_price(ticker_naver)
-            except:
-                price = None
+            price = get_naver_price(ticker)
+            shares = get_naver_shares(ticker)
+            financials = get_naver_financials(ticker)
+            latest_yr, latest = get_latest_actual(financials)
+            roe_hist = get_roe_history(financials)
 
-            d = get_yf_data(ticker_yf)
-            if not price:
-                price = d["price"]
+            # BPS × 주식수 = 자본총계
+            bps_actual = latest.get("bps")
+            equity_100m = (bps_actual * shares / 1e8) if bps_actual and shares else None
 
-            roe_hist = get_roe_history(ticker_yf)
-            equity_100m = d["equity"] / 1e8 if d["equity"] else None
-
-            # 주식수: yfinance → 네이버 BPS 역산 폴백
-            shares = d["shares"]
-            if not shares and equity_100m:
-                try:
-                    bps_naver = get_naver_bps(ticker_naver)
-                    if bps_naver and bps_naver > 0:
-                        shares = int(equity_100m * 1e8 / bps_naver)
-                except:
-                    pass
-
-            dv = date_value(d["base_dt"], today)
+            dv = date_value(latest_yr, today) if latest_yr else 0
             calc = calc_kr(price, equity_100m, roe_pct, shares, dv, req_kr)
 
             asset = {
                 "name": name,
-                "ticker": ticker_naver,
+                "ticker": ticker,
                 "market": "KR",
                 "price": price,
-                "base_date": d["base_dt"].strftime("%Y-%m-%d"),
+                "base_date": latest_yr,
+                "bps_actual": bps_actual,
+                "equity_y0_100m": round(equity_100m, 1) if equity_100m else None,
+                "shares": shares,
                 "roe_pct": roe_pct,
                 "roe_note": cfg.get("note", ""),
                 "roe_history": roe_hist,
                 "required_return_pct": round(req_kr * 100, 1),
-                "equity_y0_100m": round(equity_100m, 0) if equity_100m else None,
-                "shares": int(shares) if shares else None,
                 "pbgr": calc["pbgr"] if calc else None,
                 "fair_price": calc["fair_price"] if calc else None,
             }
             result["assets"].append(asset)
-            print(f"PBGR={calc['pbgr']:.3f} | 현재가={d['price']:,} | 적정가={calc['fair_price']:,}" if calc else "계산 실패")
+            print(f"PBGR={calc['pbgr']:.3f} | 현재가={price:,} | 적정가={calc['fair_price']:,} | 자본={equity_100m:.0f}억 ({latest_yr})" if calc else "계산 실패")
         except Exception as e:
             print(f"오류: {e}")
-            result["assets"].append({"name": name, "ticker": ticker_naver, "market": "KR", "error": str(e)})
-
+            result["assets"].append({"name": name, "ticker": ticker, "market": "KR", "error": str(e)})
 
     with open("pbgr_data.json", "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
