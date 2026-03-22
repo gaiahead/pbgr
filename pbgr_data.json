@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 15:58",
+  "updated": "2026-03-22 16:55",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -10,12 +10,12 @@
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 4310590.0,
-      "equity_now_100m": 4364640.0,
+      "equity_now_100m": 4441809.4,
       "shares": 6735612586,
       "shares_common": 5919637922,
       "shares_preferred": 815974664,
-      "roe_pct": 4.15,
-      "roe_note": "애널 예측 기반",
+      "roe_pct": 10.28,
+      "roe_note": "wisereport 실적 평균 자동",
       "roe_ref": {
         "actual": [
           {
@@ -53,8 +53,8 @@
         "estimate_avg": 17.6
       },
       "required_return_pct": 10.0,
-      "pbgr": 5.3329,
-      "fair_price": 37391.0
+      "pbgr": 2.972,
+      "fair_price": 67094.0
     },
     {
       "name": "SK하이닉스",
@@ -64,12 +64,12 @@
       "base_date": "2025.12",
       "bps_actual": 174538,
       "equity_y0_100m": 1243936.5,
-      "equity_now_100m": 1351441.1,
+      "equity_now_100m": 1301098.8,
       "shares": 712702365,
       "shares_common": 712702365,
       "shares_preferred": null,
-      "roe_pct": 31.06,
-      "roe_note": "2025 실적 반영",
+      "roe_pct": 15.79,
+      "roe_note": "wisereport 실적 평균 자동",
       "roe_ref": {
         "actual": [
           {
@@ -107,8 +107,8 @@
         "estimate_avg": 49.24
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.9422,
-      "fair_price": 1068746.0
+      "pbgr": 3.3431,
+      "fair_price": 301217.0
     },
     {
       "name": "리노공업",
@@ -118,12 +118,12 @@
       "base_date": "2024.12",
       "bps_actual": 8204,
       "equity_y0_100m": 6252.4,
-      "equity_now_100m": 7823.7,
+      "equity_now_100m": 8214.2,
       "shares": 76211850,
       "shares_common": 76211850,
       "shares_preferred": null,
-      "roe_pct": 18.72,
-      "roe_note": "3년 평균 (2022-2024)",
+      "roe_pct": 23.23,
+      "roe_note": "wisereport 실적 평균 자동",
       "roe_ref": {
         "actual": [
           {
@@ -161,8 +161,8 @@
         "estimate_avg": 20.58
       },
       "required_return_pct": 10.0,
-      "pbgr": 5.1471,
-      "fair_price": 21701.0
+      "pbgr": 3.3871,
+      "fair_price": 32978.0
     },
     {
       "name": "유한양행",
@@ -172,12 +172,12 @@
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 24939.6,
-      "equity_now_100m": 25443.9,
+      "equity_now_100m": 25386.0,
       "shares": 80828541,
       "shares_common": 79647601,
       "shares_preferred": 1180940,
-      "roe_pct": 6.75,
-      "roe_note": "애널 예측 기반",
+      "roe_pct": 5.96,
+      "roe_note": "wisereport 실적 평균 자동",
       "roe_ref": {
         "actual": [
           {
@@ -215,8 +215,8 @@
         "estimate_avg": 6.47
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.3241,
-      "fair_price": 23196.0
+      "pbgr": 4.6652,
+      "fair_price": 21499.0
     },
     {
       "name": "NAVER",
@@ -226,12 +226,12 @@
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 289230.0,
-      "equity_now_100m": 293080.5,
+      "equity_now_100m": 294219.5,
       "shares": 156852638,
       "shares_common": 156852638,
       "shares_preferred": null,
-      "roe_pct": 4.41,
-      "roe_note": "과거 평균 기반",
+      "roe_pct": 5.74,
+      "roe_note": "wisereport 실적 평균 자동",
       "roe_ref": {
         "actual": [
           {
@@ -269,8 +269,8 @@
         "estimate_avg": 7.7
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.0042,
-      "fair_price": 110517.0
+      "pbgr": 1.761,
+      "fair_price": 125784.0
     }
   ]
 }

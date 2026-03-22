@@ -2,11 +2,11 @@
   "kr": {
     "required_return": 0.10,
     "assets": {
-      "005930": { "name": "삼성전자",  "roe": 4.15,  "preferred_ticker": "005935", "note": "애널 예측 기반" },
-      "000660": { "name": "SK하이닉스","roe": 31.06, "preferred_ticker": null,     "note": "2025 실적 반영" },
-      "058470": { "name": "리노공업",  "roe": 18.72, "preferred_ticker": null,     "note": "3년 평균 (2022-2024)" },
-      "000100": { "name": "유한양행",  "roe": 6.75,  "preferred_ticker": "000105", "note": "애널 예측 기반" },
-      "035420": { "name": "NAVER",     "roe": 4.41,  "preferred_ticker": null,     "note": "과거 평균 기반" }
+      "005930": { "name": "삼성전자",  "roe": null, "preferred_ticker": "005935", "note": "wisereport 실적 평균 자동" },
+      "000660": { "name": "SK하이닉스","roe": null, "preferred_ticker": null,     "note": "wisereport 실적 평균 자동" },
+      "058470": { "name": "리노공업",  "roe": null, "preferred_ticker": null,     "note": "wisereport 실적 평균 자동" },
+      "000100": { "name": "유한양행",  "roe": null, "preferred_ticker": "000105", "note": "wisereport 실적 평균 자동" },
+      "035420": { "name": "NAVER",     "roe": null, "preferred_ticker": null,     "note": "wisereport 실적 평균 자동" }
     }
   }
 }

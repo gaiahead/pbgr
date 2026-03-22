@@ -239,6 +239,13 @@ def main():
             latest_yr, latest = get_latest_actual(financials)
             roe_hist = get_wisereport_roe(ticker)
 
+            # ROE 기본값: config 값 있으면 사용, 없으면 실적 평균 자동
+            # config에서 roe가 null이면 wisereport 실적 평균 사용
+            if cfg.get("roe") is not None:
+                roe_pct = cfg["roe"]
+            else:
+                roe_pct = roe_hist.get("actual_avg") or 0
+
             # BPS × 주식수 = 자본총계
             bps_actual = latest.get("bps")
             equity_100m = (bps_actual * shares / 1e8) if bps_actual and shares else None
