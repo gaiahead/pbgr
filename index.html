@@ -219,16 +219,21 @@ function renderTable() {
     const tr = document.createElement('tr');
 
     // 기본 컬럼들
-    // 현재 자본 추정: ROE가 변경된 경우 재계산, 아니면 서버값 사용
+    // 현재 자본 추정: ROE 변경 시 재계산, 기본은 서버값
     let equityNow = null;
-    if (a.equity_y0_100m && a._roe && a.base_date) {
+    const roeDiff = Math.abs(a._roe - a.roe_pct) > 0.001;
+    if (roeDiff && a.equity_y0_100m && a._roe && a.base_date) {
+      // ROE 수정된 경우 클라이언트 재계산
       const parts = a.base_date.split('.');
-      const baseYear = parseInt(parts[0]), baseMonth = parseInt(parts[1]);
-      const base = new Date(baseYear, baseMonth - 1, new Date(baseYear, baseMonth, 0).getDate());
-      const today2 = new Date();
-      const months2 = (today2.getFullYear()-base.getFullYear())*12+(today2.getMonth()-base.getMonth());
-      const dv2 = months2 + (today2.getDate()-1)/new Date(today2.getFullYear(), today2.getMonth()+1, 0).getDate();
+      const bY = parseInt(parts[0]), bM = parseInt(parts[1]);
+      const base = new Date(bY, bM - 1, new Date(bY, bM, 0).getDate());
+      const t = new Date();
+      const m2 = (t.getFullYear()-bY)*12+(t.getMonth()-(bM-1));
+      const dv2 = m2 + (t.getDate()-1)/new Date(t.getFullYear(), t.getMonth()+1, 0).getDate();
       equityNow = a.equity_y0_100m * Math.pow(1 + a._roe/100, dv2/12);
+    } else {
+      // 서버 계산값 사용
+      equityNow = a.equity_now_100m;
     }
 
     tr.innerHTML = `
