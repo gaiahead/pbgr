@@ -26,6 +26,29 @@ def date_value(base_date, today=None):
     return months + frac
 
 # ─── yfinance: 전일 종가 + 자본 + 주식수 ─────────────────
+def get_roe_history(ticker_code, n=3):
+    """최근 n년 ROE 계산 (순이익/자본)"""
+    t = yf.Ticker(ticker_code)
+    bs = t.balance_sheet
+    inc = t.income_stmt
+    history = []
+    for col in list(bs.columns)[:n]:
+        try:
+            eq = None
+            for field in ["Common Stock Equity", "Stockholders Equity"]:
+                if field in bs.index:
+                    v = bs.loc[field, col]
+                    if not np.isnan(v) and v > 0:
+                        eq = float(v)
+                        break
+            ni = float(inc.loc["Net Income", col]) if "Net Income" in inc.index else None
+            if eq and ni is not None:
+                history.append({"year": col.year, "roe_pct": round(ni / eq * 100, 2)})
+        except:
+            pass
+    avg = round(sum(h["roe_pct"] for h in history) / len(history), 2) if history else 0.0
+    return {"history": history, "avg_pct": avg}
+
 def get_yf_data(ticker_code, base_date=None):
     t = yf.Ticker(ticker_code)
     info = t.info
@@ -115,6 +138,7 @@ def main():
         print(f"  [KR] {name} ({ticker_yf}) ...", end=" ", flush=True)
         try:
             d = get_yf_data(ticker_yf)
+            roe_hist = get_roe_history(ticker_yf)
             equity_100m = d["equity"] / 1e8 if d["equity"] else None
             dv = date_value(d["base_dt"], today)
             calc = calc_kr(d["price"], equity_100m, roe_pct, d["shares"], dv, req_kr)
@@ -127,6 +151,7 @@ def main():
                 "base_date": d["base_dt"].strftime("%Y-%m-%d"),
                 "roe_pct": roe_pct,
                 "roe_note": cfg.get("note", ""),
+                "roe_history": roe_hist,
                 "required_return_pct": round(req_kr * 100, 1),
                 "equity_y0_100m": round(equity_100m, 0) if equity_100m else None,
                 "shares": int(d["shares"]) if d["shares"] else None,

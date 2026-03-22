@@ -13,17 +13,6 @@
 
     .header-right{display:flex;align-items:center;gap:8px}
 
-    /* PAT 입력 */
-    .pat-wrap{display:flex;align-items:center;gap:6px}
-    .pat-input{
-      background:#161b27;border:1px solid #1e2535;border-radius:6px;
-      color:#94a3b8;font-size:0.7rem;font-family:monospace;
-      padding:5px 10px;width:220px;outline:none;
-      transition:border-color .15s;
-    }
-    .pat-input:focus{border-color:#334155}
-    .pat-label{font-size:0.68rem;color:#475569;white-space:nowrap}
-
     .save-btn{
       font-size:0.75rem;font-weight:600;padding:7px 16px;border-radius:8px;
       border:1px solid #1e3a5f;background:#1e293b;color:#60a5fa;cursor:pointer;
@@ -88,7 +77,7 @@
     }
     .req-input:focus{border-bottom-color:#60a5fa;color:#f1f5f9}
 
-    .status-msg{font-size:0.7rem;color:#475569;min-width:120px;text-align:right}
+    .status-msg{font-size:0.7rem;color:#475569;min-width:80px;text-align:right}
     .note{font-size:0.68rem;color:#334155;padding:12px 28px 24px}
   </style>
 </head>
@@ -100,12 +89,8 @@
     <p>Price to Book Growth Ratio · 한국 주식 · <span id="updated"></span> 기준 (전일 종가)</p>
   </div>
   <div class="header-right">
-    <div class="pat-wrap">
-      <span class="pat-label">GitHub PAT</span>
-      <input class="pat-input" id="pat-input" type="password" placeholder="ghp_…" oninput="onPatChange()">
-    </div>
     <span class="status-msg" id="status-msg"></span>
-    <button class="save-btn saved" id="save-btn" onclick="saveToGitHub()" disabled>저장</button>
+    <button class="save-btn saved" id="save-btn" onclick="saveSettings()">✓ 저장됨</button>
   </div>
 </header>
 
@@ -126,6 +111,7 @@
       <th>괴리율</th>
       <th>PBGR</th>
       <th>ROE ✎</th>
+      <th style="color:#334155">3년 실측 ROE</th>
       <th>기준일</th>
     </tr></thead>
     <tbody id="kr-body"></tbody>
@@ -133,27 +119,30 @@
 </div>
 
 <div class="note">
-  ROE · 요구수익률 수정 → GitHub PAT 입력 → <strong style="color:#60a5fa">저장</strong> 클릭 &nbsp;|&nbsp;
-  PAT는 이 기기 브라우저에만 저장됨 (repo 쓰기 권한 필요) &nbsp;|&nbsp;
-  ROE 더블클릭 = 초기값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
+  ROE · 요구수익률 수정 후 <strong style="color:#60a5fa">저장</strong> 클릭 → 이 브라우저에 영구 저장 &nbsp;|&nbsp;
+  ROE 더블클릭 = config 기본값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
 </div>
 
 <script>
-const REPO = 'gaiahead/pbgr';
-const FILE = 'config.json';
-const LS_PAT = 'pbgr_pat';
+const LS_KEY = 'pbgr_settings_v2';
 
-// ─── PAT ──────────────────────────────────────────────────
-function getPat() { return localStorage.getItem(LS_PAT) || ''; }
-function onPatChange() {
-  const pat = document.getElementById('pat-input').value.trim();
-  if (pat) localStorage.setItem(LS_PAT, pat);
-  updateSaveBtn();
+// ─── localStorage 저장 ────────────────────────────────────
+function loadSettings() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; }
 }
-function updateSaveBtn() {
+function saveSettings() {
+  const s = { req_kr: parseFloat(document.getElementById('req-kr').value) || 10, roe: {} };
+  document.querySelectorAll('.roe-input').forEach(inp => {
+    const val = parseFloat(inp.value);
+    const def = parseFloat(inp.dataset.default);
+    if (!isNaN(val) && Math.abs(val - def) > 0.001) s.roe[inp.dataset.ticker] = val;
+  });
+  localStorage.setItem(LS_KEY, JSON.stringify(s));
+  setStatus('✓ 저장됨', '#4ade80');
   const btn = document.getElementById('save-btn');
-  const hasPat = !!document.getElementById('pat-input').value.trim();
-  btn.disabled = !hasPat;
+  btn.className = 'save-btn saved';
+  btn.textContent = '✓ 저장됨';
+  renderTable();
 }
 
 // ─── 상태 표시 ────────────────────────────────────────────
@@ -164,76 +153,18 @@ function setStatus(msg, color='#475569') {
 }
 function markDirty() {
   const btn = document.getElementById('save-btn');
-  if (!btn.disabled) { btn.className = 'save-btn unsaved'; btn.textContent = '● 저장'; }
+  btn.className = 'save-btn unsaved';
+  btn.textContent = '● 저장';
   setStatus('수정됨', '#fbbf24');
   renderTable();
 }
 
-// ─── GitHub API ───────────────────────────────────────────
-let configSha = null;
 let configData = null;
 
 async function loadConfig() {
-  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-    headers: { 'Accept': 'application/vnd.github+json' }
-  });
-  const json = await res.json();
-  configSha = json.sha;
-  configData = JSON.parse(atob(json.content.replace(/\n/g,'')));
+  const res = await fetch('config.json');
+  configData = await res.json();
   return configData;
-}
-
-async function saveToGitHub() {
-  const pat = document.getElementById('pat-input').value.trim();
-  if (!pat) { setStatus('PAT를 입력하세요', '#f87171'); return; }
-
-  setStatus('저장 중…', '#60a5fa');
-  document.getElementById('save-btn').disabled = true;
-
-  // 현재 UI 값 수집
-  const reqKR = parseFloat(document.getElementById('req-kr').value) || 10;
-  configData.kr.required_return = reqKR / 100;
-
-  document.querySelectorAll('.roe-input').forEach(inp => {
-    const ticker = inp.dataset.ticker;
-    const val = parseFloat(inp.value);
-    if (!isNaN(val) && configData.kr.assets[ticker]) {
-      configData.kr.assets[ticker].roe = val;
-    }
-  });
-
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData, null, 2) + '\n')));
-
-  try {
-    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${pat}`,
-        'Accept': 'application/vnd.github+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: `config: ROE/요구수익률 업데이트 (UI)`,
-        content,
-        sha: configSha,
-      })
-    });
-    const json = await res.json();
-    if (res.ok) {
-      configSha = json.content.sha;
-      setStatus('✓ GitHub에 저장됨', '#4ade80');
-      const btn = document.getElementById('save-btn');
-      btn.className = 'save-btn saved';
-      btn.textContent = '✓ 저장됨';
-      btn.disabled = false;
-    } else {
-      setStatus('오류: ' + (json.message || res.status), '#f87171');
-      document.getElementById('save-btn').disabled = false;
-    }
-  } catch(e) {
-    setStatus('네트워크 오류', '#f87171');
-    document.getElementById('save-btn').disabled = false;
-  }
 }
 
 // ─── 포맷 ─────────────────────────────────────────────────
@@ -286,15 +217,15 @@ function renderTable() {
   tbody.innerHTML = '';
 
   const assets = rawData.assets.filter(a => a.market === 'KR');
+  const s = loadSettings();
   const withCalc = assets.map(a => {
-    // config 기본값 기준, 현재 인풋값 우선
     const configRoe = configData?.kr?.assets?.[a.ticker]?.roe ?? a.roe_pct;
-    const roe = currentRoe[a.ticker] ?? configRoe;
+    const roe = currentRoe[a.ticker] ?? s.roe?.[a.ticker] ?? configRoe;
     const isCustom = Math.abs(roe - a.roe_pct) > 0.001;
     const calc = recalcKR(a.price, a.equity_y0_100m, roe, a.shares, a.base_date, reqKR);
     return { ...a, _roe: roe, _isCustom: isCustom, _calc: calc };
   });
-  withCalc.sort((a, b) => (a._calc?.pbgr ?? 999) - (b._calc?.pbgr ?? 999));
+  // config 순서 유지 (정렬 없음)
 
   withCalc.forEach(a => {
     const tr = document.createElement('tr');
@@ -321,6 +252,21 @@ function renderTable() {
       </td>
       <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
     `;
+    // 3년 실측 ROE 컬럼
+    const roeTd = document.createElement('td');
+    roeTd.style.cssText = 'text-align:right;white-space:nowrap';
+    if (a.roe_history?.history?.length) {
+      const hist = a.roe_history.history;
+      const avg = a.roe_history.avg_pct;
+      const rows = hist.map(h =>
+        `<span style="color:#334155">${h.year}</span><span style="color:#475569;margin-left:3px">${h.roe_pct > 0 ? '+' : ''}${h.roe_pct.toFixed(1)}%</span>`
+      ).join(' <span style="color:#1e2535">|</span> ');
+      roeTd.innerHTML = `<div style="font-size:0.72rem">${rows}</div>
+        <div style="font-size:0.7rem;color:#475569;margin-top:2px">평균 ${avg.toFixed(1)}%</div>`;
+    } else {
+      roeTd.textContent = '—';
+    }
+    tr.appendChild(roeTd);
     tbody.appendChild(tr);
   });
 }
@@ -333,11 +279,6 @@ function resetRoe(inp) {
 
 // ─── 초기화 ───────────────────────────────────────────────
 async function init() {
-  // PAT 복원
-  const savedPat = getPat();
-  if (savedPat) document.getElementById('pat-input').value = savedPat;
-  updateSaveBtn();
-
   const [dataRes, cfg] = await Promise.all([
     fetch('pbgr_data.json').then(r => r.json()),
     loadConfig()
@@ -345,7 +286,8 @@ async function init() {
 
   rawData = dataRes;
   document.getElementById('updated').textContent = rawData.updated;
-  document.getElementById('req-kr').value = (cfg.kr.required_return * 100).toFixed(1);
+  const s = loadSettings();
+  document.getElementById('req-kr').value = s.req_kr ?? (cfg.kr.required_return * 100).toFixed(1);
 
   document.getElementById('req-kr').addEventListener('input', markDirty);
   renderTable();

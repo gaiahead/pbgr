@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 11:36",
+  "updated": "2026-03-22 11:49",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -10,6 +10,23 @@
       "base_date": "2025-12-31",
       "roe_pct": 4.15,
       "roe_note": "애널 예측 기반",
+      "roe_history": {
+        "history": [
+          {
+            "year": 2025,
+            "roe_pct": 10.43
+          },
+          {
+            "year": 2024,
+            "roe_pct": 8.59
+          },
+          {
+            "year": 2023,
+            "roe_pct": 4.1
+          }
+        ],
+        "avg_pct": 7.71
+      },
       "required_return_pct": 10.0,
       "equity_y0_100m": 4241938.0,
       "shares": 7488520802,
@@ -24,6 +41,23 @@
       "base_date": "2025-12-31",
       "roe_pct": 31.06,
       "roe_note": "2025 실적 반영",
+      "roe_history": {
+        "history": [
+          {
+            "year": 2025,
+            "roe_pct": 35.61
+          },
+          {
+            "year": 2024,
+            "roe_pct": 26.78
+          },
+          {
+            "year": 2023,
+            "roe_pct": -17.03
+          }
+        ],
+        "avg_pct": 15.12
+      },
       "required_return_pct": 10.0,
       "equity_y0_100m": 1205162.0,
       "shares": 690455268,
@@ -36,13 +70,30 @@
       "market": "KR",
       "price": 5860.0,
       "base_date": "2024-12-31",
-      "roe_pct": 21.13,
-      "roe_note": "과거 평균 기반",
+      "roe_pct": 18.72,
+      "roe_note": "3년 평균 (2022-2024)",
+      "roe_history": {
+        "history": [
+          {
+            "year": 2024,
+            "roe_pct": 12.61
+          },
+          {
+            "year": 2023,
+            "roe_pct": 19.2
+          },
+          {
+            "year": 2022,
+            "roe_pct": 24.34
+          }
+        ],
+        "avg_pct": 18.72
+      },
       "required_return_pct": 10.0,
       "equity_y0_100m": 1242.0,
       "shares": 18602574,
-      "pbgr": 0.2648,
-      "fair_price": 22132.0
+      "pbgr": 0.3318,
+      "fair_price": 17663.0
     },
     {
       "name": "유한양행",
@@ -52,6 +103,23 @@
       "base_date": "2025-12-31",
       "roe_pct": 6.75,
       "roe_note": "애널 예측 기반",
+      "roe_history": {
+        "history": [
+          {
+            "year": 2025,
+            "roe_pct": 8.42
+          },
+          {
+            "year": 2024,
+            "roe_pct": 3.37
+          },
+          {
+            "year": 2023,
+            "roe_pct": 6.64
+          }
+        ],
+        "avg_pct": 6.14
+      },
       "required_return_pct": 10.0,
       "equity_y0_100m": 23057.0,
       "shares": 74764121,
@@ -66,6 +134,23 @@
       "base_date": "2025-12-31",
       "roe_pct": 4.41,
       "roe_note": "과거 평균 기반",
+      "roe_history": {
+        "history": [
+          {
+            "year": 2025,
+            "roe_pct": 7.08
+          },
+          {
+            "year": 2024,
+            "roe_pct": 7.55
+          },
+          {
+            "year": 2023,
+            "roe_pct": 4.36
+          }
+        ],
+        "avg_pct": 6.33
+      },
       "required_return_pct": 10.0,
       "equity_y0_100m": 275820.0,
       "shares": 149484820,
