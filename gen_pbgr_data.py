@@ -133,6 +133,60 @@ def get_latest_actual(financials):
     latest_yr = sorted(actual.keys())[-1]
     return latest_yr, actual[latest_yr]
 
+def get_wisereport_equity_cagr(code):
+    """wisereport 연간 자본총계로 실제 CAGR 계산 (= ROE 대리값)"""
+    url = (f"https://navercomp.wisereport.co.kr/v2/company/ajax/cF1001.aspx"
+           f"?cmp_cd={code}&fin_typ=0&freq_typ=A&extY=0&extQ=0"
+           f"&encparam=alV0blgxYnRzZldFanllNFlqU3Ezdz09")
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0",
+        "Referer": f"https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={code}",
+    })
+    with urllib.request.urlopen(req, timeout=15) as res:
+        html = res.read().decode("utf-8", errors="ignore")
+
+    # 연간 연도 파싱
+    q_start = html.find(">분기<")
+    after_q = html[q_start:]
+    trs = re.findall(r"<tr[^>]*>(.*?)</tr>", after_q, re.DOTALL)
+    if not trs:
+        return None, {}
+    ths = re.findall(r"<th[^>]*>(.*?)</th>", trs[0], re.DOTALL)
+    annual_years = []
+    for th in ths:
+        c = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", th)).strip()
+        m = re.match(r"(\d{4}/\d{2})(\(E\))?", c)
+        if m and "(E)" not in c:
+            annual_years.append(m.group(1))
+
+    # 자본총계 값 (title 속성)
+    eq_idx = html.find(">자본총계<")
+    if eq_idx < 0:
+        return None, {}
+    chunk = html[eq_idx:eq_idx + 1000]
+    vals = re.findall(r'<td[^>]*title="(-?[0-9,]+\.?[0-9]*)"', chunk)[:len(annual_years)]
+
+    equity_series = {}
+    for yr, val in zip(annual_years, vals):
+        try:
+            # 연간(/12)만 포함, 분기 제외
+            if yr.endswith("/12"):
+                equity_series[yr] = float(val.replace(",", ""))
+        except:
+            pass
+
+    if len(equity_series) < 2:
+        return None, equity_series
+
+    years = sorted(equity_series.keys())
+    oldest, latest = years[0], years[-1]
+    n = int(latest[:4]) - int(oldest[:4])
+    if n <= 0 or equity_series[oldest] <= 0:
+        return None, equity_series
+
+    cagr = (equity_series[latest] / equity_series[oldest]) ** (1 / n) - 1
+    return round(cagr * 100, 2), equity_series
+
 def get_wisereport_roe(code, ext_y=3):
     """wisereport Financial Summary에서 5년 실적 + 추정 ROE 수집"""
     def fetch(ey):
@@ -238,11 +292,16 @@ def main():
             financials = get_naver_financials(ticker)
             latest_yr, latest = get_latest_actual(financials)
             roe_hist = get_wisereport_roe(ticker)
+            equity_cagr, equity_series = get_wisereport_equity_cagr(ticker)
 
-            # ROE 기본값: config 값 있으면 사용, 없으면 실적 평균 자동
-            # config에서 roe가 null이면 wisereport 실적 평균 사용
+            # ROE 기본값 우선순위:
+            # 1. config.json에 roe가 명시된 경우 (null 아님)
+            # 2. wisereport 자본총계 CAGR (가장 오래된 결산→최신 결산)
+            # 3. wisereport 실적 평균 ROE (폴백)
             if cfg.get("roe") is not None:
                 roe_pct = cfg["roe"]
+            elif equity_cagr is not None:
+                roe_pct = equity_cagr
             else:
                 roe_pct = roe_hist.get("actual_avg") or 0
 
@@ -273,6 +332,8 @@ def main():
                 "shares_preferred": shares_data["preferred"],
                 "roe_pct": roe_pct,
                 "roe_note": cfg.get("note", ""),
+                "equity_cagr_pct": equity_cagr,
+                "equity_series": equity_series,
                 "roe_ref": roe_hist,
                 "required_return_pct": round(req_kr * 100, 1),
                 "pbgr": calc["pbgr"] if calc else None,
