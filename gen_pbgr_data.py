@@ -54,7 +54,13 @@ def get_yf_data(ticker_code, base_date=None):
     info = t.info
 
     # 전일 종가
-    price = info.get("previousClose") or info.get("regularMarketPreviousClose") or info.get("currentPrice")
+    # history로 마지막 거래일 종가 (previousClose보다 정확)
+    try:
+        hist = yf.Ticker(ticker_code).history(period="5d")
+        price = float(hist["Close"].dropna().iloc[-1]) if not hist.empty else None
+    except:
+        price = None
+    price = price or info.get("regularMarketPreviousClose") or info.get("previousClose") or info.get("currentPrice")
 
     # Balance sheet (최신 결산 or 기준일 이전)
     bs = t.balance_sheet
