@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 14:30",
+  "updated": "2026-03-22 15:58",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -9,9 +9,11 @@
       "price": 199400,
       "base_date": "2025.12",
       "bps_actual": 63997,
-      "equity_y0_100m": 3788390.7,
-      "equity_now_100m": 3835892.9,
-      "shares": 5919637922,
+      "equity_y0_100m": 4310590.0,
+      "equity_now_100m": 4364640.0,
+      "shares": 6735612586,
+      "shares_common": 5919637922,
+      "shares_preferred": 815974664,
       "roe_pct": 4.15,
       "roe_note": "애널 예측 기반",
       "roe_ref": {
@@ -64,6 +66,8 @@
       "equity_y0_100m": 1243936.5,
       "equity_now_100m": 1351441.1,
       "shares": 712702365,
+      "shares_common": 712702365,
+      "shares_preferred": null,
       "roe_pct": 31.06,
       "roe_note": "2025 실적 반영",
       "roe_ref": {
@@ -116,6 +120,8 @@
       "equity_y0_100m": 6252.4,
       "equity_now_100m": 7823.7,
       "shares": 76211850,
+      "shares_common": 76211850,
+      "shares_preferred": null,
       "roe_pct": 18.72,
       "roe_note": "3년 평균 (2022-2024)",
       "roe_ref": {
@@ -165,9 +171,11 @@
       "price": 100300,
       "base_date": "2025.12",
       "bps_actual": 30855,
-      "equity_y0_100m": 24575.3,
-      "equity_now_100m": 25072.2,
-      "shares": 79647601,
+      "equity_y0_100m": 24939.6,
+      "equity_now_100m": 25443.9,
+      "shares": 80828541,
+      "shares_common": 79647601,
+      "shares_preferred": 1180940,
       "roe_pct": 6.75,
       "roe_note": "애널 예측 기반",
       "roe_ref": {
@@ -220,6 +228,8 @@
       "equity_y0_100m": 289230.0,
       "equity_now_100m": 293080.5,
       "shares": 156852638,
+      "shares_common": 156852638,
+      "shares_preferred": null,
       "roe_pct": 4.41,
       "roe_note": "과거 평균 기반",
       "roe_ref": {

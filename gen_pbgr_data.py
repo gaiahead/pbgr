@@ -51,17 +51,27 @@ def get_naver_price(code):
         data = json.loads(res.read())
     return int(data["datas"][0]["closePrice"].replace(",", ""))
 
-def get_naver_shares(code):
-    """상장주식수 (기업개요)"""
-    url = f"https://finance.naver.com/item/coinfo.naver?code={code}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR"})
-    with urllib.request.urlopen(req, timeout=15) as res:
-        html = res.read().decode("euc-kr", errors="ignore")
-    idx = html.find("상장주식수")
-    if idx < 0:
-        return None
-    m = re.search(r"<em[^>]*>([0-9,]+)</em>", html[idx:idx+200])
-    return int(m.group(1).replace(",", "")) if m else None
+def get_naver_shares(code, preferred_code=None):
+    """보통주·우선주·전체 주식수 반환"""
+    def fetch_shares(c):
+        url = f"https://finance.naver.com/item/coinfo.naver?code={c}"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR"})
+        with urllib.request.urlopen(req, timeout=15) as res:
+            html = res.read().decode("euc-kr", errors="ignore")
+        idx = html.find("상장주식수")
+        if idx < 0:
+            return None
+        m = re.search(r"<em[^>]*>([0-9,]+)</em>", html[idx:idx+200])
+        return int(m.group(1).replace(",", "")) if m else None
+
+    common = fetch_shares(code)
+    preferred = fetch_shares(preferred_code) if preferred_code else None
+    total = (common or 0) + (preferred or 0)
+    return {
+        "total": total if total > 0 else None,
+        "common": common,
+        "preferred": preferred,
+    }
 
 def get_naver_financials(code):
     """
@@ -221,8 +231,10 @@ def main():
         roe_pct = cfg["roe"]
         print(f"  [KR] {name} ({ticker}) ...", end=" ", flush=True)
         try:
+            preferred_ticker = cfg.get("preferred_ticker")
             price = get_naver_price(ticker)
-            shares = get_naver_shares(ticker)
+            shares_data = get_naver_shares(ticker, preferred_ticker)
+            shares = shares_data["total"]
             financials = get_naver_financials(ticker)
             latest_yr, latest = get_latest_actual(financials)
             roe_hist = get_wisereport_roe(ticker)
@@ -249,7 +261,9 @@ def main():
                 "bps_actual": bps_actual,
                 "equity_y0_100m": round(equity_100m, 1) if equity_100m else None,
                 "equity_now_100m": equity_now,
-                "shares": shares,
+                "shares": shares_data["total"],
+                "shares_common": shares_data["common"],
+                "shares_preferred": shares_data["preferred"],
                 "roe_pct": roe_pct,
                 "roe_note": cfg.get("note", ""),
                 "roe_ref": roe_hist,

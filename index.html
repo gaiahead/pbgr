@@ -116,6 +116,7 @@
       <th>PBGR</th>
       <th>ROE ✎</th>
       <th style="color:#334155;font-weight:500">ROE 참고</th>
+      <th style="color:#334155;font-weight:500">주식수</th>
     </tr></thead>
     <tbody id="kr-body"></tbody>
   </table>
@@ -218,18 +219,15 @@ function renderTable() {
     const tr = document.createElement('tr');
 
     // 기본 컬럼들
-    // 현재 자본 추정: 서버에서 계산된 값 사용 (ROE가 바뀌면 클라이언트 재계산)
+    // 현재 자본 추정: ROE가 변경된 경우 재계산, 아니면 서버값 사용
     let equityNow = null;
     if (a.equity_y0_100m && a._roe && a.base_date) {
-      // base_date: '2025.12' → year=2025, month=12, 말일
       const parts = a.base_date.split('.');
       const baseYear = parseInt(parts[0]), baseMonth = parseInt(parts[1]);
-      const baseLastDay = new Date(baseYear, baseMonth, 0).getDate();
-      const base = new Date(baseYear, baseMonth - 1, baseLastDay);
+      const base = new Date(baseYear, baseMonth - 1, new Date(baseYear, baseMonth, 0).getDate());
       const today2 = new Date();
       const months2 = (today2.getFullYear()-base.getFullYear())*12+(today2.getMonth()-base.getMonth());
-      const daysInMonth2 = new Date(today2.getFullYear(), today2.getMonth()+1, 0).getDate();
-      const dv2 = months2 + (today2.getDate()-1)/daysInMonth2;
+      const dv2 = months2 + (today2.getDate()-1)/new Date(today2.getFullYear(), today2.getMonth()+1, 0).getDate();
       equityNow = a.equity_y0_100m * Math.pow(1 + a._roe/100, dv2/12);
     }
 
@@ -295,6 +293,24 @@ function renderTable() {
       histTd.textContent = '—';
     }
     tr.appendChild(histTd);
+
+    // 주식수 컬럼
+    const sharesTd = document.createElement('td');
+    sharesTd.style.cssText = 'text-align:right;white-space:nowrap';
+    const fmtShares = v => v ? (v / 1e8).toFixed(2) + '억주' : '—';
+    if (a.shares || a.shares_common) {
+      const total = a.shares || a.shares_common;
+      const common = a.shares_common;
+      const preferred = a.shares_preferred;
+      let html = `<div style="font-size:0.78rem;color:#94a3b8">전체 ${fmtShares(total)}</div>`;
+      html += `<div style="font-size:0.72rem;color:#475569;margin-top:1px">보통주 ${fmtShares(common)}`;
+      if (preferred) html += ` / 우선주 ${fmtShares(preferred)}`;
+      html += '</div>';
+      sharesTd.innerHTML = html;
+    } else {
+      sharesTd.textContent = '—';
+    }
+    tr.appendChild(sharesTd);
     tbody.appendChild(tr);
   });
 }
