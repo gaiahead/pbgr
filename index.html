@@ -7,9 +7,19 @@
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Apple SD Gothic Neo','Pretendard',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
-    header{padding:20px 28px 14px;border-bottom:1px solid #1e2535}
-    header h1{font-size:1.2rem;font-weight:700;color:#f8fafc}
-    header p{font-size:0.74rem;color:#475569;margin-top:4px}
+    header{padding:20px 28px 14px;border-bottom:1px solid #1e2535;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    .header-left h1{font-size:1.2rem;font-weight:700;color:#f8fafc}
+    .header-left p{font-size:0.74rem;color:#475569;margin-top:4px}
+
+    /* 저장 버튼 */
+    .save-btn{
+      font-size:0.75rem;font-weight:600;padding:7px 16px;border-radius:8px;
+      border:1px solid #1e3a5f;background:#1e293b;color:#60a5fa;cursor:pointer;
+      transition:all .15s;white-space:nowrap;
+    }
+    .save-btn:hover{background:#1e3a5f;color:#93c5fd}
+    .save-btn.saved{border-color:#166534;background:#14532d;color:#4ade80}
+    .save-btn.unsaved{border-color:#92400e;background:#451a03;color:#fbbf24}
 
     .section{padding:24px 28px 0}
     .section:last-of-type{padding-bottom:32px}
@@ -20,18 +30,15 @@
       margin-bottom:12px;display:flex;align-items:center;gap:10px;
     }
     .section-title .param{
-      font-size:0.7rem;color:#334155;font-weight:500;
+      font-size:0.7rem;color:#94a3b8;font-weight:500;
       text-transform:none;letter-spacing:0;
       background:#161b27;border:1px solid #1e2535;border-radius:5px;
-      padding:2px 8px;
+      padding:2px 10px;display:flex;align-items:center;gap:4px;
     }
 
     table{width:100%;border-collapse:collapse;font-size:0.84rem}
     thead tr{border-bottom:1px solid #1e2535}
-    th{
-      padding:8px 14px;text-align:right;font-size:0.68rem;font-weight:600;
-      color:#475569;letter-spacing:.04em;white-space:nowrap;
-    }
+    th{padding:8px 14px;text-align:right;font-size:0.68rem;font-weight:600;color:#475569;letter-spacing:.04em;white-space:nowrap}
     th:first-child{text-align:left}
     tbody tr{border-bottom:1px solid #161b27;transition:background .12s}
     tbody tr:hover{background:#141820}
@@ -41,58 +48,60 @@
     .name{font-weight:700;color:#f1f5f9;font-size:0.88rem}
     .ticker{font-size:0.68rem;color:#475569;margin-top:2px}
 
-    /* PBGR */
     .pbgr-val{font-weight:800;font-size:1.0rem}
     .under{color:#4ade80}
     .over {color:#f87171}
 
-    .badge{
-      display:inline-block;font-size:0.6rem;font-weight:700;
-      padding:2px 6px;border-radius:4px;margin-left:5px;vertical-align:middle;
-    }
+    .badge{display:inline-block;font-size:0.6rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:5px;vertical-align:middle}
     .badge-under{background:rgba(34,197,94,.15);color:#4ade80}
     .badge-over {background:rgba(239,68,68,.15);color:#f87171}
 
-    /* ROE 편집 */
-    .roe-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px}
-    .roe-input{
+    /* 편집 인풋 */
+    .edit-input{
       background:transparent;border:none;color:#cbd5e1;
       font-size:0.84rem;font-family:inherit;
       width:52px;text-align:right;outline:none;cursor:text;
       border-bottom:1px dashed #334155;padding-bottom:1px;
-      transition:border-color .15s;
+      transition:border-color .15s, color .15s;
     }
-    .roe-input:focus{border-bottom-color:#60a5fa;color:#f1f5f9}
-    .roe-unit{color:#475569;font-size:0.75rem}
-    .roe-dot{
-      width:6px;height:6px;border-radius:50%;flex-shrink:0;
-      background:#475569;transition:background .2s;
-    }
-    .roe-dot.custom{background:#60a5fa}
+    .edit-input:focus{border-bottom-color:#60a5fa;color:#f1f5f9}
+    .edit-input.dirty{color:#fbbf24;border-bottom-color:#92400e}
+    .unit{color:#475569;font-size:0.75rem;margin-left:2px}
 
-    /* 요구수익률 편집 */
+    .req-wrap{display:flex;align-items:center;gap:3px}
     .req-input{
-      background:transparent;border:none;color:#64748b;
+      background:transparent;border:none;color:#94a3b8;
       font-size:0.7rem;font-family:inherit;
-      width:32px;text-align:right;outline:none;cursor:text;
+      width:28px;text-align:right;outline:none;cursor:text;
       border-bottom:1px dashed #334155;
+      transition:border-color .15s, color .15s;
     }
-    .req-input:focus{border-bottom-color:#60a5fa;color:#94a3b8}
+    .req-input:focus{border-bottom-color:#60a5fa;color:#f1f5f9}
+    .req-input.dirty{color:#fbbf24;border-bottom-color:#92400e}
 
-    .note{font-size:0.68rem;color:#1e2535;padding:16px 28px 24px}
+    .note{font-size:0.68rem;color:#334155;padding:12px 28px 24px}
   </style>
 </head>
 <body>
 
 <header>
-  <h1>📊 PBGR 가치평가 모니터</h1>
-  <p>Price to Book Growth Ratio · 한국 주식 · <span id="updated"></span> 기준 (전일 종가)</p>
+  <div class="header-left">
+    <h1>📊 PBGR 가치평가 모니터</h1>
+    <p>Price to Book Growth Ratio · 한국 주식 · <span id="updated"></span> 기준 (전일 종가)</p>
+  </div>
+  <button class="save-btn saved" id="save-btn" onclick="saveSettings()">✓ 저장됨</button>
 </header>
 
-<div class="section" id="kr-section">
+<div class="section">
   <div class="section-title">
     🇰🇷 한국
-    <span class="param">요구수익률 <input class="req-input" id="req-kr" value="10">%</span>
+    <span class="param">
+      요구수익률
+      <div class="req-wrap">
+        <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
+        <span style="color:#64748b;font-size:0.7rem">%</span>
+      </div>
+    </span>
   </div>
   <table>
     <thead><tr>
@@ -108,34 +117,48 @@
   </table>
 </div>
 
-
 <div class="note">
-  ROE 셀 클릭 → 직접 수정 (브라우저에 저장됨, 파란 점 = 수정값) &nbsp;|&nbsp;
-  PBGR &lt; 1: 저평가 &nbsp;|&nbsp; 데이터: yfinance (전일 종가 기준)
+  ROE · 요구수익률 수정 후 <strong style="color:#60a5fa">저장</strong> 버튼 클릭 → 브라우저에 영구 저장 &nbsp;|&nbsp;
+  더블클릭으로 초기값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
 </div>
 
 <script>
+const LS_KEY = 'pbgr_v2';
+
 // ─── localStorage ─────────────────────────────────────────
-const LS_KEY = 'pbgr_overrides';
-function loadOverrides() {
+function loadSettings() {
   try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
   catch { return {}; }
 }
-function saveOverride(ticker, field, val) {
-  const ov = loadOverrides();
-  if (!ov[ticker]) ov[ticker] = {};
-  ov[ticker][field] = val;
-  localStorage.setItem(LS_KEY, JSON.stringify(ov));
+function saveSettings() {
+  const s = {};
+  s.req_kr = parseFloat(document.getElementById('req-kr').value) || 10;
+  s.roe = {};
+  document.querySelectorAll('.roe-input').forEach(inp => {
+    const ticker = inp.dataset.ticker;
+    const defaultRoe = parseFloat(inp.dataset.default);
+    const val = parseFloat(inp.value);
+    if (!isNaN(val) && val !== defaultRoe) s.roe[ticker] = val;
+  });
+  localStorage.setItem(LS_KEY, JSON.stringify(s));
+  markSaved();
 }
-function clearOverride(ticker, field) {
-  const ov = loadOverrides();
-  if (ov[ticker]) delete ov[ticker][field];
-  localStorage.setItem(LS_KEY, JSON.stringify(ov));
+
+function markDirty() {
+  const btn = document.getElementById('save-btn');
+  btn.className = 'save-btn unsaved';
+  btn.textContent = '● 저장 안 됨 — 클릭하여 저장';
+}
+function markSaved() {
+  const btn = document.getElementById('save-btn');
+  btn.className = 'save-btn saved';
+  btn.textContent = '✓ 저장됨';
+  // 재계산
+  renderTable();
 }
 
 // ─── 포맷 ─────────────────────────────────────────────────
 function fmtKR(v) { return v != null ? Number(v).toLocaleString('ko-KR') + '원' : '—'; }
-function fmtUS(v) { return v != null ? '$' + Number(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—'; }
 function gap(pbgr) {
   if (!pbgr) return '—';
   const pct = ((1 / pbgr) - 1) * 100;
@@ -151,155 +174,79 @@ function pbgrHtml(pbgr) {
   return `<span class="pbgr-val ${cls}">${pbgr.toFixed(3)}${badge}</span>`;
 }
 
-// ─── PBGR 재계산 (클라이언트) ─────────────────────────────
-function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_return) {
+// ─── 클라이언트 재계산 ────────────────────────────────────
+function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_pct) {
   if (!price || !equity_100m || !roe_pct || !shares) return null;
   const base = new Date(base_date);
   const today = new Date();
   const months = (today.getFullYear() - base.getFullYear()) * 12 + (today.getMonth() - base.getMonth());
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const dv = months + (today.getDate() - 1) / daysInMonth;
-
   const roe = roe_pct / 100;
+  const r = req_pct / 100;
   const y10 = equity_100m * Math.pow(1 + roe, 10);
   const y11 = equity_100m * Math.pow(1 + roe, 11);
   const r_t = Math.pow(y11 / y10, 1 / 12) - 1;
   const trailing = y10 * Math.pow(1 + r_t, dv - 1);
-  const bv = trailing / Math.pow(1 + req_return, 10);
+  const bv = trailing / Math.pow(1 + r, 10);
   const bps = bv * 1e8 / shares;
   return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps) } : null;
-}
-
-function recalcUS(price, equity_m, roe, ni_y1, ni_y2, shares, correction, base_date, req_return) {
-  if (!price || !equity_m || !roe || !shares) return null;
-  const base = new Date(base_date);
-  const today = new Date();
-  const months = (today.getFullYear() - base.getFullYear()) * 12 + (today.getMonth() - base.getMonth());
-  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const dv = months + (today.getDate() - 1) / daysInMonth;
-
-  const y = new Array(12).fill(0);
-  y[0] = equity_m;
-  y[1] = y[0] + (ni_y1 || equity_m * roe);
-  y[2] = y[1] + (ni_y2 || equity_m * roe);
-  for (let n = 3; n <= 10; n++) y[n] = y[n-1] * (1 + roe * Math.pow(correction, n - 2));
-  y[11] = y[10] * (1 + roe * Math.pow(correction, 9));
-  if (y[10] <= 0) return null;
-  const r_t = Math.pow(y[11] / y[10], 1 / 12) - 1;
-  const trailing = y[10] * Math.pow(1 + r_t, dv - 1);
-  const fair_m = trailing / Math.pow(1 + req_return, 10);
-  const fair_price = fair_m * 1e6 / shares;
-  return fair_price > 0 ? { pbgr: price / fair_price, fair_price } : null;
-}
-
-// ─── ROE 편집 인풋 만들기 ─────────────────────────────────
-function makeRoeInput(a, isCustom, onUpdate) {
-  const dot = `<span class="roe-dot${isCustom ? ' custom' : ''}" title="${isCustom ? '수정값' : '설정값'}"></span>`;
-  const inp = document.createElement('input');
-  inp.type = 'number';
-  inp.step = '0.01';
-  inp.className = 'roe-input';
-  inp.value = a._displayRoe.toFixed(2);
-
-  inp.addEventListener('change', () => {
-    const v = parseFloat(inp.value);
-    if (isNaN(v) || v <= 0) return;
-    saveOverride(a.ticker, 'roe_pct', v);
-    onUpdate(v);
-  });
-  inp.addEventListener('dblclick', () => {
-    clearOverride(a.ticker, 'roe_pct');
-    inp.value = a.roe_pct.toFixed(2);
-    onUpdate(a.roe_pct, true);
-  });
-
-  const wrap = document.createElement('div');
-  wrap.className = 'roe-cell';
-  wrap.innerHTML = dot;
-  wrap.appendChild(inp);
-  const unit = document.createElement('span');
-  unit.className = 'roe-unit';
-  unit.textContent = '%';
-  wrap.appendChild(unit);
-  return wrap;
 }
 
 // ─── 렌더 ─────────────────────────────────────────────────
 let rawData = null;
 
-function renderTables() {
-  const overrides = loadOverrides();
-  const reqKR = parseFloat(document.getElementById('req-kr').value) / 100 || 0.10;
-  const reqUS = parseFloat(document.getElementById('req-us').value) / 100 || 0.07;
+function renderTable() {
+  const s = loadSettings();
+  const reqKR = parseFloat(document.getElementById('req-kr').value) || 10;
+  const tbody = document.getElementById('kr-body');
+  tbody.innerHTML = '';
 
-  const kr = rawData.assets.filter(a => a.market === 'KR');
+  const assets = rawData.assets.filter(a => a.market === 'KR');
 
-  function renderKR(tbody, assets) {
-    tbody.innerHTML = '';
-    assets = [...assets].map(a => {
-      const ov = overrides[a.ticker] || {};
-      return { ...a, _displayRoe: ov.roe_pct ?? a.roe_pct, _isCustom: !!ov.roe_pct };
-    });
-    assets.sort((a, b) => (a.pbgr_live || 999) - (b.pbgr_live || 999));
+  // ROE 적용: 저장된 값 우선
+  const withCalc = assets.map(a => {
+    const savedRoe = s.roe?.[a.ticker];
+    const roe = savedRoe ?? a.roe_pct;
+    const calc = recalcKR(a.price, a.equity_y0_100m, roe, a.shares, a.base_date, reqKR);
+    return { ...a, _roe: roe, _isCustom: savedRoe != null, _calc: calc };
+  });
 
-    assets.forEach(a => {
-      const calc = recalcKR(a.price, a.equity_y0_100m, a._displayRoe, a.shares_total || a.shares, a.base_date, reqKR);
-      a.pbgr_live = calc?.pbgr;
-      a.fair_live = calc?.fair_price;
+  // PBGR 오름차순 정렬
+  withCalc.sort((a, b) => (a._calc?.pbgr ?? 999) - (b._calc?.pbgr ?? 999));
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
-        <td>${a.price ? a.price.toLocaleString('ko-KR') + '원' : '—'}</td>
-        <td>${a.fair_live ? a.fair_live.toLocaleString('ko-KR') + '원' : '—'}</td>
-        <td>${gap(a.pbgr_live)}</td>
-        <td>${pbgrHtml(a.pbgr_live)}</td>
-        <td></td>
-        <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
-      `;
-      const roeTd = tr.querySelector('td:nth-child(6)');
-      roeTd.appendChild(makeRoeInput(a, a._isCustom, (newRoe, reset) => {
-        if (reset) clearOverride(a.ticker, 'roe_pct');
-        renderTables();
-      }));
-      tbody.appendChild(tr);
-    });
-  }
+  withCalc.forEach(a => {
+    const isCustom = a._isCustom;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
+      <td>${fmtKR(a.price)}</td>
+      <td>${a._calc ? fmtKR(a._calc.fair_price) : '—'}</td>
+      <td>${gap(a._calc?.pbgr)}</td>
+      <td>${pbgrHtml(a._calc?.pbgr)}</td>
+      <td>
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
+          <span style="width:6px;height:6px;border-radius:50%;background:${isCustom ? '#60a5fa' : '#334155'};display:inline-block;flex-shrink:0" title="${isCustom ? '수정됨 (더블클릭으로 초기화)' : a.roe_note || '기본값'}"></span>
+          <input class="edit-input roe-input${isCustom ? ' dirty' : ''}"
+            type="number" step="0.01"
+            value="${a._roe.toFixed(2)}"
+            data-ticker="${a.ticker}"
+            data-default="${a.roe_pct}"
+            oninput="markDirty()"
+            ondblclick="resetRoe(this)">
+          <span class="unit">%</span>
+        </div>
+      </td>
+      <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
-  function renderUS(tbody, assets) {
-    tbody.innerHTML = '';
-    assets = [...assets].map(a => {
-      const ov = overrides[a.ticker] || {};
-      return { ...a, _displayRoe: ov.roe_pct != null ? ov.roe_pct : a.roe_pct, _isCustom: ov.roe_pct != null };
-    });
-
-    assets.forEach(a => {
-      const roe = a._displayRoe / 100;
-      const calc = recalcUS(a.price, a.equity_y0_m, roe, null, null, a.shares, a.correction, a.base_date, reqUS);
-      a.pbgr_live = calc?.pbgr;
-      a.fair_live = calc?.fair_price;
-
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
-        <td>${a.price ? '$' + a.price.toFixed(2) : '—'}</td>
-        <td>${a.fair_live ? '$' + a.fair_live.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—'}</td>
-        <td>${gap(a.pbgr_live)}</td>
-        <td>${pbgrHtml(a.pbgr_live)}</td>
-        <td></td>
-        <td style="color:#64748b;font-size:0.75rem">${a.correction ?? '—'}</td>
-        <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
-      `;
-      const roeTd = tr.querySelector('td:nth-child(6)');
-      roeTd.appendChild(makeRoeInput(a, a._isCustom, (newRoe, reset) => {
-        if (reset) clearOverride(a.ticker, 'roe_pct');
-        renderTables();
-      }));
-      tbody.appendChild(tr);
-    });
-  }
-
-  renderKR(document.getElementById('kr-body'), kr);
+function resetRoe(inp) {
+  inp.value = parseFloat(inp.dataset.default).toFixed(2);
+  inp.classList.remove('dirty');
+  markDirty();
 }
 
 async function init() {
@@ -307,16 +254,14 @@ async function init() {
   rawData = await res.json();
 
   document.getElementById('updated').textContent = rawData.updated;
-  document.getElementById('req-kr').value = (rawData.kr_required_return * 100).toFixed(0);
 
-  // shares 필드 통일
-  rawData.assets.forEach(a => {
-    if (!a.shares) a.shares = a.shares_total;
-  });
+  // 저장된 요구수익률 복원
+  const s = loadSettings();
+  if (s.req_kr) document.getElementById('req-kr').value = s.req_kr;
 
-  document.getElementById('req-kr').addEventListener('input', renderTables);
+  document.getElementById('req-kr').addEventListener('input', markDirty);
 
-  renderTables();
+  renderTable();
 }
 
 init();

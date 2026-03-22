@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 11:31",
+  "updated": "2026-03-22 11:36",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -12,6 +12,7 @@
       "roe_note": "애널 예측 기반",
       "required_return_pct": 10.0,
       "equity_y0_100m": 4241938.0,
+      "shares": 7488520802,
       "pbgr": 6.0582,
       "fair_price": 33096.0
     },
@@ -25,6 +26,7 @@
       "roe_note": "2025 실적 반영",
       "required_return_pct": 10.0,
       "equity_y0_100m": 1205162.0,
+      "shares": 690455268,
       "pbgr": 0.9478,
       "fair_price": 1068795.0
     },
@@ -38,6 +40,7 @@
       "roe_note": "과거 평균 기반",
       "required_return_pct": 10.0,
       "equity_y0_100m": 1242.0,
+      "shares": 18602574,
       "pbgr": 0.2648,
       "fair_price": 22132.0
     },
@@ -51,6 +54,7 @@
       "roe_note": "애널 예측 기반",
       "required_return_pct": 10.0,
       "equity_y0_100m": 23057.0,
+      "shares": 74764121,
       "pbgr": 4.2573,
       "fair_price": 23184.0
     },
@@ -64,6 +68,7 @@
       "roe_note": "과거 평균 기반",
       "required_return_pct": 10.0,
       "equity_y0_100m": 275820.0,
+      "shares": 149484820,
       "pbgr": 1.9939,
       "fair_price": 110587.0
     }

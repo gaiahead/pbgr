@@ -129,6 +129,7 @@ def main():
                 "roe_note": cfg.get("note", ""),
                 "required_return_pct": round(req_kr * 100, 1),
                 "equity_y0_100m": round(equity_100m, 0) if equity_100m else None,
+                "shares": int(d["shares"]) if d["shares"] else None,
                 "pbgr": calc["pbgr"] if calc else None,
                 "fair_price": calc["fair_price"] if calc else None,
             }
