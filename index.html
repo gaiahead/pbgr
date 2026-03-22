@@ -86,7 +86,7 @@
 
 <header>
   <h1>📊 PBGR 가치평가 모니터</h1>
-  <p>Price to Book Growth Ratio · <span id="updated"></span> 기준 (전일 종가)</p>
+  <p>Price to Book Growth Ratio · 한국 주식 · <span id="updated"></span> 기준 (전일 종가)</p>
 </header>
 
 <div class="section" id="kr-section">
@@ -108,25 +108,6 @@
   </table>
 </div>
 
-<div class="section" id="us-section" style="margin-top:24px">
-  <div class="section-title">
-    🇺🇸 미국
-    <span class="param">요구수익률 <input class="req-input" id="req-us" value="7">%</span>
-  </div>
-  <table>
-    <thead><tr>
-      <th>종목</th>
-      <th>전일 종가</th>
-      <th>적정가</th>
-      <th>괴리율</th>
-      <th>PBGR</th>
-      <th>ROE ✎</th>
-      <th>보정</th>
-      <th>기준일</th>
-    </tr></thead>
-    <tbody id="us-body"></tbody>
-  </table>
-</div>
 
 <div class="note">
   ROE 셀 클릭 → 직접 수정 (브라우저에 저장됨, 파란 점 = 수정값) &nbsp;|&nbsp;
@@ -252,7 +233,6 @@ function renderTables() {
   const reqUS = parseFloat(document.getElementById('req-us').value) / 100 || 0.07;
 
   const kr = rawData.assets.filter(a => a.market === 'KR');
-  const us = rawData.assets.filter(a => a.market === 'US');
 
   function renderKR(tbody, assets) {
     tbody.innerHTML = '';
@@ -320,7 +300,6 @@ function renderTables() {
   }
 
   renderKR(document.getElementById('kr-body'), kr);
-  renderUS(document.getElementById('us-body'), us);
 }
 
 async function init() {
@@ -329,7 +308,6 @@ async function init() {
 
   document.getElementById('updated').textContent = rawData.updated;
   document.getElementById('req-kr').value = (rawData.kr_required_return * 100).toFixed(0);
-  document.getElementById('req-us').value = (rawData.us_required_return * 100).toFixed(0);
 
   // shares 필드 통일
   rawData.assets.forEach(a => {
@@ -337,7 +315,6 @@ async function init() {
   });
 
   document.getElementById('req-kr').addEventListener('input', renderTables);
-  document.getElementById('req-us').addEventListener('input', renderTables);
 
   renderTables();
 }

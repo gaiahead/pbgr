@@ -8,14 +8,5 @@
       "000100": { "name": "유한양행",  "roe": 6.75,  "note": "애널 예측 기반" },
       "035420": { "name": "NAVER",     "roe": 4.41,  "note": "과거 평균 기반" }
     }
-  },
-  "us": {
-    "required_return": 0.07,
-    "base_date": "2021-01-01",
-    "assets": {
-      "AAPL":  { "name": "Apple",               "roe": null, "correction": 0.8, "note": "yfinance 자동" },
-      "MSFT":  { "name": "Microsoft",           "roe": null, "correction": 1.0, "note": "yfinance 자동" },
-      "BRK-B": { "name": "Berkshire Hathaway",  "roe": 0.10, "correction": 1.0, "note": "수동 설정 (yfinance 부정확)" }
-    }
   }
 }
