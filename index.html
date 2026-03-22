@@ -154,6 +154,8 @@ function markDirty() {
   document.getElementById('save-btn').className = 'save-btn unsaved';
   document.getElementById('save-btn').textContent = '● 저장';
   setStatus('수정됨', '#fbbf24');
+  // ROE는 포커스 잃을 때 재계산 (입력 중 방해 안 함)
+  if (document.activeElement && document.activeElement.classList.contains('roe-input')) return;
   renderTable();
 }
 
@@ -240,7 +242,14 @@ function renderTable() {
     inp.value = roe.toFixed(2);
     inp.dataset.ticker = a.ticker;
     inp.dataset.default = configRoe;
-    inp.addEventListener('input', markDirty);
+    inp.addEventListener('change', markDirty);
+    inp.addEventListener('input', () => {
+      // 입력 중 재렌더 없이 상태 표시만
+      document.getElementById('save-btn').className = 'save-btn unsaved';
+      document.getElementById('save-btn').textContent = '● 저장';
+      setStatus('수정됨', '#fbbf24');
+    });
+    inp.addEventListener('blur', renderTable);
     inp.addEventListener('dblclick', () => {
       inp.value = configRoe.toFixed(2);
       markDirty();

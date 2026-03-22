@@ -1,12 +1,12 @@
 {
-  "updated": "2026-03-22 12:37",
+  "updated": "2026-03-22 13:00",
   "kr_required_return": 0.1,
   "assets": [
     {
       "name": "삼성전자",
       "ticker": "005930",
       "market": "KR",
-      "price": 199400.0,
+      "price": 199400,
       "base_date": "2025-12-31",
       "roe_pct": 4.15,
       "roe_note": "애널 예측 기반",
@@ -29,15 +29,15 @@
       },
       "required_return_pct": 10.0,
       "equity_y0_100m": 4241938.0,
-      "shares": 7488520802,
-      "pbgr": 6.0249,
-      "fair_price": 33096.0
+      "shares": 6735612586,
+      "pbgr": 5.4192,
+      "fair_price": 36795.0
     },
     {
       "name": "SK하이닉스",
       "ticker": "000660",
       "market": "KR",
-      "price": 1007000.0,
+      "price": 1007000,
       "base_date": "2025-12-31",
       "roe_pct": 31.06,
       "roe_note": "2025 실적 반영",
@@ -68,7 +68,7 @@
       "name": "리노공업",
       "ticker": "058470",
       "market": "KR",
-      "price": 111700.0,
+      "price": 111700,
       "base_date": "2024-12-31",
       "roe_pct": 18.72,
       "roe_note": "3년 평균 (2022-2024)",
@@ -91,15 +91,15 @@
       },
       "required_return_pct": 10.0,
       "equity_y0_100m": 6226.0,
-      "shares": 75895600,
-      "pbgr": 5.1473,
-      "fair_price": 21701.0
+      "shares": 76211850,
+      "pbgr": 5.1687,
+      "fair_price": 21611.0
     },
     {
       "name": "유한양행",
       "ticker": "000100",
       "market": "KR",
-      "price": 100300.0,
+      "price": 100300,
       "base_date": "2025-12-31",
       "roe_pct": 6.75,
       "roe_note": "애널 예측 기반",
@@ -122,15 +122,15 @@
       },
       "required_return_pct": 10.0,
       "equity_y0_100m": 23057.0,
-      "shares": 74764121,
-      "pbgr": 4.3263,
-      "fair_price": 23184.0
+      "shares": 73615781,
+      "pbgr": 4.2599,
+      "fair_price": 23545.0
     },
     {
       "name": "NAVER",
       "ticker": "035420",
       "market": "KR",
-      "price": 221500.0,
+      "price": 221500,
       "base_date": "2025-12-31",
       "roe_pct": 4.41,
       "roe_note": "과거 평균 기반",

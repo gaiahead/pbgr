@@ -5,6 +5,8 @@ PBGR (Price to Book Growth Ratio) 데이터 생성기
 - ROE·요구수익률: config.json
 """
 import json
+import re
+import urllib.request
 import numpy as np
 import yfinance as yf
 from datetime import datetime, timezone, timedelta
@@ -26,6 +28,26 @@ def date_value(base_date, today=None):
     return months + frac
 
 # ─── yfinance: 전일 종가 + 자본 + 주식수 ─────────────────
+def get_naver_price(naver_code):
+    """네이버 polling API로 현재 종가"""
+    url = f"https://polling.finance.naver.com/api/realtime/domestic/stock/{naver_code}"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=10) as res:
+        data = json.loads(res.read())
+    return int(data["datas"][0]["closePrice"].replace(",", ""))
+
+def get_naver_bps(naver_code):
+    """네이버에서 BPS 스크래핑"""
+    import urllib.request as ur, re
+    url = f"https://finance.naver.com/item/main.naver?code={naver_code}"
+    req = ur.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR"})
+    with ur.urlopen(req, timeout=15) as res:
+        html = res.read().decode("euc-kr", errors="ignore")
+    idx = html.find("BPS()")
+    if idx < 0: return None
+    m = re.search(r"<td[^>]*>\s*[\r\n\t ]*([0-9,]+)\s*[\r\n\t ]*</td>", html[idx:idx+500])
+    return int(m.group(1).replace(",","")) if m else None
+
 def get_roe_history(ticker_code, n=3):
     """최근 n년 ROE 계산 (순이익/자본)"""
     t = yf.Ticker(ticker_code)
@@ -78,11 +100,13 @@ def get_yf_data(ticker_code, base_date=None):
                 equity = float(v)
                 break
 
+    # 주식수: Share Issued (상장주식수) 우선, 없으면 Ordinary+Preferred, 없으면 info
+    share_issued = float(bs.loc["Share Issued", col]) if "Share Issued" in bs.index else 0
     ordinary = float(bs.loc["Ordinary Shares Number", col]) if "Ordinary Shares Number" in bs.index else 0
     preferred = float(bs.loc["Preferred Shares Number", col]) if "Preferred Shares Number" in bs.index else 0
 
-    # 주식수: BS 값이 부정확하면 info 폴백
-    shares = (ordinary + preferred) if ordinary and ordinary > 1e6 else None
+    shares = share_issued if share_issued > 1e6 else None
+    shares = shares or ((ordinary + preferred) if ordinary > 1e6 else None)
     shares = shares or info.get("sharesOutstanding") or info.get("impliedSharesOutstanding")
 
     base_dt = col.to_pydatetime().replace(tzinfo=None)
@@ -143,24 +167,44 @@ def main():
         roe_pct = cfg["roe"]
         print(f"  [KR] {name} ({ticker_yf}) ...", end=" ", flush=True)
         try:
+            # 종가: 네이버 우선 (yfinance KR 종가 오류 많음)
+            try:
+                price = get_naver_price(ticker_naver)
+            except:
+                price = None
+
             d = get_yf_data(ticker_yf)
+            if not price:
+                price = d["price"]
+
             roe_hist = get_roe_history(ticker_yf)
             equity_100m = d["equity"] / 1e8 if d["equity"] else None
+
+            # 주식수: yfinance → 네이버 BPS 역산 폴백
+            shares = d["shares"]
+            if not shares and equity_100m:
+                try:
+                    bps_naver = get_naver_bps(ticker_naver)
+                    if bps_naver and bps_naver > 0:
+                        shares = int(equity_100m * 1e8 / bps_naver)
+                except:
+                    pass
+
             dv = date_value(d["base_dt"], today)
-            calc = calc_kr(d["price"], equity_100m, roe_pct, d["shares"], dv, req_kr)
+            calc = calc_kr(price, equity_100m, roe_pct, shares, dv, req_kr)
 
             asset = {
                 "name": name,
                 "ticker": ticker_naver,
                 "market": "KR",
-                "price": d["price"],
+                "price": price,
                 "base_date": d["base_dt"].strftime("%Y-%m-%d"),
                 "roe_pct": roe_pct,
                 "roe_note": cfg.get("note", ""),
                 "roe_history": roe_hist,
                 "required_return_pct": round(req_kr * 100, 1),
                 "equity_y0_100m": round(equity_100m, 0) if equity_100m else None,
-                "shares": int(d["shares"]) if d["shares"] else None,
+                "shares": int(shares) if shares else None,
                 "pbgr": calc["pbgr"] if calc else None,
                 "fair_price": calc["fair_price"] if calc else None,
             }
