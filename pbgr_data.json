@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 17:48",
+  "updated": "2026-03-23 07:34",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -250,32 +250,7 @@
       "name": "유한양행",
       "ticker": "000100",
       "market": "KR",
-      "price": 100300,
-      "base_date": "2025.12",
-      "bps_actual": 30855,
-      "equity_y0_100m": 24939.6,
-      "equity_now_100m": 25357.4,
-      "shares": 80828541,
-      "shares_common": 79647601,
-      "shares_preferred": 1180940,
-      "roe_pct": 5.57,
-      "roe_note": "wisereport 자본CAGR 자동",
-      "equity_cagr_pct": 5.57,
-      "equity_series": {
-        "2022/12": 20078.06,
-        "2023/12": 21006.56,
-        "2024/12": 21506.7,
-        "2025/12": 23622.84
-      },
-      "roe_ref": {
-        "actual": [],
-        "actual_avg": null,
-        "estimate": [],
-        "estimate_avg": null
-      },
-      "required_return_pct": 10.0,
-      "pbgr": 4.8445,
-      "fair_price": 20704.0
+      "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)>"
     },
     {
       "name": "NAVER",
