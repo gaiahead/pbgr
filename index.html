@@ -4,8 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Apple SD Gothic Neo','Pretendard',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
@@ -13,46 +11,53 @@
     header h1{font-size:1.2rem;font-weight:700;color:#f8fafc}
     header p{font-size:0.74rem;color:#475569;margin-top:4px}
 
-    .chart-section{padding:20px 28px 0}
-    .chart-wrap{
-      background:#161b27;border:1px solid #1e2535;border-radius:14px;
-      padding:18px;margin-bottom:20px;
-      position:relative;width:100%;height:380px;
+    .section{padding:24px 28px}
+    .section + .section{padding-top:0}
+
+    .section-title{
+      font-size:0.78rem;font-weight:700;color:#64748b;
+      letter-spacing:.08em;text-transform:uppercase;
+      margin-bottom:12px;display:flex;align-items:center;gap:8px;
     }
+    .section-title span{color:#334155;font-size:0.72rem;font-weight:500;text-transform:none;letter-spacing:0}
 
-    /* 종목 그룹 */
-    .groups{padding:0 28px 24px;display:flex;flex-direction:column;gap:12px}
-    .group-label{font-size:0.7rem;color:#475569;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
-    .group{display:flex;flex-wrap:wrap;gap:8px}
-
-    .asset-btn{
-      background:#161b27;border:1.5px solid #1e2535;border-radius:10px;
-      padding:10px 14px;cursor:pointer;transition:all .2s;user-select:none;
-      text-align:left;position:relative;overflow:hidden;
-      flex:0 0 auto;min-width:110px;
+    table{width:100%;border-collapse:collapse;font-size:0.85rem}
+    thead tr{border-bottom:1px solid #1e2535}
+    th{
+      padding:8px 12px;text-align:right;font-size:0.7rem;font-weight:600;
+      color:#475569;letter-spacing:.04em;white-space:nowrap;
     }
-    .asset-btn.active{border-color:var(--c);background:#1a2030}
-    .asset-btn:hover{background:#1a2030}
-    .asset-btn .name{font-size:0.75rem;font-weight:700;color:#94a3b8;transition:color .2s;white-space:nowrap}
-    .asset-btn.active .name{color:var(--c)}
-    .asset-btn .val{font-size:1.2rem;font-weight:800;line-height:1.2;margin-top:4px}
-    .asset-btn .sub{font-size:0.68rem;color:#475569;margin-top:2px}
-    .asset-btn.active .sub{color:#64748b}
-    .asset-btn .indicator{position:absolute;top:0;left:0;right:0;height:2px;background:var(--c);opacity:0;transition:opacity .2s}
-    .asset-btn.active .indicator{opacity:1}
+    th:first-child{text-align:left}
+    tbody tr{border-bottom:1px solid #161b27;transition:background .15s}
+    tbody tr:hover{background:#161b27}
+    td{padding:10px 12px;text-align:right;color:#cbd5e1;white-space:nowrap}
+    td:first-child{text-align:left}
 
-    /* PBGR 배지 */
-    .pbgr-badge{
-      display:inline-block;font-size:0.65rem;font-weight:700;
-      padding:2px 6px;border-radius:4px;margin-left:4px;
+    /* 종목명 */
+    .name{font-weight:700;color:#f1f5f9}
+    .ticker{font-size:0.7rem;color:#475569;margin-top:2px}
+
+    /* PBGR 값 색상 */
+    .pbgr-val{font-weight:800;font-size:1.0rem}
+    .under{color:#4ade80}   /* < 1 저평가 */
+    .over {color:#f87171}   /* > 1 고평가 */
+
+    /* 배지 */
+    .badge{
+      display:inline-block;font-size:0.62rem;font-weight:700;
+      padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;
     }
     .badge-under{background:rgba(34,197,94,.15);color:#4ade80}
-    .badge-over{background:rgba(239,68,68,.15);color:#f87171}
+    .badge-over {background:rgba(239,68,68,.15);color:#f87171}
 
-    /* 범례 */
-    .legend-note{
-      font-size:0.68rem;color:#475569;padding:0 28px 16px;
+    /* 현재가 vs 적정가 바 */
+    .bar-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+    .bar-bg{
+      width:80px;height:6px;background:#1e2535;border-radius:3px;overflow:hidden;flex-shrink:0;
     }
+    .bar-fill{height:100%;border-radius:3px;transition:width .3s}
+
+    .note{font-size:0.68rem;color:#334155;padding:0 28px 24px}
   </style>
 </head>
 <body>
@@ -62,222 +67,152 @@
   <p>Price to Book Growth Ratio · <span id="updated"></span></p>
 </header>
 
-<div class="chart-section">
-  <div class="chart-wrap"><canvas id="chart-pbgr"></canvas></div>
+<div class="section" id="kr-section">
+  <div class="section-title">
+    🇰🇷 한국
+    <span id="kr-params"></span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>종목</th>
+        <th>현재가</th>
+        <th>적정가 (BPS)</th>
+        <th>괴리율</th>
+        <th>PBGR</th>
+        <th>ROE</th>
+        <th>PER</th>
+        <th>PBR</th>
+      </tr>
+    </thead>
+    <tbody id="kr-body"></tbody>
+  </table>
 </div>
 
-<div class="legend-note">
-  PBGR &lt; 1 = 저평가(적정가보다 낮은 가격) &nbsp;|&nbsp; PBGR &gt; 1 = 고평가 &nbsp;|&nbsp; 클릭하여 차트에서 하이라이트
+<div class="section" id="us-section">
+  <div class="section-title">
+    🇺🇸 미국
+    <span id="us-params"></span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>종목</th>
+        <th>현재가</th>
+        <th>적정가</th>
+        <th>괴리율</th>
+        <th>PBGR</th>
+        <th>ROE</th>
+        <th>보정</th>
+      </tr>
+    </thead>
+    <tbody id="us-body"></tbody>
+  </table>
 </div>
 
-<div class="groups" id="groups"></div>
+<div class="note">
+  PBGR = 현재가 / 적정가 (ROE 기반 10년 성장 모델 → 현재가치 환산) &nbsp;|&nbsp;
+  저평가(PBGR &lt; 1): 현재가 &lt; 적정가 &nbsp;|&nbsp; 데이터: 네이버 파이낸스 · yfinance
+</div>
 
 <script>
-let chartData = null;
-let chart = null;
-let activeAssets = new Set();
-
-// PBGR 값 기반 색상 (낮을수록 초록, 높을수록 빨강)
-function pbgrColor(pbgr, allPbgrs) {
-  if (pbgr === null) return '#475569';
-  const valid = allPbgrs.filter(v => v !== null);
-  const min = Math.min(...valid);
-  const max = Math.max(...valid);
-  const t = max === min ? 0.5 : (pbgr - min) / (max - min); // 0=저평가, 1=고평가
-  
-  // 초록 → 회색 → 빨강
-  if (t < 0.5) {
-    const f = t * 2;
-    const r = Math.round(34 + (100-34)*f);
-    const g = Math.round(197 + (116-197)*f);
-    const b = Math.round(94 + (107-94)*f);
-    return `rgb(${r},${g},${b})`;
-  } else {
-    const f = (t - 0.5) * 2;
-    const r = Math.round(100 + (239-100)*f);
-    const g = Math.round(116 + (68-116)*f);
-    const b = Math.round(107 + (68-107)*f);
-    return `rgb(${r},${g},${b})`;
-  }
+function fmt(v, opts={}) {
+  if (v === null || v === undefined) return '—';
+  return v.toLocaleString('ko-KR', opts);
+}
+function fmtKR(v) {
+  if (!v && v !== 0) return '—';
+  return Number(v).toLocaleString('ko-KR') + '원';
+}
+function fmtUS(v, digits=2) {
+  if (!v && v !== 0) return '—';
+  return '$' + Number(v).toLocaleString('en-US', {minimumFractionDigits:digits, maximumFractionDigits:digits});
+}
+function fmtPct(v) {
+  if (!v && v !== 0) return '—';
+  return Number(v).toFixed(2) + '%';
 }
 
-function formatPrice(price, market) {
-  if (price === null || price === undefined) return 'N/A';
-  if (market === 'US') return '$' + price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-  return price.toLocaleString('ko-KR') + '원';
+function pbgrClass(pbgr) {
+  if (pbgr === null || pbgr === undefined) return '';
+  return pbgr < 1 ? 'under' : 'over';
+}
+function badgeHtml(pbgr) {
+  if (pbgr === null || pbgr === undefined) return '';
+  const cls = pbgr < 1 ? 'badge-under' : 'badge-over';
+  const txt = pbgr < 1 ? '저평가' : '고평가';
+  return `<span class="badge ${cls}">${txt}</span>`;
 }
 
-function renderGroups(assets) {
-  const allPbgrs = assets.map(a => a.pbgr);
-  const kr = assets.filter(a => a.market === 'KR');
-  const us = assets.filter(a => a.market === 'US');
-
-  const groups = document.getElementById('groups');
-  groups.innerHTML = '';
-
-  function makeGroup(items, label) {
-    const wrapper = document.createElement('div');
-    const lbl = document.createElement('div');
-    lbl.className = 'group-label';
-    lbl.textContent = label;
-    wrapper.appendChild(lbl);
-
-    const row = document.createElement('div');
-    row.className = 'group';
-
-    items.forEach(asset => {
-      const color = pbgrColor(asset.pbgr, allPbgrs);
-      const btn = document.createElement('div');
-      btn.className = 'asset-btn' + (activeAssets.has(asset.ticker) ? ' active' : '');
-      btn.style.setProperty('--c', color);
-      btn.dataset.ticker = asset.ticker;
-
-      const under = asset.pbgr !== null && asset.pbgr < 1;
-      const pbgrStr = asset.pbgr !== null ? asset.pbgr.toFixed(3) : 'N/A';
-      const badgeClass = under ? 'badge-under' : 'badge-over';
-      const priceStr = formatPrice(asset.price, asset.market);
-      const fairStr = formatPrice(asset.fair_price, asset.market);
-
-      btn.innerHTML = `
-        <div class="indicator"></div>
-        <div class="name">${asset.name}</div>
-        <div class="val" style="color:${color}">${pbgrStr}
-          <span class="pbgr-badge ${badgeClass}">${under ? '저평가' : '고평가'}</span>
-        </div>
-        <div class="sub">현재가 ${priceStr}</div>
-        <div class="sub">적정가 ${fairStr}</div>
-      `;
-
-      btn.addEventListener('click', () => {
-        if (activeAssets.has(asset.ticker)) {
-          activeAssets.delete(asset.ticker);
-        } else {
-          activeAssets.add(asset.ticker);
-        }
-        renderChart(chartData);
-        renderGroups(chartData.assets);
-      });
-
-      row.appendChild(btn);
-    });
-
-    wrapper.appendChild(row);
-    groups.appendChild(wrapper);
-  }
-
-  makeGroup(kr, `🇰🇷 한국 · 요구수익률 ${(chartData.kr_required_return*100).toFixed(0)}%`);
-  makeGroup(us, `🇺🇸 미국 · 요구수익률 ${(chartData.us_required_return*100).toFixed(0)}%`);
+// 현재가/적정가 비율 바 (현재가가 적정가의 몇 %)
+function barHtml(pbgr) {
+  if (!pbgr) return '';
+  // 바는 1 기준: 저평가면 채움<100%, 고평가면 100%
+  const fillPct = Math.min(100, (1 / pbgr) * 100);
+  const color = pbgr < 1 ? '#4ade80' : '#f87171';
+  return `<div class="bar-wrap">
+    <div class="bar-bg"><div class="bar-fill" style="width:${fillPct}%;background:${color}"></div></div>
+  </div>`;
 }
 
-function renderChart(data) {
-  const assets = data.assets;
-  const allPbgrs = assets.map(a => a.pbgr);
-  const active = assets.filter(a => activeAssets.has(a.ticker));
-
-  const labels = assets.map(a => a.name);
-  const pbgrs = assets.map(a => a.pbgr);
-  const colors = assets.map(a => pbgrColor(a.pbgr, allPbgrs));
-
-  // 활성 종목 강조 (불투명도)
-  const bgColors = assets.map(a => {
-    const c = pbgrColor(a.pbgr, allPbgrs);
-    if (activeAssets.size === 0 || activeAssets.has(a.ticker)) {
-      return c.replace('rgb(', 'rgba(').replace(')', ', 0.85)');
-    }
-    return c.replace('rgb(', 'rgba(').replace(')', ', 0.2)');
-  });
-
-  const borderColors = assets.map(a => {
-    const c = pbgrColor(a.pbgr, allPbgrs);
-    if (activeAssets.size === 0 || activeAssets.has(a.ticker)) return c;
-    return c.replace('rgb(', 'rgba(').replace(')', ', 0.3)');
-  });
-
-  const ctx = document.getElementById('chart-pbgr').getContext('2d');
-
-  if (chart) {
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = pbgrs;
-    chart.data.datasets[0].backgroundColor = bgColors;
-    chart.data.datasets[0].borderColor = borderColors;
-    chart.update();
-    return;
-  }
-
-  chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'PBGR',
-        data: pbgrs,
-        backgroundColor: bgColors,
-        borderColor: borderColors,
-        borderWidth: 2,
-        borderRadius: 6,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        annotation: {
-          annotations: {
-            line1: {
-              type: 'line',
-              yMin: 1,
-              yMax: 1,
-              borderColor: 'rgba(148,163,184,0.5)',
-              borderWidth: 1.5,
-              borderDash: [5, 4],
-              label: {
-                content: 'PBGR = 1 (적정)',
-                display: true,
-                position: 'end',
-                color: '#94a3b8',
-                font: { size: 11 },
-                backgroundColor: 'transparent',
-              }
-            }
-          }
-        },
-        tooltip: {
-          callbacks: {
-            label(ctx) {
-              const a = assets[ctx.dataIndex];
-              const lines = [`PBGR: ${ctx.parsed.y.toFixed(4)}`];
-              if (a.fair_price) lines.push(`적정가: ${formatPrice(a.fair_price, a.market)}`);
-              if (a.price) lines.push(`현재가: ${formatPrice(a.price, a.market)}`);
-              if (a.roe_pct) lines.push(`ROE: ${a.roe_pct.toFixed(2)}%`);
-              return lines;
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { color: '#1e2535' },
-          ticks: { color: '#94a3b8', font: { size: 12 } }
-        },
-        y: {
-          grid: { color: '#1e2535' },
-          ticks: { color: '#94a3b8' },
-          title: { display: true, text: 'PBGR', color: '#475569' }
-        }
-      }
-    }
-  });
+function gap(pbgr) {
+  if (!pbgr) return '—';
+  const pct = ((1 / pbgr) - 1) * 100;
+  const sign = pct >= 0 ? '+' : '';
+  return `<span style="color:${pct >= 0 ? '#4ade80' : '#f87171'}">${sign}${pct.toFixed(1)}%</span>`;
 }
 
 async function init() {
   const res = await fetch('pbgr_data.json');
-  chartData = await res.json();
+  const data = await res.json();
 
-  document.getElementById('updated').textContent = chartData.updated + ' 기준';
+  document.getElementById('updated').textContent = data.updated + ' 기준';
+  document.getElementById('kr-params').textContent =
+    `· 요구수익률 ${(data.kr_required_return*100).toFixed(0)}%, 기준일 2024-01-01`;
+  document.getElementById('us-params').textContent =
+    `· 요구수익률 ${(data.us_required_return*100).toFixed(0)}%, 기준일 2021-01-01`;
 
-  renderChart(chartData);
-  renderGroups(chartData.assets);
+  const kr = data.assets.filter(a => a.market === 'KR');
+  const us = data.assets.filter(a => a.market === 'US');
+
+  // 한국 테이블
+  const krBody = document.getElementById('kr-body');
+  kr.sort((a,b) => (a.pbgr||999) - (b.pbgr||999));
+  kr.forEach(a => {
+    const cls = pbgrClass(a.pbgr);
+    krBody.innerHTML += `<tr>
+      <td>
+        <div class="name">${a.name}</div>
+        <div class="ticker">${a.ticker}</div>
+      </td>
+      <td>${fmtKR(a.price)}</td>
+      <td>${fmtKR(a.fair_price)}</td>
+      <td>${gap(a.pbgr)}</td>
+      <td class="pbgr-val ${cls}">${a.pbgr ? a.pbgr.toFixed(3) : '—'}${badgeHtml(a.pbgr)}</td>
+      <td>${fmtPct(a.roe_pct)}</td>
+      <td>${a.per ? a.per.toFixed(1) + 'x' : '—'}</td>
+      <td>${a.pbr ? a.pbr.toFixed(2) + 'x' : '—'}</td>
+    </tr>`;
+  });
+
+  // 미국 테이블
+  const usBody = document.getElementById('us-body');
+  us.sort((a,b) => (a.pbgr||999) - (b.pbgr||999));
+  us.forEach(a => {
+    const cls = pbgrClass(a.pbgr);
+    usBody.innerHTML += `<tr>
+      <td>
+        <div class="name">${a.name}</div>
+        <div class="ticker">${a.ticker}</div>
+      </td>
+      <td>${fmtUS(a.price)}</td>
+      <td>${fmtUS(a.fair_price)}</td>
+      <td>${gap(a.pbgr)}</td>
+      <td class="pbgr-val ${cls}">${a.pbgr ? a.pbgr.toFixed(3) : '—'}${badgeHtml(a.pbgr)}</td>
+      <td>${fmtPct(a.roe_pct)}</td>
+      <td>${a.correction !== undefined ? a.correction : '—'}</td>
+    </tr>`;
+  });
 }
 
 init();
