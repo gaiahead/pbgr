@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 17:11",
+  "updated": "2026-03-22 17:47",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -15,7 +15,7 @@
       "shares_common": 5919637922,
       "shares_preferred": 815974664,
       "roe_pct": 7.14,
-      "roe_note": "wisereport 실적 평균 자동",
+      "roe_note": "wisereport 자본CAGR 자동",
       "equity_cagr_pct": 7.14,
       "equity_series": {
         "2022/12": 3547496.04,
@@ -76,7 +76,7 @@
       "shares_common": 712702365,
       "shares_preferred": null,
       "roe_pct": 24.0,
-      "roe_note": "wisereport 실적 평균 자동",
+      "roe_note": "wisereport 자본CAGR 자동",
       "equity_cagr_pct": 24.0,
       "equity_series": {
         "2022/12": 632905.42,
@@ -125,6 +125,67 @@
       "fair_price": 606770.0
     },
     {
+      "name": "한미반도체",
+      "ticker": "042700",
+      "market": "KR",
+      "price": 309500,
+      "base_date": "2025.12",
+      "bps_actual": 7278,
+      "equity_y0_100m": 6936.8,
+      "equity_now_100m": 7353.4,
+      "shares": 95312200,
+      "shares_common": 95312200,
+      "shares_preferred": null,
+      "roe_pct": 20.96,
+      "roe_note": "wisereport 자본CAGR 자동",
+      "equity_cagr_pct": 20.96,
+      "equity_series": {
+        "2022/12": 3900.97,
+        "2023/12": 5718.99,
+        "2024/12": 5408.88,
+        "2025/12": 6903.28
+      },
+      "roe_ref": {
+        "actual": [
+          {
+            "year": "2022/12",
+            "roe_pct": 25.04
+          },
+          {
+            "year": "2023/12",
+            "roe_pct": 55.54
+          },
+          {
+            "year": "2024/12",
+            "roe_pct": 27.43
+          },
+          {
+            "year": "2025/12",
+            "roe_pct": 34.76
+          }
+        ],
+        "actual_avg": 35.69,
+        "estimate": [
+          {
+            "year": "2026/12",
+            "roe_pct": 27.43
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 34.76
+          },
+          {
+            "year": "2028/12",
+            "roe_pct": 45.09
+          }
+        ],
+        "estimate_avg": 35.76
+      },
+      "required_return_pct": 10.0,
+      "pbgr": 15.7659,
+      "fair_price": 19631.0
+    },
+    {
       "name": "리노공업",
       "ticker": "058470",
       "market": "KR",
@@ -137,7 +198,7 @@
       "shares_common": 76211850,
       "shares_preferred": null,
       "roe_pct": 14.23,
-      "roe_note": "wisereport 실적 평균 자동",
+      "roe_note": "wisereport 자본CAGR 자동",
       "equity_cagr_pct": 14.23,
       "equity_series": {
         "2021/12": 4177.03,
@@ -198,7 +259,7 @@
       "shares_common": 79647601,
       "shares_preferred": 1180940,
       "roe_pct": 5.57,
-      "roe_note": "wisereport 실적 평균 자동",
+      "roe_note": "wisereport 자본CAGR 자동",
       "equity_cagr_pct": 5.57,
       "equity_series": {
         "2022/12": 20078.06,
@@ -259,7 +320,7 @@
       "shares_common": 156852638,
       "shares_preferred": null,
       "roe_pct": 7.28,
-      "roe_note": "wisereport 실적 평균 자동",
+      "roe_note": "wisereport 자본CAGR 자동",
       "equity_cagr_pct": 7.28,
       "equity_series": {
         "2022/12": 234503.22,
