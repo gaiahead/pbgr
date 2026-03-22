@@ -11,7 +11,19 @@
     .header-left h1{font-size:1.2rem;font-weight:700;color:#f8fafc}
     .header-left p{font-size:0.74rem;color:#475569;margin-top:4px}
 
-    /* 저장 버튼 */
+    .header-right{display:flex;align-items:center;gap:8px}
+
+    /* PAT 입력 */
+    .pat-wrap{display:flex;align-items:center;gap:6px}
+    .pat-input{
+      background:#161b27;border:1px solid #1e2535;border-radius:6px;
+      color:#94a3b8;font-size:0.7rem;font-family:monospace;
+      padding:5px 10px;width:220px;outline:none;
+      transition:border-color .15s;
+    }
+    .pat-input:focus{border-color:#334155}
+    .pat-label{font-size:0.68rem;color:#475569;white-space:nowrap}
+
     .save-btn{
       font-size:0.75rem;font-weight:600;padding:7px 16px;border-radius:8px;
       border:1px solid #1e3a5f;background:#1e293b;color:#60a5fa;cursor:pointer;
@@ -20,6 +32,7 @@
     .save-btn:hover{background:#1e3a5f;color:#93c5fd}
     .save-btn.saved{border-color:#166534;background:#14532d;color:#4ade80}
     .save-btn.unsaved{border-color:#92400e;background:#451a03;color:#fbbf24}
+    .save-btn:disabled{opacity:.4;cursor:not-allowed}
 
     .section{padding:24px 28px 0}
     .section:last-of-type{padding-bottom:32px}
@@ -56,7 +69,6 @@
     .badge-under{background:rgba(34,197,94,.15);color:#4ade80}
     .badge-over {background:rgba(239,68,68,.15);color:#f87171}
 
-    /* 편집 인풋 */
     .edit-input{
       background:transparent;border:none;color:#cbd5e1;
       font-size:0.84rem;font-family:inherit;
@@ -68,17 +80,15 @@
     .edit-input.dirty{color:#fbbf24;border-bottom-color:#92400e}
     .unit{color:#475569;font-size:0.75rem;margin-left:2px}
 
-    .req-wrap{display:flex;align-items:center;gap:3px}
     .req-input{
       background:transparent;border:none;color:#94a3b8;
       font-size:0.7rem;font-family:inherit;
       width:28px;text-align:right;outline:none;cursor:text;
       border-bottom:1px dashed #334155;
-      transition:border-color .15s, color .15s;
     }
     .req-input:focus{border-bottom-color:#60a5fa;color:#f1f5f9}
-    .req-input.dirty{color:#fbbf24;border-bottom-color:#92400e}
 
+    .status-msg{font-size:0.7rem;color:#475569;min-width:120px;text-align:right}
     .note{font-size:0.68rem;color:#334155;padding:12px 28px 24px}
   </style>
 </head>
@@ -89,7 +99,14 @@
     <h1>📊 PBGR 가치평가 모니터</h1>
     <p>Price to Book Growth Ratio · 한국 주식 · <span id="updated"></span> 기준 (전일 종가)</p>
   </div>
-  <button class="save-btn saved" id="save-btn" onclick="saveSettings()">✓ 저장됨</button>
+  <div class="header-right">
+    <div class="pat-wrap">
+      <span class="pat-label">GitHub PAT</span>
+      <input class="pat-input" id="pat-input" type="password" placeholder="ghp_…" oninput="onPatChange()">
+    </div>
+    <span class="status-msg" id="status-msg"></span>
+    <button class="save-btn saved" id="save-btn" onclick="saveToGitHub()" disabled>저장</button>
+  </div>
 </header>
 
 <div class="section">
@@ -97,10 +114,8 @@
     🇰🇷 한국
     <span class="param">
       요구수익률
-      <div class="req-wrap">
-        <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
-        <span style="color:#64748b;font-size:0.7rem">%</span>
-      </div>
+      <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
+      <span style="color:#64748b;font-size:0.7rem">%</span>
     </span>
   </div>
   <table>
@@ -118,43 +133,107 @@
 </div>
 
 <div class="note">
-  ROE · 요구수익률 수정 후 <strong style="color:#60a5fa">저장</strong> 버튼 클릭 → 브라우저에 영구 저장 &nbsp;|&nbsp;
-  더블클릭으로 초기값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
+  ROE · 요구수익률 수정 → GitHub PAT 입력 → <strong style="color:#60a5fa">저장</strong> 클릭 &nbsp;|&nbsp;
+  PAT는 이 기기 브라우저에만 저장됨 (repo 쓰기 권한 필요) &nbsp;|&nbsp;
+  ROE 더블클릭 = 초기값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
 </div>
 
 <script>
-const LS_KEY = 'pbgr_v2';
+const REPO = 'gaiahead/pbgr';
+const FILE = 'config.json';
+const LS_PAT = 'pbgr_pat';
 
-// ─── localStorage ─────────────────────────────────────────
-function loadSettings() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
-  catch { return {}; }
+// ─── PAT ──────────────────────────────────────────────────
+function getPat() { return localStorage.getItem(LS_PAT) || ''; }
+function onPatChange() {
+  const pat = document.getElementById('pat-input').value.trim();
+  if (pat) localStorage.setItem(LS_PAT, pat);
+  updateSaveBtn();
 }
-function saveSettings() {
-  const s = {};
-  s.req_kr = parseFloat(document.getElementById('req-kr').value) || 10;
-  s.roe = {};
-  document.querySelectorAll('.roe-input').forEach(inp => {
-    const ticker = inp.dataset.ticker;
-    const defaultRoe = parseFloat(inp.dataset.default);
-    const val = parseFloat(inp.value);
-    if (!isNaN(val) && val !== defaultRoe) s.roe[ticker] = val;
-  });
-  localStorage.setItem(LS_KEY, JSON.stringify(s));
-  markSaved();
+function updateSaveBtn() {
+  const btn = document.getElementById('save-btn');
+  const hasPat = !!document.getElementById('pat-input').value.trim();
+  btn.disabled = !hasPat;
 }
 
+// ─── 상태 표시 ────────────────────────────────────────────
+function setStatus(msg, color='#475569') {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.style.color = color;
+}
 function markDirty() {
   const btn = document.getElementById('save-btn');
-  btn.className = 'save-btn unsaved';
-  btn.textContent = '● 저장 안 됨 — 클릭하여 저장';
-}
-function markSaved() {
-  const btn = document.getElementById('save-btn');
-  btn.className = 'save-btn saved';
-  btn.textContent = '✓ 저장됨';
-  // 재계산
+  if (!btn.disabled) { btn.className = 'save-btn unsaved'; btn.textContent = '● 저장'; }
+  setStatus('수정됨', '#fbbf24');
   renderTable();
+}
+
+// ─── GitHub API ───────────────────────────────────────────
+let configSha = null;
+let configData = null;
+
+async function loadConfig() {
+  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+    headers: { 'Accept': 'application/vnd.github+json' }
+  });
+  const json = await res.json();
+  configSha = json.sha;
+  configData = JSON.parse(atob(json.content.replace(/\n/g,'')));
+  return configData;
+}
+
+async function saveToGitHub() {
+  const pat = document.getElementById('pat-input').value.trim();
+  if (!pat) { setStatus('PAT를 입력하세요', '#f87171'); return; }
+
+  setStatus('저장 중…', '#60a5fa');
+  document.getElementById('save-btn').disabled = true;
+
+  // 현재 UI 값 수집
+  const reqKR = parseFloat(document.getElementById('req-kr').value) || 10;
+  configData.kr.required_return = reqKR / 100;
+
+  document.querySelectorAll('.roe-input').forEach(inp => {
+    const ticker = inp.dataset.ticker;
+    const val = parseFloat(inp.value);
+    if (!isNaN(val) && configData.kr.assets[ticker]) {
+      configData.kr.assets[ticker].roe = val;
+    }
+  });
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData, null, 2) + '\n')));
+
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${pat}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: `config: ROE/요구수익률 업데이트 (UI)`,
+        content,
+        sha: configSha,
+      })
+    });
+    const json = await res.json();
+    if (res.ok) {
+      configSha = json.content.sha;
+      setStatus('✓ GitHub에 저장됨', '#4ade80');
+      const btn = document.getElementById('save-btn');
+      btn.className = 'save-btn saved';
+      btn.textContent = '✓ 저장됨';
+      btn.disabled = false;
+    } else {
+      setStatus('오류: ' + (json.message || res.status), '#f87171');
+      document.getElementById('save-btn').disabled = false;
+    }
+  } catch(e) {
+    setStatus('네트워크 오류', '#f87171');
+    document.getElementById('save-btn').disabled = false;
+  }
 }
 
 // ─── 포맷 ─────────────────────────────────────────────────
@@ -174,7 +253,7 @@ function pbgrHtml(pbgr) {
   return `<span class="pbgr-val ${cls}">${pbgr.toFixed(3)}${badge}</span>`;
 }
 
-// ─── 클라이언트 재계산 ────────────────────────────────────
+// ─── 재계산 ───────────────────────────────────────────────
 function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_pct) {
   if (!price || !equity_100m || !roe_pct || !shares) return null;
   const base = new Date(base_date);
@@ -182,14 +261,12 @@ function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_pct) {
   const months = (today.getFullYear() - base.getFullYear()) * 12 + (today.getMonth() - base.getMonth());
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const dv = months + (today.getDate() - 1) / daysInMonth;
-  const roe = roe_pct / 100;
-  const r = req_pct / 100;
+  const roe = roe_pct / 100, r = req_pct / 100;
   const y10 = equity_100m * Math.pow(1 + roe, 10);
   const y11 = equity_100m * Math.pow(1 + roe, 11);
   const r_t = Math.pow(y11 / y10, 1 / 12) - 1;
   const trailing = y10 * Math.pow(1 + r_t, dv - 1);
-  const bv = trailing / Math.pow(1 + r, 10);
-  const bps = bv * 1e8 / shares;
+  const bps = trailing / Math.pow(1 + r, 10) * 1e8 / shares;
   return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps) } : null;
 }
 
@@ -197,26 +274,29 @@ function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_pct) {
 let rawData = null;
 
 function renderTable() {
-  const s = loadSettings();
   const reqKR = parseFloat(document.getElementById('req-kr').value) || 10;
   const tbody = document.getElementById('kr-body');
+
+  // 현재 ROE 인풋 값 수집 (렌더 전)
+  const currentRoe = {};
+  document.querySelectorAll('.roe-input').forEach(inp => {
+    currentRoe[inp.dataset.ticker] = parseFloat(inp.value);
+  });
+
   tbody.innerHTML = '';
 
   const assets = rawData.assets.filter(a => a.market === 'KR');
-
-  // ROE 적용: 저장된 값 우선
   const withCalc = assets.map(a => {
-    const savedRoe = s.roe?.[a.ticker];
-    const roe = savedRoe ?? a.roe_pct;
+    // config 기본값 기준, 현재 인풋값 우선
+    const configRoe = configData?.kr?.assets?.[a.ticker]?.roe ?? a.roe_pct;
+    const roe = currentRoe[a.ticker] ?? configRoe;
+    const isCustom = Math.abs(roe - a.roe_pct) > 0.001;
     const calc = recalcKR(a.price, a.equity_y0_100m, roe, a.shares, a.base_date, reqKR);
-    return { ...a, _roe: roe, _isCustom: savedRoe != null, _calc: calc };
+    return { ...a, _roe: roe, _isCustom: isCustom, _calc: calc };
   });
-
-  // PBGR 오름차순 정렬
   withCalc.sort((a, b) => (a._calc?.pbgr ?? 999) - (b._calc?.pbgr ?? 999));
 
   withCalc.forEach(a => {
-    const isCustom = a._isCustom;
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
@@ -226,8 +306,10 @@ function renderTable() {
       <td>${pbgrHtml(a._calc?.pbgr)}</td>
       <td>
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
-          <span style="width:6px;height:6px;border-radius:50%;background:${isCustom ? '#60a5fa' : '#334155'};display:inline-block;flex-shrink:0" title="${isCustom ? '수정됨 (더블클릭으로 초기화)' : a.roe_note || '기본값'}"></span>
-          <input class="edit-input roe-input${isCustom ? ' dirty' : ''}"
+          <span style="width:6px;height:6px;border-radius:50%;flex-shrink:0;
+            background:${a._isCustom ? '#60a5fa' : '#334155'}"
+            title="${a._isCustom ? '수정됨' : (a.roe_note||'config 기본값')}"></span>
+          <input class="edit-input roe-input${a._isCustom ? ' dirty' : ''}"
             type="number" step="0.01"
             value="${a._roe.toFixed(2)}"
             data-ticker="${a.ticker}"
@@ -244,23 +326,28 @@ function renderTable() {
 }
 
 function resetRoe(inp) {
-  inp.value = parseFloat(inp.dataset.default).toFixed(2);
-  inp.classList.remove('dirty');
+  const defaultVal = configData?.kr?.assets?.[inp.dataset.ticker]?.roe ?? parseFloat(inp.dataset.default);
+  inp.value = defaultVal.toFixed(2);
   markDirty();
 }
 
+// ─── 초기화 ───────────────────────────────────────────────
 async function init() {
-  const res = await fetch('pbgr_data.json');
-  rawData = await res.json();
+  // PAT 복원
+  const savedPat = getPat();
+  if (savedPat) document.getElementById('pat-input').value = savedPat;
+  updateSaveBtn();
 
+  const [dataRes, cfg] = await Promise.all([
+    fetch('pbgr_data.json').then(r => r.json()),
+    loadConfig()
+  ]);
+
+  rawData = dataRes;
   document.getElementById('updated').textContent = rawData.updated;
-
-  // 저장된 요구수익률 복원
-  const s = loadSettings();
-  if (s.req_kr) document.getElementById('req-kr').value = s.req_kr;
+  document.getElementById('req-kr').value = (cfg.kr.required_return * 100).toFixed(1);
 
   document.getElementById('req-kr').addEventListener('input', markDirty);
-
   renderTable();
 }
 
