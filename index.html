@@ -83,6 +83,7 @@
         <th>ROE</th>
         <th>PER</th>
         <th>PBR</th>
+        <th>기준일</th>
       </tr>
     </thead>
     <tbody id="kr-body"></tbody>
@@ -192,6 +193,7 @@ async function init() {
       <td>${fmtPct(a.roe_pct)}</td>
       <td>${a.per ? a.per.toFixed(1) + 'x' : '—'}</td>
       <td>${a.pbr ? a.pbr.toFixed(2) + 'x' : '—'}</td>
+      <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
     </tr>`;
   });
 

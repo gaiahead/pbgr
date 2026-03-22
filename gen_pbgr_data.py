@@ -16,8 +16,8 @@ import numpy as np
 KR_REQUIRED_RETURN = 0.10   # 한국 요구수익률 10%
 US_REQUIRED_RETURN = 0.07   # 미국 요구수익률 7%
 
-KR_BASE_DATE = datetime(2024, 1, 1)  # 한국 기준일
-US_BASE_DATE = datetime(2021, 1, 1)  # 미국 기준일
+US_BASE_DATE = datetime(2021, 1, 1)  # 미국 기준일 (고정)
+# 한국 기준일은 종목별 최신 결산일 자동 설정
 
 # 한국 종목: (이름, 코드, 그룹)
 # ROE는 네이버에서 자동 수집, 자본/주식수는 yfinance
@@ -103,28 +103,34 @@ def get_naver_price(code):
     return int(price_str)
 
 # ─── yfinance 자본·주식수 ──────────────────────────────────
-def get_yf_balance(ticker_code, base_date):
-    """기준일 직전 결산 자본총계·주식수 반환"""
+def get_yf_balance(ticker_code, base_date=None):
+    """최신(또는 기준일 직전) 결산 자본총계·주식수·결산일 반환"""
     t = yf.Ticker(ticker_code)
     bs = t.balance_sheet
 
-    # 기준일 이전 가장 최근 결산
-    available = [dt for dt in bs.columns if dt.to_pydatetime().replace(tzinfo=None) <= base_date]
-    if not available:
-        available = list(bs.columns)
-    col = max(available)
+    if base_date is not None:
+        available = [dt for dt in bs.columns if dt.to_pydatetime().replace(tzinfo=None) <= base_date]
+        if not available:
+            available = list(bs.columns)
+        col = max(available)
+    else:
+        # 기준일 없으면 최신 결산
+        col = bs.columns[0]
 
     equity = None
     for field in ["Common Stock Equity", "Stockholders Equity"]:
-        if field in bs.index and not np.isnan(bs.loc[field, col]):
-            equity = float(bs.loc[field, col])
-            break
+        if field in bs.index:
+            val = bs.loc[field, col]
+            if not np.isnan(val):
+                equity = float(val)
+                break
 
     # 주식수
     ordinary = float(bs.loc["Ordinary Shares Number", col]) if "Ordinary Shares Number" in bs.index else 0
     preferred = float(bs.loc["Preferred Shares Number", col]) if "Preferred Shares Number" in bs.index else 0
 
-    return equity, ordinary, preferred
+    base_dt = col.to_pydatetime().replace(tzinfo=None)
+    return equity, ordinary, preferred, base_dt
 
 def get_yf_us_data(ticker_code):
     """미국 종목 전체 데이터"""
@@ -136,7 +142,7 @@ def get_yf_us_data(ticker_code):
     price = info.get("currentPrice") or info.get("regularMarketPrice")
 
     # 자본 (기준일 2021-01-01 이전 가장 최근)
-    equity, ordinary, preferred = get_yf_balance(ticker_code, US_BASE_DATE)
+    equity, ordinary, preferred, _ = get_yf_balance(ticker_code, US_BASE_DATE)
 
     # ROE (trailing)
     roe = info.get("returnOnEquity", 0) or 0  # 소수점 표현 (예: 0.152)
@@ -264,11 +270,10 @@ def main():
     kst = timezone(timedelta(hours=9))
     updated = datetime.now(kst).strftime("%Y-%m-%d %H:%M")
 
-    kr_date_value = calc_date_value(KR_BASE_DATE, today)
     us_date_value = calc_date_value(US_BASE_DATE, today)
 
     print(f"[{updated}] PBGR 데이터 생성 시작")
-    print(f"  KR 날짜값: {kr_date_value:.2f}개월 / US 날짜값: {us_date_value:.2f}개월")
+    print(f"  US 날짜값: {us_date_value:.2f}개월 (기준: {US_BASE_DATE.date()})")
 
     result = {
         "updated": updated,
@@ -286,10 +291,13 @@ def main():
             naver = get_naver_stock_info(naver_code)
             roe_pct = naver.get("roe_pct", 0)
 
-            # 자본·주식수: yfinance
-            equity, ordinary, preferred = get_yf_balance(yf_code, KR_BASE_DATE)
+            # 자본·주식수: yfinance (최신 결산 자동)
+            equity, ordinary, preferred, base_dt = get_yf_balance(yf_code)
             equity_100m = equity / 1e8 if equity else None
             shares_total = (ordinary + preferred) if ordinary else None
+
+            # 종목별 날짜값 (최신 결산일 기준)
+            kr_date_value = calc_date_value(base_dt, today)
 
             calc = calc_pbgr_kr(price, equity_100m, roe_pct, shares_total, kr_date_value)
 
@@ -298,6 +306,7 @@ def main():
                 "ticker": naver_code,
                 "market": "KR",
                 "price": price,
+                "base_date": base_dt.strftime("%Y-%m-%d"),
                 "pbgr": calc["pbgr"] if calc else None,
                 "fair_price": calc["fair_price"] if calc else None,
                 "bps": calc["bps"] if calc else None,
@@ -309,7 +318,7 @@ def main():
                 "shares_total": int(shares_total) if shares_total else None,
             }
             result["assets"].append(asset)
-            print(f"PBGR={calc['pbgr']:.3f}" if calc else "계산 실패")
+            print(f"PBGR={calc['pbgr']:.3f} (기준: {base_dt.date()})" if calc else "계산 실패")
         except Exception as e:
             print(f"오류: {e}")
             result["assets"].append({"name": name, "ticker": naver_code, "market": "KR", "error": str(e)})
