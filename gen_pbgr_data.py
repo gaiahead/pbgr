@@ -1,354 +1,201 @@
 #!/usr/bin/env python3
 """
 PBGR (Price to Book Growth Ratio) 데이터 생성기
-- 한국: 네이버 파이낸스(현재가·ROE) + yfinance(자본·주식수)
-- 미국: yfinance 전용
+- 현재가/자본/주식수: yfinance (전일 종가 기준)
+- ROE·요구수익률: config.json
 """
 import json
-import urllib.request
-import re
+import numpy as np
 import yfinance as yf
 from datetime import datetime, timezone, timedelta
-from scipy.optimize import brentq
-import numpy as np
+import calendar
 
-# ─── 파라미터 ───────────────────────────────────────────────
-KR_REQUIRED_RETURN = 0.10   # 한국 요구수익률 10%
-US_REQUIRED_RETURN = 0.07   # 미국 요구수익률 7%
+# ─── config 로드 ──────────────────────────────────────────
+with open("config.json", encoding="utf-8") as f:
+    CONFIG = json.load(f)
 
-US_BASE_DATE = datetime(2021, 1, 1)  # 미국 기준일 (고정)
-# 한국 기준일은 종목별 최신 결산일 자동 설정
+KR_CFG = CONFIG["kr"]
+US_CFG = CONFIG["us"]
 
-# 한국 종목: (이름, 코드, 그룹)
-# ROE는 네이버에서 자동 수집, 자본/주식수는 yfinance
-KR_ASSETS = [
-    ("삼성전자",  "005930", "005930.KS"),
-    ("SK하이닉스","000660", "000660.KS"),
-    ("리노공업",  "058630", "058630.KS"),
-    ("유한양행",  "000100", "000100.KS"),
-    ("NAVER",     "035420", "035420.KS"),
-]
+US_BASE_DATE = datetime.strptime(US_CFG["base_date"], "%Y-%m-%d")
 
-# 미국 종목: (이름, 티커, 보정계수, ROE override or None)
-# ROE override: None이면 yfinance 자동, 소수(예: 0.10)면 수동
-US_ASSETS = [
-    ("Apple",               "AAPL",  0.8, None),
-    ("Microsoft",           "MSFT",  1.0, None),
-    ("Berkshire Hathaway",  "BRK-B", 1.0, 0.10),  # BRK ROE 수동: ~10%
-]
-
-# ─── 날짜값 계산 (엑셀 수식 재현) ─────────────────────────
-def calc_date_value(base_date, today=None):
-    """기준일로부터 경과 월 (일할 포함)"""
+# ─── 날짜값 계산 ──────────────────────────────────────────
+def date_value(base_date, today=None):
     if today is None:
         today = datetime.now()
     months = (today.year - base_date.year) * 12 + (today.month - base_date.month)
-    # 일할: (day-1) / 해당월 일수
-    import calendar
     days_in_month = calendar.monthrange(today.year, today.month)[1]
-    day_fraction = (today.day - 1) / days_in_month
-    return months + day_fraction
+    frac = (today.day - 1) / days_in_month
+    return months + frac
 
-# ─── 네이버 파이낸스 스크래핑 ──────────────────────────────
-def get_naver_stock_info(code):
-    """BPS, EPS, ROE(%), PBR, PER 수집"""
-    url = f"https://finance.naver.com/item/main.naver?code={code}"
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "Mozilla/5.0",
-        "Accept-Language": "ko-KR"
-    })
-    with urllib.request.urlopen(req, timeout=15) as res:
-        html = res.read().decode("euc-kr", errors="ignore")
-
-    def extract_after(keyword):
-        idx = html.find(keyword)
-        if idx < 0:
-            return None
-        chunk = html[idx:idx+500]
-        m = re.search(r"<td[^>]*>\s*[\r\n\t ]*([0-9,.-]+)\s*[\r\n\t ]*</td>", chunk)
-        if m:
-            return m.group(1).replace(",", "")
-        return None
-
-    result = {}
-    v = extract_after("BPS()")
-    if v:
-        try: result["bps"] = int(v)
-        except: pass
-    v = extract_after("EPS()")
-    if v:
-        try: result["eps"] = int(v)
-        except: pass
-    v = extract_after("ROE")
-    if v:
-        try: result["roe_pct"] = float(v)
-        except: pass
-    v = extract_after("PBR")
-    if v:
-        try: result["pbr"] = float(v)
-        except: pass
-    v = extract_after("PER")
-    if v:
-        try: result["per"] = float(v)
-        except: pass
-    return result
-
-def get_naver_price(code):
-    """네이버 polling API로 현재가"""
-    url = f"https://polling.finance.naver.com/api/realtime/domestic/stock/{code}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=10) as res:
-        data = json.loads(res.read())
-    price_str = data["datas"][0]["closePrice"].replace(",", "")
-    return int(price_str)
-
-# ─── yfinance 자본·주식수 ──────────────────────────────────
-def get_yf_balance(ticker_code, base_date=None):
-    """최신(또는 기준일 직전) 결산 자본총계·주식수·결산일 반환"""
+# ─── yfinance: 전일 종가 + 자본 + 주식수 ─────────────────
+def get_yf_data(ticker_code, base_date=None):
     t = yf.Ticker(ticker_code)
-    bs = t.balance_sheet
+    info = t.info
 
-    if base_date is not None:
+    # 전일 종가
+    price = info.get("previousClose") or info.get("regularMarketPreviousClose") or info.get("currentPrice")
+
+    # Balance sheet (최신 결산 or 기준일 이전)
+    bs = t.balance_sheet
+    if base_date:
         available = [dt for dt in bs.columns if dt.to_pydatetime().replace(tzinfo=None) <= base_date]
-        if not available:
-            available = list(bs.columns)
-        col = max(available)
+        col = max(available) if available else bs.columns[0]
     else:
-        # 기준일 없으면 최신 결산
         col = bs.columns[0]
 
     equity = None
     for field in ["Common Stock Equity", "Stockholders Equity"]:
         if field in bs.index:
-            val = bs.loc[field, col]
-            if not np.isnan(val):
-                equity = float(val)
+            v = bs.loc[field, col]
+            if not np.isnan(v):
+                equity = float(v)
                 break
 
-    # 주식수
     ordinary = float(bs.loc["Ordinary Shares Number", col]) if "Ordinary Shares Number" in bs.index else 0
     preferred = float(bs.loc["Preferred Shares Number", col]) if "Preferred Shares Number" in bs.index else 0
 
+    # 주식수: BS 값이 부정확하면 info 폴백
+    shares = (ordinary + preferred) if ordinary and ordinary > 1e6 else None
+    shares = shares or info.get("sharesOutstanding") or info.get("impliedSharesOutstanding")
+
     base_dt = col.to_pydatetime().replace(tzinfo=None)
-    return equity, ordinary, preferred, base_dt
 
-def get_yf_us_data(ticker_code):
-    """미국 종목 전체 데이터"""
-    t = yf.Ticker(ticker_code)
-    info = t.info
-    bs = t.balance_sheet
-    inc = t.income_stmt
-
-    price = info.get("currentPrice") or info.get("regularMarketPrice")
-
-    # 자본 (기준일 2021-01-01 이전 가장 최근)
-    equity, ordinary, preferred, _ = get_yf_balance(ticker_code, US_BASE_DATE)
-
-    # ROE (trailing)
-    roe = info.get("returnOnEquity", 0) or 0  # 소수점 표현 (예: 0.152)
-
-    # 순이익 Y1, Y2 (최근 2년 annual)
+    # 순이익 (미국 Y1/Y2용)
     ni_list = []
+    inc = t.income_stmt
     if "Net Income" in inc.index:
-        ni_data = inc.loc["Net Income"].dropna()
-        ni_list = [float(v) for v in ni_data.values[:2]]  # 최근 2년
+        ni_list = [float(v) for v in inc.loc["Net Income"].dropna().values[:2]]
 
-    # BRK-B 등 일부 종목은 Ordinary Shares Number가 부정확 → sharesOutstanding 우선
-    shares_from_bs = (ordinary + preferred) if ordinary and ordinary > 1e6 else None
-    shares = shares_from_bs or info.get("sharesOutstanding", 0) or info.get("impliedSharesOutstanding", 0)
+    roe_auto = info.get("returnOnEquity")  # 소수 표현
 
     return {
         "price": price,
-        "equity_m": equity / 1e6 if equity else None,  # 백만달러
-        "roe": roe,
-        "ni_y1_m": ni_list[0] / 1e6 if len(ni_list) > 0 else None,
-        "ni_y2_m": ni_list[1] / 1e6 if len(ni_list) > 1 else None,
+        "equity": equity,
         "shares": shares,
+        "base_dt": base_dt,
+        "ni_list": ni_list,
+        "roe_auto": roe_auto,
     }
 
-# ─── PBGR 계산: 한국 모델 ─────────────────────────────────
-def calc_pbgr_kr(price, equity_100m, roe_pct, shares_total, date_value, req_return=KR_REQUIRED_RETURN):
-    """
-    한국 PBGR 계산
-    equity_100m: 자본Y0 (억원)
-    roe_pct: ROE (%)
-    shares_total: 총 주식수
-    date_value: 기준일로부터 경과 월 (일할 포함)
-    """
-    if not all([price, equity_100m, roe_pct, shares_total]):
+# ─── PBGR 계산: 한국 모델 ────────────────────────────────
+def calc_kr(price, equity_100m, roe_pct, shares, dv, req_return):
+    if not all([price, equity_100m, roe_pct, shares]):
         return None
-
     roe = roe_pct / 100
     y0 = equity_100m
     y10 = y0 * (1 + roe) ** 10
     y11 = y0 * (1 + roe) ** 11
-
-    # RATE(12, 0, -Y10, Y11) → Y10→Y11 성장률로 trailing 추정
-    # RATE(nper, pmt, pv, fv): fv = pv*(1+r)^nper → r = (fv/pv)^(1/nper) - 1
     if y10 <= 0:
         return None
-    r_trailing = (y11 / y10) ** (1 / 12) - 1
-    # 자본Trailing: Y10 성장률 기반, date_value-1 기간 복리
-    equity_trailing = y10 * (1 + r_trailing) ** (date_value - 1)
-
-    # 기대장부가치 = Trailing / (1+req)^10
-    expected_bv = equity_trailing / (1 + req_return) ** 10
-
-    # BPS = 기대장부가치(억) * 1억 / 주식수
-    bps = expected_bv * 1e8 / shares_total
+    r_t = (y11 / y10) ** (1 / 12) - 1
+    trailing = y10 * (1 + r_t) ** (dv - 1)
+    expected_bv = trailing / (1 + req_return) ** 10
+    bps = expected_bv * 1e8 / shares
     if bps <= 0:
         return None
+    return {"pbgr": round(price / bps, 4), "fair_price": round(bps, 0)}
 
-    pbgr = price / bps
-    fair_price = bps
-
-    # EPS (기대순이익 기반)
-    ni_expected = y0 * (1 + r_trailing) ** (date_value - 1) * roe / (1 + req_return)
-    eps = ni_expected * 1e8 / shares_total if shares_total > 0 else None
-
-    return {
-        "pbgr": round(pbgr, 4),
-        "fair_price": round(fair_price, 0),
-        "bps": round(bps, 0),
-        "eps": round(eps, 0) if eps else None,
-        "equity_y0_100m": round(y0, 0),
-        "roe_pct": round(roe_pct, 2),
-    }
-
-# ─── PBGR 계산: 미국 모델 ─────────────────────────────────
-def calc_pbgr_us(price, equity_m, roe, ni_y1_m, ni_y2_m, shares, correction, date_value, req_return=US_REQUIRED_RETURN):
-    """
-    미국 PBGR 계산
-    equity_m: 자본Y0 (백만달러)
-    roe: ROE 소수 (예: 0.152)
-    ni_y1_m/ni_y2_m: 순이익 Y1/Y2 (백만달러)
-    correction: 보정계수 (ROE 점진적 수렴)
-    """
+# ─── PBGR 계산: 미국 모델 ────────────────────────────────
+def calc_us(price, equity_m, roe, ni_y1_m, ni_y2_m, shares, correction, dv, req_return):
     if not all([price, equity_m, roe, shares]):
         return None
-
-    y = [0] * 12  # Y0~Y11
+    y = [0.0] * 12
     y[0] = equity_m
-
-    # Y1, Y2: 실제 순이익 누적 (없으면 ROE 추정)
-    ni1 = ni_y1_m if ni_y1_m else equity_m * roe
-    ni2 = ni_y2_m if ni_y2_m else equity_m * roe
-    y[1] = y[0] + ni1
-    y[2] = y[0] + ni1 + ni2
-
-    # Y3~Y10: ROE × 보정^(n-2)
+    y[1] = y[0] + (ni_y1_m if ni_y1_m else equity_m * roe)
+    y[2] = y[1] + (ni_y2_m if ni_y2_m else equity_m * roe)
     for n in range(3, 11):
         y[n] = y[n-1] * (1 + roe * (correction ** (n - 2)))
-
-    # Y11
     y[11] = y[10] * (1 + roe * (correction ** 9))
-
-    # Trailing
     if y[10] <= 0:
         return None
-    r_trailing = (y[11] / y[10]) ** (1 / 12) - 1
-    equity_trailing = y[10] * (1 + r_trailing) ** (date_value - 1)
-
-    # 적정시총
-    fair_mktcap_m = equity_trailing / (1 + req_return) ** 10
+    r_t = (y[11] / y[10]) ** (1 / 12) - 1
+    trailing = y[10] * (1 + r_t) ** (dv - 1)
+    fair_mktcap_m = trailing / (1 + req_return) ** 10
     fair_price = fair_mktcap_m * 1e6 / shares
     if fair_price <= 0:
         return None
+    return {"pbgr": round(price / fair_price, 4), "fair_price": round(fair_price, 2)}
 
-    pbgr = price / fair_price
-
-    return {
-        "pbgr": round(pbgr, 4),
-        "fair_price": round(fair_price, 2),
-        "roe_pct": round(roe * 100, 2),
-        "equity_y0_m": round(equity_m, 0),
-    }
-
-# ─── 메인 ─────────────────────────────────────────────────
+# ─── 메인 ────────────────────────────────────────────────
 def main():
+    KST = timezone(timedelta(hours=9))
     today = datetime.now()
-    kst = timezone(timedelta(hours=9))
-    updated = datetime.now(kst).strftime("%Y-%m-%d %H:%M")
-
-    us_date_value = calc_date_value(US_BASE_DATE, today)
+    updated = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
 
     print(f"[{updated}] PBGR 데이터 생성 시작")
-    print(f"  US 날짜값: {us_date_value:.2f}개월 (기준: {US_BASE_DATE.date()})")
 
     result = {
         "updated": updated,
-        "kr_required_return": KR_REQUIRED_RETURN,
-        "us_required_return": US_REQUIRED_RETURN,
+        "kr_required_return": KR_CFG["required_return"],
+        "us_required_return": US_CFG["required_return"],
         "assets": []
     }
 
-    # ── 한국 종목 ──
-    for name, naver_code, yf_code in KR_ASSETS:
-        print(f"  [KR] {name} ...", end=" ", flush=True)
+    # ── 한국 종목 ──────────────────────────────────────────
+    req_kr = KR_CFG["required_return"]
+    for ticker_naver, cfg in KR_CFG["assets"].items():
+        ticker_yf = ticker_naver + ".KS"
+        name = cfg["name"]
+        roe_pct = cfg["roe"]
+        print(f"  [KR] {name} ({ticker_yf}) ...", end=" ", flush=True)
         try:
-            # 현재가·ROE: 네이버
-            price = get_naver_price(naver_code)
-            naver = get_naver_stock_info(naver_code)
-            roe_pct = naver.get("roe_pct", 0)
-
-            # 자본·주식수: yfinance (최신 결산 자동)
-            equity, ordinary, preferred, base_dt = get_yf_balance(yf_code)
-            equity_100m = equity / 1e8 if equity else None
-            shares_total = (ordinary + preferred) if ordinary else None
-
-            # 종목별 날짜값 (최신 결산일 기준)
-            kr_date_value = calc_date_value(base_dt, today)
-
-            calc = calc_pbgr_kr(price, equity_100m, roe_pct, shares_total, kr_date_value)
+            d = get_yf_data(ticker_yf)
+            equity_100m = d["equity"] / 1e8 if d["equity"] else None
+            dv = date_value(d["base_dt"], today)
+            calc = calc_kr(d["price"], equity_100m, roe_pct, d["shares"], dv, req_kr)
 
             asset = {
                 "name": name,
-                "ticker": naver_code,
+                "ticker": ticker_naver,
                 "market": "KR",
-                "price": price,
-                "base_date": base_dt.strftime("%Y-%m-%d"),
+                "price": d["price"],
+                "base_date": d["base_dt"].strftime("%Y-%m-%d"),
+                "roe_pct": roe_pct,
+                "roe_note": cfg.get("note", ""),
+                "required_return_pct": round(req_kr * 100, 1),
+                "equity_y0_100m": round(equity_100m, 0) if equity_100m else None,
                 "pbgr": calc["pbgr"] if calc else None,
                 "fair_price": calc["fair_price"] if calc else None,
-                "bps": calc["bps"] if calc else None,
-                "eps": calc["eps"] if calc else None,
-                "roe_pct": roe_pct,
-                "per": naver.get("per"),
-                "pbr": naver.get("pbr"),
-                "equity_y0_100m": round(equity_100m, 0) if equity_100m else None,
-                "shares_total": int(shares_total) if shares_total else None,
             }
             result["assets"].append(asset)
-            print(f"PBGR={calc['pbgr']:.3f} (기준: {base_dt.date()})" if calc else "계산 실패")
+            print(f"PBGR={calc['pbgr']:.3f} | 현재가={d['price']:,} | 적정가={calc['fair_price']:,}" if calc else "계산 실패")
         except Exception as e:
             print(f"오류: {e}")
-            result["assets"].append({"name": name, "ticker": naver_code, "market": "KR", "error": str(e)})
+            result["assets"].append({"name": name, "ticker": ticker_naver, "market": "KR", "error": str(e)})
 
-    # ── 미국 종목 ──
-    for name, ticker, correction, roe_override in US_ASSETS:
-        print(f"  [US] {name} ...", end=" ", flush=True)
+    # ── 미국 종목 ──────────────────────────────────────────
+    req_us = US_CFG["required_return"]
+    for ticker, cfg in US_CFG["assets"].items():
+        name = cfg["name"]
+        correction = cfg.get("correction", 1.0)
+        roe_override = cfg.get("roe")  # None이면 yfinance 자동
+        print(f"  [US] {name} ({ticker}) ...", end=" ", flush=True)
         try:
-            data = get_yf_us_data(ticker)
-            roe_used = roe_override if roe_override is not None else data["roe"]
-            calc = calc_pbgr_us(
-                data["price"], data["equity_m"], roe_used,
-                data["ni_y1_m"], data["ni_y2_m"], data["shares"],
-                correction, us_date_value
-            )
+            d = get_yf_data(ticker, base_date=US_BASE_DATE)
+            equity_m = d["equity"] / 1e6 if d["equity"] else None
+            roe = roe_override if roe_override is not None else d["roe_auto"]
+            ni_y1 = d["ni_list"][0] / 1e6 if len(d["ni_list"]) > 0 else None
+            ni_y2 = d["ni_list"][1] / 1e6 if len(d["ni_list"]) > 1 else None
+            dv = date_value(US_BASE_DATE, today)
+            calc = calc_us(d["price"], equity_m, roe, ni_y1, ni_y2, d["shares"], correction, dv, req_us)
 
             asset = {
                 "name": name,
                 "ticker": ticker,
                 "market": "US",
-                "price": data["price"],
+                "price": d["price"],
+                "base_date": US_BASE_DATE.strftime("%Y-%m-%d"),
+                "roe_pct": round(roe * 100, 2) if roe else None,
+                "roe_note": cfg.get("note", ""),
+                "correction": correction,
+                "required_return_pct": round(req_us * 100, 1),
+                "equity_y0_m": round(equity_m, 0) if equity_m else None,
                 "pbgr": calc["pbgr"] if calc else None,
                 "fair_price": calc["fair_price"] if calc else None,
-                "roe_pct": calc["roe_pct"] if calc else None,
-                "correction": correction,
-                "equity_y0_m": data["equity_m"],
-                "shares": int(data["shares"]) if data["shares"] else None,
             }
             result["assets"].append(asset)
-            print(f"PBGR={calc['pbgr']:.3f}" if calc else "계산 실패")
+            print(f"PBGR={calc['pbgr']:.3f} | 현재가=${d['price']} | 적정가=${calc['fair_price']:,.2f}" if calc else "계산 실패")
         except Exception as e:
             print(f"오류: {e}")
             result["assets"].append({"name": name, "ticker": ticker, "market": "US", "error": str(e)})

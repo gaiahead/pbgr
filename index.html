@@ -11,210 +11,335 @@
     header h1{font-size:1.2rem;font-weight:700;color:#f8fafc}
     header p{font-size:0.74rem;color:#475569;margin-top:4px}
 
-    .section{padding:24px 28px}
-    .section + .section{padding-top:0}
+    .section{padding:24px 28px 0}
+    .section:last-of-type{padding-bottom:32px}
 
     .section-title{
-      font-size:0.78rem;font-weight:700;color:#64748b;
+      font-size:0.75rem;font-weight:700;color:#64748b;
       letter-spacing:.08em;text-transform:uppercase;
-      margin-bottom:12px;display:flex;align-items:center;gap:8px;
+      margin-bottom:12px;display:flex;align-items:center;gap:10px;
     }
-    .section-title span{color:#334155;font-size:0.72rem;font-weight:500;text-transform:none;letter-spacing:0}
+    .section-title .param{
+      font-size:0.7rem;color:#334155;font-weight:500;
+      text-transform:none;letter-spacing:0;
+      background:#161b27;border:1px solid #1e2535;border-radius:5px;
+      padding:2px 8px;
+    }
 
-    table{width:100%;border-collapse:collapse;font-size:0.85rem}
+    table{width:100%;border-collapse:collapse;font-size:0.84rem}
     thead tr{border-bottom:1px solid #1e2535}
     th{
-      padding:8px 12px;text-align:right;font-size:0.7rem;font-weight:600;
+      padding:8px 14px;text-align:right;font-size:0.68rem;font-weight:600;
       color:#475569;letter-spacing:.04em;white-space:nowrap;
     }
     th:first-child{text-align:left}
-    tbody tr{border-bottom:1px solid #161b27;transition:background .15s}
-    tbody tr:hover{background:#161b27}
-    td{padding:10px 12px;text-align:right;color:#cbd5e1;white-space:nowrap}
+    tbody tr{border-bottom:1px solid #161b27;transition:background .12s}
+    tbody tr:hover{background:#141820}
+    td{padding:11px 14px;text-align:right;color:#cbd5e1;white-space:nowrap}
     td:first-child{text-align:left}
 
-    /* 종목명 */
-    .name{font-weight:700;color:#f1f5f9}
-    .ticker{font-size:0.7rem;color:#475569;margin-top:2px}
+    .name{font-weight:700;color:#f1f5f9;font-size:0.88rem}
+    .ticker{font-size:0.68rem;color:#475569;margin-top:2px}
 
-    /* PBGR 값 색상 */
+    /* PBGR */
     .pbgr-val{font-weight:800;font-size:1.0rem}
-    .under{color:#4ade80}   /* < 1 저평가 */
-    .over {color:#f87171}   /* > 1 고평가 */
+    .under{color:#4ade80}
+    .over {color:#f87171}
 
-    /* 배지 */
     .badge{
-      display:inline-block;font-size:0.62rem;font-weight:700;
-      padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;
+      display:inline-block;font-size:0.6rem;font-weight:700;
+      padding:2px 6px;border-radius:4px;margin-left:5px;vertical-align:middle;
     }
     .badge-under{background:rgba(34,197,94,.15);color:#4ade80}
     .badge-over {background:rgba(239,68,68,.15);color:#f87171}
 
-    /* 현재가 vs 적정가 바 */
-    .bar-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
-    .bar-bg{
-      width:80px;height:6px;background:#1e2535;border-radius:3px;overflow:hidden;flex-shrink:0;
+    /* ROE 편집 */
+    .roe-cell{display:flex;align-items:center;justify-content:flex-end;gap:4px}
+    .roe-input{
+      background:transparent;border:none;color:#cbd5e1;
+      font-size:0.84rem;font-family:inherit;
+      width:52px;text-align:right;outline:none;cursor:text;
+      border-bottom:1px dashed #334155;padding-bottom:1px;
+      transition:border-color .15s;
     }
-    .bar-fill{height:100%;border-radius:3px;transition:width .3s}
+    .roe-input:focus{border-bottom-color:#60a5fa;color:#f1f5f9}
+    .roe-unit{color:#475569;font-size:0.75rem}
+    .roe-dot{
+      width:6px;height:6px;border-radius:50%;flex-shrink:0;
+      background:#475569;transition:background .2s;
+    }
+    .roe-dot.custom{background:#60a5fa}
 
-    .note{font-size:0.68rem;color:#334155;padding:0 28px 24px}
+    /* 요구수익률 편집 */
+    .req-input{
+      background:transparent;border:none;color:#64748b;
+      font-size:0.7rem;font-family:inherit;
+      width:32px;text-align:right;outline:none;cursor:text;
+      border-bottom:1px dashed #334155;
+    }
+    .req-input:focus{border-bottom-color:#60a5fa;color:#94a3b8}
+
+    .note{font-size:0.68rem;color:#1e2535;padding:16px 28px 24px}
   </style>
 </head>
 <body>
 
 <header>
   <h1>📊 PBGR 가치평가 모니터</h1>
-  <p>Price to Book Growth Ratio · <span id="updated"></span></p>
+  <p>Price to Book Growth Ratio · <span id="updated"></span> 기준 (전일 종가)</p>
 </header>
 
 <div class="section" id="kr-section">
   <div class="section-title">
     🇰🇷 한국
-    <span id="kr-params"></span>
+    <span class="param">요구수익률 <input class="req-input" id="req-kr" value="10">%</span>
   </div>
   <table>
-    <thead>
-      <tr>
-        <th>종목</th>
-        <th>현재가</th>
-        <th>적정가 (BPS)</th>
-        <th>괴리율</th>
-        <th>PBGR</th>
-        <th>ROE</th>
-        <th>PER</th>
-        <th>PBR</th>
-        <th>기준일</th>
-      </tr>
-    </thead>
+    <thead><tr>
+      <th>종목</th>
+      <th>전일 종가</th>
+      <th>적정가</th>
+      <th>괴리율</th>
+      <th>PBGR</th>
+      <th>ROE ✎</th>
+      <th>기준일</th>
+    </tr></thead>
     <tbody id="kr-body"></tbody>
   </table>
 </div>
 
-<div class="section" id="us-section">
+<div class="section" id="us-section" style="margin-top:24px">
   <div class="section-title">
     🇺🇸 미국
-    <span id="us-params"></span>
+    <span class="param">요구수익률 <input class="req-input" id="req-us" value="7">%</span>
   </div>
   <table>
-    <thead>
-      <tr>
-        <th>종목</th>
-        <th>현재가</th>
-        <th>적정가</th>
-        <th>괴리율</th>
-        <th>PBGR</th>
-        <th>ROE</th>
-        <th>보정</th>
-      </tr>
-    </thead>
+    <thead><tr>
+      <th>종목</th>
+      <th>전일 종가</th>
+      <th>적정가</th>
+      <th>괴리율</th>
+      <th>PBGR</th>
+      <th>ROE ✎</th>
+      <th>보정</th>
+      <th>기준일</th>
+    </tr></thead>
     <tbody id="us-body"></tbody>
   </table>
 </div>
 
 <div class="note">
-  PBGR = 현재가 / 적정가 (ROE 기반 10년 성장 모델 → 현재가치 환산) &nbsp;|&nbsp;
-  저평가(PBGR &lt; 1): 현재가 &lt; 적정가 &nbsp;|&nbsp; 데이터: 네이버 파이낸스 · yfinance
+  ROE 셀 클릭 → 직접 수정 (브라우저에 저장됨, 파란 점 = 수정값) &nbsp;|&nbsp;
+  PBGR &lt; 1: 저평가 &nbsp;|&nbsp; 데이터: yfinance (전일 종가 기준)
 </div>
 
 <script>
-function fmt(v, opts={}) {
-  if (v === null || v === undefined) return '—';
-  return v.toLocaleString('ko-KR', opts);
+// ─── localStorage ─────────────────────────────────────────
+const LS_KEY = 'pbgr_overrides';
+function loadOverrides() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
+  catch { return {}; }
 }
-function fmtKR(v) {
-  if (!v && v !== 0) return '—';
-  return Number(v).toLocaleString('ko-KR') + '원';
+function saveOverride(ticker, field, val) {
+  const ov = loadOverrides();
+  if (!ov[ticker]) ov[ticker] = {};
+  ov[ticker][field] = val;
+  localStorage.setItem(LS_KEY, JSON.stringify(ov));
 }
-function fmtUS(v, digits=2) {
-  if (!v && v !== 0) return '—';
-  return '$' + Number(v).toLocaleString('en-US', {minimumFractionDigits:digits, maximumFractionDigits:digits});
-}
-function fmtPct(v) {
-  if (!v && v !== 0) return '—';
-  return Number(v).toFixed(2) + '%';
-}
-
-function pbgrClass(pbgr) {
-  if (pbgr === null || pbgr === undefined) return '';
-  return pbgr < 1 ? 'under' : 'over';
-}
-function badgeHtml(pbgr) {
-  if (pbgr === null || pbgr === undefined) return '';
-  const cls = pbgr < 1 ? 'badge-under' : 'badge-over';
-  const txt = pbgr < 1 ? '저평가' : '고평가';
-  return `<span class="badge ${cls}">${txt}</span>`;
+function clearOverride(ticker, field) {
+  const ov = loadOverrides();
+  if (ov[ticker]) delete ov[ticker][field];
+  localStorage.setItem(LS_KEY, JSON.stringify(ov));
 }
 
-// 현재가/적정가 비율 바 (현재가가 적정가의 몇 %)
-function barHtml(pbgr) {
-  if (!pbgr) return '';
-  // 바는 1 기준: 저평가면 채움<100%, 고평가면 100%
-  const fillPct = Math.min(100, (1 / pbgr) * 100);
-  const color = pbgr < 1 ? '#4ade80' : '#f87171';
-  return `<div class="bar-wrap">
-    <div class="bar-bg"><div class="bar-fill" style="width:${fillPct}%;background:${color}"></div></div>
-  </div>`;
-}
-
+// ─── 포맷 ─────────────────────────────────────────────────
+function fmtKR(v) { return v != null ? Number(v).toLocaleString('ko-KR') + '원' : '—'; }
+function fmtUS(v) { return v != null ? '$' + Number(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—'; }
 function gap(pbgr) {
   if (!pbgr) return '—';
   const pct = ((1 / pbgr) - 1) * 100;
   const sign = pct >= 0 ? '+' : '';
   return `<span style="color:${pct >= 0 ? '#4ade80' : '#f87171'}">${sign}${pct.toFixed(1)}%</span>`;
 }
+function pbgrHtml(pbgr) {
+  if (!pbgr) return '—';
+  const cls = pbgr < 1 ? 'under' : 'over';
+  const badge = pbgr < 1
+    ? '<span class="badge badge-under">저평가</span>'
+    : '<span class="badge badge-over">고평가</span>';
+  return `<span class="pbgr-val ${cls}">${pbgr.toFixed(3)}${badge}</span>`;
+}
+
+// ─── PBGR 재계산 (클라이언트) ─────────────────────────────
+function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_return) {
+  if (!price || !equity_100m || !roe_pct || !shares) return null;
+  const base = new Date(base_date);
+  const today = new Date();
+  const months = (today.getFullYear() - base.getFullYear()) * 12 + (today.getMonth() - base.getMonth());
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const dv = months + (today.getDate() - 1) / daysInMonth;
+
+  const roe = roe_pct / 100;
+  const y10 = equity_100m * Math.pow(1 + roe, 10);
+  const y11 = equity_100m * Math.pow(1 + roe, 11);
+  const r_t = Math.pow(y11 / y10, 1 / 12) - 1;
+  const trailing = y10 * Math.pow(1 + r_t, dv - 1);
+  const bv = trailing / Math.pow(1 + req_return, 10);
+  const bps = bv * 1e8 / shares;
+  return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps) } : null;
+}
+
+function recalcUS(price, equity_m, roe, ni_y1, ni_y2, shares, correction, base_date, req_return) {
+  if (!price || !equity_m || !roe || !shares) return null;
+  const base = new Date(base_date);
+  const today = new Date();
+  const months = (today.getFullYear() - base.getFullYear()) * 12 + (today.getMonth() - base.getMonth());
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const dv = months + (today.getDate() - 1) / daysInMonth;
+
+  const y = new Array(12).fill(0);
+  y[0] = equity_m;
+  y[1] = y[0] + (ni_y1 || equity_m * roe);
+  y[2] = y[1] + (ni_y2 || equity_m * roe);
+  for (let n = 3; n <= 10; n++) y[n] = y[n-1] * (1 + roe * Math.pow(correction, n - 2));
+  y[11] = y[10] * (1 + roe * Math.pow(correction, 9));
+  if (y[10] <= 0) return null;
+  const r_t = Math.pow(y[11] / y[10], 1 / 12) - 1;
+  const trailing = y[10] * Math.pow(1 + r_t, dv - 1);
+  const fair_m = trailing / Math.pow(1 + req_return, 10);
+  const fair_price = fair_m * 1e6 / shares;
+  return fair_price > 0 ? { pbgr: price / fair_price, fair_price } : null;
+}
+
+// ─── ROE 편집 인풋 만들기 ─────────────────────────────────
+function makeRoeInput(a, isCustom, onUpdate) {
+  const dot = `<span class="roe-dot${isCustom ? ' custom' : ''}" title="${isCustom ? '수정값' : '설정값'}"></span>`;
+  const inp = document.createElement('input');
+  inp.type = 'number';
+  inp.step = '0.01';
+  inp.className = 'roe-input';
+  inp.value = a._displayRoe.toFixed(2);
+
+  inp.addEventListener('change', () => {
+    const v = parseFloat(inp.value);
+    if (isNaN(v) || v <= 0) return;
+    saveOverride(a.ticker, 'roe_pct', v);
+    onUpdate(v);
+  });
+  inp.addEventListener('dblclick', () => {
+    clearOverride(a.ticker, 'roe_pct');
+    inp.value = a.roe_pct.toFixed(2);
+    onUpdate(a.roe_pct, true);
+  });
+
+  const wrap = document.createElement('div');
+  wrap.className = 'roe-cell';
+  wrap.innerHTML = dot;
+  wrap.appendChild(inp);
+  const unit = document.createElement('span');
+  unit.className = 'roe-unit';
+  unit.textContent = '%';
+  wrap.appendChild(unit);
+  return wrap;
+}
+
+// ─── 렌더 ─────────────────────────────────────────────────
+let rawData = null;
+
+function renderTables() {
+  const overrides = loadOverrides();
+  const reqKR = parseFloat(document.getElementById('req-kr').value) / 100 || 0.10;
+  const reqUS = parseFloat(document.getElementById('req-us').value) / 100 || 0.07;
+
+  const kr = rawData.assets.filter(a => a.market === 'KR');
+  const us = rawData.assets.filter(a => a.market === 'US');
+
+  function renderKR(tbody, assets) {
+    tbody.innerHTML = '';
+    assets = [...assets].map(a => {
+      const ov = overrides[a.ticker] || {};
+      return { ...a, _displayRoe: ov.roe_pct ?? a.roe_pct, _isCustom: !!ov.roe_pct };
+    });
+    assets.sort((a, b) => (a.pbgr_live || 999) - (b.pbgr_live || 999));
+
+    assets.forEach(a => {
+      const calc = recalcKR(a.price, a.equity_y0_100m, a._displayRoe, a.shares_total || a.shares, a.base_date, reqKR);
+      a.pbgr_live = calc?.pbgr;
+      a.fair_live = calc?.fair_price;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
+        <td>${a.price ? a.price.toLocaleString('ko-KR') + '원' : '—'}</td>
+        <td>${a.fair_live ? a.fair_live.toLocaleString('ko-KR') + '원' : '—'}</td>
+        <td>${gap(a.pbgr_live)}</td>
+        <td>${pbgrHtml(a.pbgr_live)}</td>
+        <td></td>
+        <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
+      `;
+      const roeTd = tr.querySelector('td:nth-child(6)');
+      roeTd.appendChild(makeRoeInput(a, a._isCustom, (newRoe, reset) => {
+        if (reset) clearOverride(a.ticker, 'roe_pct');
+        renderTables();
+      }));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderUS(tbody, assets) {
+    tbody.innerHTML = '';
+    assets = [...assets].map(a => {
+      const ov = overrides[a.ticker] || {};
+      return { ...a, _displayRoe: ov.roe_pct != null ? ov.roe_pct : a.roe_pct, _isCustom: ov.roe_pct != null };
+    });
+
+    assets.forEach(a => {
+      const roe = a._displayRoe / 100;
+      const calc = recalcUS(a.price, a.equity_y0_m, roe, null, null, a.shares, a.correction, a.base_date, reqUS);
+      a.pbgr_live = calc?.pbgr;
+      a.fair_live = calc?.fair_price;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
+        <td>${a.price ? '$' + a.price.toFixed(2) : '—'}</td>
+        <td>${a.fair_live ? '$' + a.fair_live.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—'}</td>
+        <td>${gap(a.pbgr_live)}</td>
+        <td>${pbgrHtml(a.pbgr_live)}</td>
+        <td></td>
+        <td style="color:#64748b;font-size:0.75rem">${a.correction ?? '—'}</td>
+        <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
+      `;
+      const roeTd = tr.querySelector('td:nth-child(6)');
+      roeTd.appendChild(makeRoeInput(a, a._isCustom, (newRoe, reset) => {
+        if (reset) clearOverride(a.ticker, 'roe_pct');
+        renderTables();
+      }));
+      tbody.appendChild(tr);
+    });
+  }
+
+  renderKR(document.getElementById('kr-body'), kr);
+  renderUS(document.getElementById('us-body'), us);
+}
 
 async function init() {
   const res = await fetch('pbgr_data.json');
-  const data = await res.json();
+  rawData = await res.json();
 
-  document.getElementById('updated').textContent = data.updated + ' 기준';
-  document.getElementById('kr-params').textContent =
-    `· 요구수익률 ${(data.kr_required_return*100).toFixed(0)}%, 기준일 2024-01-01`;
-  document.getElementById('us-params').textContent =
-    `· 요구수익률 ${(data.us_required_return*100).toFixed(0)}%, 기준일 2021-01-01`;
+  document.getElementById('updated').textContent = rawData.updated;
+  document.getElementById('req-kr').value = (rawData.kr_required_return * 100).toFixed(0);
+  document.getElementById('req-us').value = (rawData.us_required_return * 100).toFixed(0);
 
-  const kr = data.assets.filter(a => a.market === 'KR');
-  const us = data.assets.filter(a => a.market === 'US');
-
-  // 한국 테이블
-  const krBody = document.getElementById('kr-body');
-  kr.sort((a,b) => (a.pbgr||999) - (b.pbgr||999));
-  kr.forEach(a => {
-    const cls = pbgrClass(a.pbgr);
-    krBody.innerHTML += `<tr>
-      <td>
-        <div class="name">${a.name}</div>
-        <div class="ticker">${a.ticker}</div>
-      </td>
-      <td>${fmtKR(a.price)}</td>
-      <td>${fmtKR(a.fair_price)}</td>
-      <td>${gap(a.pbgr)}</td>
-      <td class="pbgr-val ${cls}">${a.pbgr ? a.pbgr.toFixed(3) : '—'}${badgeHtml(a.pbgr)}</td>
-      <td>${fmtPct(a.roe_pct)}</td>
-      <td>${a.per ? a.per.toFixed(1) + 'x' : '—'}</td>
-      <td>${a.pbr ? a.pbr.toFixed(2) + 'x' : '—'}</td>
-      <td style="color:#475569;font-size:0.75rem">${a.base_date || '—'}</td>
-    </tr>`;
+  // shares 필드 통일
+  rawData.assets.forEach(a => {
+    if (!a.shares) a.shares = a.shares_total;
   });
 
-  // 미국 테이블
-  const usBody = document.getElementById('us-body');
-  us.sort((a,b) => (a.pbgr||999) - (b.pbgr||999));
-  us.forEach(a => {
-    const cls = pbgrClass(a.pbgr);
-    usBody.innerHTML += `<tr>
-      <td>
-        <div class="name">${a.name}</div>
-        <div class="ticker">${a.ticker}</div>
-      </td>
-      <td>${fmtUS(a.price)}</td>
-      <td>${fmtUS(a.fair_price)}</td>
-      <td>${gap(a.pbgr)}</td>
-      <td class="pbgr-val ${cls}">${a.pbgr ? a.pbgr.toFixed(3) : '—'}${badgeHtml(a.pbgr)}</td>
-      <td>${fmtPct(a.roe_pct)}</td>
-      <td>${a.correction !== undefined ? a.correction : '—'}</td>
-    </tr>`;
-  });
+  document.getElementById('req-kr').addEventListener('input', renderTables);
+  document.getElementById('req-us').addEventListener('input', renderTables);
+
+  renderTables();
 }
 
 init();
