@@ -123,15 +123,23 @@ def get_latest_actual(financials):
     latest_yr = sorted(actual.keys())[-1]
     return latest_yr, actual[latest_yr]
 
-def get_roe_history(financials):
-    """최근 3년 실제 ROE 이력 (E 제외)"""
+def get_roe_stats(financials):
+    """실적 ROE (E 제외) + 추정 ROE (E 포함) 분리 통계"""
     actual = [(yr, v) for yr, v in sorted(financials.items()) if not is_estimate(yr)]
-    history = []
-    for yr, v in actual[-3:]:
-        if v.get("roe") is not None:
-            history.append({"year": yr, "roe_pct": v["roe"]})
-    avg = round(sum(h["roe_pct"] for h in history) / len(history), 2) if history else 0.0
-    return {"history": history, "avg_pct": avg}
+    estimate = [(yr, v) for yr, v in sorted(financials.items()) if is_estimate(yr)]
+
+    actual_roe = [{"year": yr, "roe_pct": v["roe"]} for yr, v in actual if v.get("roe") is not None]
+    est_roe = [{"year": yr, "roe_pct": v["roe"]} for yr, v in estimate if v.get("roe") is not None]
+
+    actual_avg = round(sum(h["roe_pct"] for h in actual_roe) / len(actual_roe), 2) if actual_roe else None
+    est_avg = round(sum(h["roe_pct"] for h in est_roe) / len(est_roe), 2) if est_roe else None
+
+    return {
+        "actual": actual_roe,       # 실적 ROE 목록
+        "actual_avg": actual_avg,   # 실적 평균
+        "estimate": est_roe,        # 추정 ROE 목록
+        "estimate_avg": est_avg,    # 추정 평균
+    }
 
 # ─── PBGR 계산 ───────────────────────────────────────────
 def calc_kr(price, equity_100m, roe_pct, shares, dv, req_return):
@@ -176,13 +184,19 @@ def main():
             shares = get_naver_shares(ticker)
             financials = get_naver_financials(ticker)
             latest_yr, latest = get_latest_actual(financials)
-            roe_hist = get_roe_history(financials)
+            roe_hist = get_roe_stats(financials)
 
             # BPS × 주식수 = 자본총계
             bps_actual = latest.get("bps")
             equity_100m = (bps_actual * shares / 1e8) if bps_actual and shares else None
 
             dv = date_value(latest_yr, today) if latest_yr else 0
+
+            # 현재 시점 자본 추정 (기준일 자본 × ROE 복리 × 경과 월)
+            equity_now = None
+            if equity_100m and roe_pct:
+                equity_now = round(equity_100m * (1 + roe_pct/100) ** (dv/12), 1)
+
             calc = calc_kr(price, equity_100m, roe_pct, shares, dv, req_kr)
 
             asset = {
@@ -193,10 +207,11 @@ def main():
                 "base_date": latest_yr,
                 "bps_actual": bps_actual,
                 "equity_y0_100m": round(equity_100m, 1) if equity_100m else None,
+                "equity_now_100m": equity_now,
                 "shares": shares,
                 "roe_pct": roe_pct,
                 "roe_note": cfg.get("note", ""),
-                "roe_history": roe_hist,
+                "roe_ref": roe_hist,
                 "required_return_pct": round(req_kr * 100, 1),
                 "pbgr": calc["pbgr"] if calc else None,
                 "fair_price": calc["fair_price"] if calc else None,

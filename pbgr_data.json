@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 14:12",
+  "updated": "2026-03-22 14:21",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -10,11 +10,12 @@
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 3788390.7,
+      "equity_now_100m": 3835892.9,
       "shares": 5919637922,
       "roe_pct": 4.15,
       "roe_note": "애널 예측 기반",
-      "roe_history": {
-        "history": [
+      "roe_ref": {
+        "actual": [
           {
             "year": "2023.12",
             "roe_pct": 4.15
@@ -28,7 +29,14 @@
             "roe_pct": 10.85
           }
         ],
-        "avg_pct": 8.01
+        "actual_avg": 8.01,
+        "estimate": [
+          {
+            "year": "2026.12&#40;E&#41;",
+            "roe_pct": 32.93
+          }
+        ],
+        "estimate_avg": 32.93
       },
       "required_return_pct": 10.0,
       "pbgr": 5.3329,
@@ -42,11 +50,12 @@
       "base_date": "2025.12",
       "bps_actual": 174538,
       "equity_y0_100m": 1243936.5,
+      "equity_now_100m": 1351441.1,
       "shares": 712702365,
       "roe_pct": 31.06,
       "roe_note": "2025 실적 반영",
-      "roe_history": {
-        "history": [
+      "roe_ref": {
+        "actual": [
           {
             "year": "2023.12",
             "roe_pct": 31.06
@@ -56,7 +65,9 @@
             "roe_pct": 44.15
           }
         ],
-        "avg_pct": 37.6
+        "actual_avg": 37.6,
+        "estimate": [],
+        "estimate_avg": null
       },
       "required_return_pct": 10.0,
       "pbgr": 0.9422,
@@ -70,11 +81,12 @@
       "base_date": "2024.12",
       "bps_actual": 8204,
       "equity_y0_100m": 6252.4,
+      "equity_now_100m": 7823.7,
       "shares": 76211850,
       "roe_pct": 18.72,
       "roe_note": "3년 평균 (2022-2024)",
-      "roe_history": {
-        "history": [
+      "roe_ref": {
+        "actual": [
           {
             "year": "2022.12",
             "roe_pct": 25.11
@@ -88,7 +100,14 @@
             "roe_pct": 19.2
           }
         ],
-        "avg_pct": 21.81
+        "actual_avg": 21.81,
+        "estimate": [
+          {
+            "year": "2025.12&#40;E&#41;",
+            "roe_pct": 21.42
+          }
+        ],
+        "estimate_avg": 21.42
       },
       "required_return_pct": 10.0,
       "pbgr": 5.1471,
@@ -102,11 +121,12 @@
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 24575.3,
+      "equity_now_100m": 25072.2,
       "shares": 79647601,
       "roe_pct": 6.75,
       "roe_note": "애널 예측 기반",
-      "roe_history": {
-        "history": [
+      "roe_ref": {
+        "actual": [
           {
             "year": "2023.12",
             "roe_pct": 6.75
@@ -120,7 +140,14 @@
             "roe_pct": 8.81
           }
         ],
-        "avg_pct": 6.32
+        "actual_avg": 6.32,
+        "estimate": [
+          {
+            "year": "2026.12&#40;E&#41;",
+            "roe_pct": 7.2
+          }
+        ],
+        "estimate_avg": 7.2
       },
       "required_return_pct": 10.0,
       "pbgr": 4.3241,
@@ -134,11 +161,12 @@
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 289230.0,
+      "equity_now_100m": 293080.5,
       "shares": 156852638,
       "roe_pct": 4.41,
       "roe_note": "과거 평균 기반",
-      "roe_history": {
-        "history": [
+      "roe_ref": {
+        "actual": [
           {
             "year": "2023.12",
             "roe_pct": 4.41
@@ -152,7 +180,14 @@
             "roe_pct": 7.36
           }
         ],
-        "avg_pct": 6.56
+        "actual_avg": 6.56,
+        "estimate": [
+          {
+            "year": "2026.12&#40;E&#41;",
+            "roe_pct": 7.85
+          }
+        ],
+        "estimate_avg": 7.85
       },
       "required_return_pct": 10.0,
       "pbgr": 2.0042,

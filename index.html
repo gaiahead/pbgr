@@ -112,9 +112,10 @@
       <th>전일 종가</th>
       <th>적정가</th>
       <th>괴리율</th>
+      <th>현재 자본(추정)</th>
       <th>PBGR</th>
       <th>ROE ✎</th>
-      <th style="color:#334155;font-weight:500">최근 3년 ROE</th>
+      <th style="color:#334155;font-weight:500">ROE 참고</th>
     </tr></thead>
     <tbody id="kr-body"></tbody>
   </table>
@@ -217,11 +218,23 @@ function renderTable() {
     const tr = document.createElement('tr');
 
     // 기본 컬럼들
+    // 현재 자본 추정 (클라이언트에서도 계산)
+    let equityNow = null;
+    if (a.equity_y0_100m && a._roe && a.base_date) {
+      const base = new Date(a.base_date.replace('.', '-').replace('.', '-') + (a.base_date.length === 7 ? '-31' : ''));
+      const today2 = new Date();
+      const months2 = (today2.getFullYear()-base.getFullYear())*12+(today2.getMonth()-base.getMonth());
+      const daysInMonth2 = new Date(today2.getFullYear(), today2.getMonth()+1, 0).getDate();
+      const dv2 = months2 + (today2.getDate()-1)/daysInMonth2;
+      equityNow = a.equity_y0_100m * Math.pow(1 + a._roe/100, dv2/12);
+    }
+
     tr.innerHTML = `
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
       <td>${fmtKR(a.price)}</td>
       <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td>${gap(calc?.pbgr)}</td>
+      <td style="color:#64748b;font-size:0.8rem">${equityNow ? (equityNow/10000).toFixed(1) + '조' : '—'}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
     `;
 
@@ -263,16 +276,24 @@ function renderTable() {
     roeTd.appendChild(roeCell);
     tr.appendChild(roeTd);
 
-    // 3년 실측 ROE 컬럼
+    // ROE 참고 컬럼
     const histTd = document.createElement('td');
-    histTd.style.cssText = 'text-align:right';
-    if (a.roe_history?.history?.length) {
-      const hist = a.roe_history.history;
-      const avg = a.roe_history.avg_pct;
-      const lines = hist.map(h =>
-        `<span style="color:#475569">${h.year}</span> <span style="color:${h.roe_pct >= 0 ? '#94a3b8' : '#f87171'}">${h.roe_pct > 0 ? '+' : ''}${h.roe_pct.toFixed(1)}%</span>`
-      ).join('&nbsp; ');
-      histTd.innerHTML = `<div style="font-size:0.74rem">${lines}</div><div style="font-size:0.7rem;color:#334155;margin-top:2px">평균 ${avg.toFixed(1)}%</div>`;
+    histTd.style.cssText = 'text-align:right;white-space:nowrap';
+    const ref = a.roe_ref;
+    if (ref) {
+      const actLines = (ref.actual || []).map(h =>
+        `<span style="color:#475569">${h.year.replace('.','년 ').replace('.','월')}</span> <span style="color:${h.roe_pct >= 0 ? '#94a3b8' : '#f87171'}">${h.roe_pct > 0 ? '+' : ''}${h.roe_pct.toFixed(1)}%</span>`
+      ).join(' ');
+      const estLines = (ref.estimate || []).map(h =>
+        `<span style="color:#2d3748">${h.year.replace('&#40;E&#41;','(E)').replace('.','년 ').replace('.','월')}</span> <span style="color:#334155">${h.roe_pct > 0 ? '+' : ''}${h.roe_pct.toFixed(1)}%</span>`
+      ).join(' ');
+
+      let html = '';
+      if (ref.actual_avg != null)
+        html += `<div style="font-size:0.72rem">${actLines}</div><div style="font-size:0.7rem;color:#475569;margin-top:1px">실적 평균 ${ref.actual_avg.toFixed(1)}%</div>`;
+      if (ref.estimate_avg != null)
+        html += `<div style="font-size:0.72rem;margin-top:4px">${estLines}</div><div style="font-size:0.7rem;color:#334155;margin-top:1px">추정 평균 ${ref.estimate_avg.toFixed(1)}%</div>`;
+      histTd.innerHTML = html || '—';
     } else {
       histTd.textContent = '—';
     }
