@@ -123,23 +123,64 @@ def get_latest_actual(financials):
     latest_yr = sorted(actual.keys())[-1]
     return latest_yr, actual[latest_yr]
 
-def get_roe_stats(financials):
-    """실적 ROE (E 제외) + 추정 ROE (E 포함) 분리 통계"""
-    actual = [(yr, v) for yr, v in sorted(financials.items()) if not is_estimate(yr)]
-    estimate = [(yr, v) for yr, v in sorted(financials.items()) if is_estimate(yr)]
+def get_wisereport_roe(code, ext_y=3):
+    """wisereport Financial Summary에서 5년 실적 + 추정 ROE 수집"""
+    def fetch(ey):
+        url = (f"https://navercomp.wisereport.co.kr/v2/company/ajax/cF1001.aspx"
+               f"?cmp_cd={code}&fin_typ=0&freq_typ=A&extY={ey}&extQ=0"
+               f"&encparam=alV0blgxYnRzZldFanllNFlqU3Ezdz09")
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0",
+            "Referer": f"https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={code}",
+        })
+        with urllib.request.urlopen(req, timeout=15) as res:
+            return res.read().decode("utf-8", errors="ignore")
 
-    actual_roe = [{"year": yr, "roe_pct": v["roe"]} for yr, v in actual if v.get("roe") is not None]
-    est_roe = [{"year": yr, "roe_pct": v["roe"]} for yr, v in estimate if v.get("roe") is not None]
+    def parse(html, n_annual):
+        q_start = html.find(">분기<")
+        after_q = html[q_start:]
+        trs = re.findall(r"<tr[^>]*>(.*?)</tr>", after_q, re.DOTALL)
+        if not trs:
+            return [], []
+        ths = re.findall(r"<th[^>]*>(.*?)</th>", trs[0], re.DOTALL)
+        years = []
+        for th in ths:
+            c = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", th)).strip()
+            m = re.match(r"(\d{4}/\d{2})(\(E\))?", c)
+            if m:
+                years.append((m.group(1), "(E)" in c))
+        roe_idx = html.find("ROE(%)")
+        titles = re.findall(r'<td[^>]*title="(-?[0-9.N/A]+)"', html[roe_idx:roe_idx+3000])
+        return years[:n_annual], titles[:n_annual]
 
-    actual_avg = round(sum(h["roe_pct"] for h in actual_roe) / len(actual_roe), 2) if actual_roe else None
-    est_avg = round(sum(h["roe_pct"] for h in est_roe) / len(est_roe), 2) if est_roe else None
+    try:
+        html0 = fetch(0)
+        act_years, act_titles = parse(html0, 4)
+        actual = []
+        for (yr, _), t in zip(act_years, act_titles):
+            try: actual.append({"year": yr, "roe_pct": float(t)})
+            except: pass
 
-    return {
-        "actual": actual_roe,       # 실적 ROE 목록
-        "actual_avg": actual_avg,   # 실적 평균
-        "estimate": est_roe,        # 추정 ROE 목록
-        "estimate_avg": est_avg,    # 추정 평균
-    }
+        estimate = []
+        if ext_y > 0:
+            htmlE = fetch(ext_y)
+            est_years, est_titles = parse(htmlE, 4 + ext_y)
+            for (yr, is_est), t in zip(est_years, est_titles):
+                if is_est:
+                    try: estimate.append({"year": yr, "roe_pct": float(t)})
+                    except: pass
+
+        act_avg = round(sum(h["roe_pct"] for h in actual) / len(actual), 2) if actual else None
+        est_avg = round(sum(h["roe_pct"] for h in estimate) / len(estimate), 2) if estimate else None
+
+        return {
+            "actual": actual,
+            "actual_avg": act_avg,
+            "estimate": estimate,
+            "estimate_avg": est_avg,
+        }
+    except Exception as e:
+        return {"actual": [], "actual_avg": None, "estimate": [], "estimate_avg": None}
 
 # ─── PBGR 계산 ───────────────────────────────────────────
 def calc_kr(price, equity_100m, roe_pct, shares, dv, req_return):
@@ -184,7 +225,7 @@ def main():
             shares = get_naver_shares(ticker)
             financials = get_naver_financials(ticker)
             latest_yr, latest = get_latest_actual(financials)
-            roe_hist = get_roe_stats(financials)
+            roe_hist = get_wisereport_roe(ticker)
 
             # BPS × 주식수 = 자본총계
             bps_actual = latest.get("bps")

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-22 14:21",
+  "updated": "2026-03-22 14:30",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -17,26 +17,38 @@
       "roe_ref": {
         "actual": [
           {
-            "year": "2023.12",
+            "year": "2022/12",
+            "roe_pct": 17.07
+          },
+          {
+            "year": "2023/12",
             "roe_pct": 4.15
           },
           {
-            "year": "2024.12",
+            "year": "2024/12",
             "roe_pct": 9.03
           },
           {
-            "year": "2025.12",
+            "year": "2025/12",
             "roe_pct": 10.85
           }
         ],
-        "actual_avg": 8.01,
+        "actual_avg": 10.28,
         "estimate": [
           {
-            "year": "2026.12&#40;E&#41;",
+            "year": "2026/12",
+            "roe_pct": 9.03
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 10.85
+          },
+          {
+            "year": "2028/12",
             "roe_pct": 32.93
           }
         ],
-        "estimate_avg": 32.93
+        "estimate_avg": 17.6
       },
       "required_return_pct": 10.0,
       "pbgr": 5.3329,
@@ -57,17 +69,38 @@
       "roe_ref": {
         "actual": [
           {
-            "year": "2023.12",
+            "year": "2022/12",
+            "roe_pct": 3.55
+          },
+          {
+            "year": "2023/12",
+            "roe_pct": -15.61
+          },
+          {
+            "year": "2024/12",
             "roe_pct": 31.06
           },
           {
-            "year": "2024.12",
+            "year": "2025/12",
             "roe_pct": 44.15
           }
         ],
-        "actual_avg": 37.6,
-        "estimate": [],
-        "estimate_avg": null
+        "actual_avg": 15.79,
+        "estimate": [
+          {
+            "year": "2026/12",
+            "roe_pct": 31.06
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 44.15
+          },
+          {
+            "year": "2028/12",
+            "roe_pct": 72.5
+          }
+        ],
+        "estimate_avg": 49.24
       },
       "required_return_pct": 10.0,
       "pbgr": 0.9422,
@@ -88,26 +121,38 @@
       "roe_ref": {
         "actual": [
           {
-            "year": "2022.12",
+            "year": "2021/12",
+            "roe_pct": 27.5
+          },
+          {
+            "year": "2022/12",
             "roe_pct": 25.11
           },
           {
-            "year": "2023.12",
+            "year": "2023/12",
             "roe_pct": 21.12
           },
           {
-            "year": "2024.12",
+            "year": "2024/12",
             "roe_pct": 19.2
           }
         ],
-        "actual_avg": 21.81,
+        "actual_avg": 23.23,
         "estimate": [
           {
-            "year": "2025.12&#40;E&#41;",
+            "year": "2025/12",
+            "roe_pct": 21.12
+          },
+          {
+            "year": "2026/12",
+            "roe_pct": 19.2
+          },
+          {
+            "year": "2027/12",
             "roe_pct": 21.42
           }
         ],
-        "estimate_avg": 21.42
+        "estimate_avg": 20.58
       },
       "required_return_pct": 10.0,
       "pbgr": 5.1471,
@@ -128,26 +173,38 @@
       "roe_ref": {
         "actual": [
           {
-            "year": "2023.12",
+            "year": "2022/12",
+            "roe_pct": 4.86
+          },
+          {
+            "year": "2023/12",
             "roe_pct": 6.75
           },
           {
-            "year": "2024.12",
+            "year": "2024/12",
             "roe_pct": 3.4
           },
           {
-            "year": "2025.12",
+            "year": "2025/12",
             "roe_pct": 8.81
           }
         ],
-        "actual_avg": 6.32,
+        "actual_avg": 5.96,
         "estimate": [
           {
-            "year": "2026.12&#40;E&#41;",
+            "year": "2026/12",
+            "roe_pct": 3.4
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 8.81
+          },
+          {
+            "year": "2028/12",
             "roe_pct": 7.2
           }
         ],
-        "estimate_avg": 7.2
+        "estimate_avg": 6.47
       },
       "required_return_pct": 10.0,
       "pbgr": 4.3241,
@@ -168,26 +225,38 @@
       "roe_ref": {
         "actual": [
           {
-            "year": "2023.12",
+            "year": "2022/12",
+            "roe_pct": 3.29
+          },
+          {
+            "year": "2023/12",
             "roe_pct": 4.41
           },
           {
-            "year": "2024.12",
+            "year": "2024/12",
             "roe_pct": 7.9
           },
           {
-            "year": "2025.12",
+            "year": "2025/12",
             "roe_pct": 7.36
           }
         ],
-        "actual_avg": 6.56,
+        "actual_avg": 5.74,
         "estimate": [
           {
-            "year": "2026.12&#40;E&#41;",
+            "year": "2026/12",
+            "roe_pct": 7.9
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 7.36
+          },
+          {
+            "year": "2028/12",
             "roe_pct": 7.85
           }
         ],
-        "estimate_avg": 7.85
+        "estimate_avg": 7.7
       },
       "required_return_pct": 10.0,
       "pbgr": 2.0042,
