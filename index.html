@@ -112,7 +112,9 @@
       <th>전일 종가</th>
       <th>적정가</th>
       <th>괴리율</th>
-      <th>현재 자본 (추정)</th>
+      <th style="color:#334155;font-weight:500">자본총계 (실적)</th>
+      <th style="color:#334155;font-weight:500">자본총계 (현재)</th>
+      <th style="color:#334155;font-weight:500">자본총계 (추정)</th>
       <th>PBGR</th>
       <th>ROE ✎</th>
       <th style="color:#334155;font-weight:500">ROE 참고</th>
@@ -236,12 +238,22 @@ function renderTable() {
       equityNow = a.equity_now_100m;
     }
 
+    // 자본총계 포맷 헬퍼
+    const fmtEq = v => v ? (v >= 10000 ? (v/10000).toFixed(1) + '조' : Math.round(v).toLocaleString('ko-KR') + '억') : '—';
+
+    // 자본총계 (추정): equity_series에서 (E) 포함 최신값
+    const eqSeries = a.equity_series || {};
+    const estKeys = Object.keys(eqSeries).filter(k=>k.includes('(E)')).sort();
+    const eqEst = estKeys.length ? eqSeries[estKeys[estKeys.length-1]] : null;
+
     tr.innerHTML = `
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
       <td>${fmtKR(a.price)}</td>
       <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td>${gap(calc?.pbgr)}</td>
-      <td style="color:#64748b;font-size:0.8rem">${equityNow ? (equityNow >= 10000 ? (equityNow/10000).toFixed(1) + '조' : Math.round(equityNow).toLocaleString('ko-KR') + '억') : '—'}</td>
+      <td style="color:#64748b;font-size:0.8rem">${fmtEq(a.equity_y0_100m)}</td>
+      <td style="color:#64748b;font-size:0.8rem">${fmtEq(equityNow)}</td>
+      <td style="color:#64748b;font-size:0.8rem">${fmtEq(eqEst)}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
     `;
 

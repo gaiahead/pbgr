@@ -233,7 +233,9 @@ def get_wisereport_data(code):
             "estimate_avg": est_avg,
         }
 
-        return equity_cagr, actual_eq, roe_hist
+        # actual_eq에 추정값도 포함해서 반환 (UI 표시용)
+        equity_series_full = {**actual_eq, **est_eq}
+        return equity_cagr, equity_series_full, roe_hist
 
     except Exception as e:
         return None, {}, {"actual": [], "actual_avg": None, "estimate": [], "estimate_avg": None}
