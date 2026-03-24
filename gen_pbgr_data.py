@@ -341,7 +341,7 @@ def main():
                 "shares_common": shares_data["common"],
                 "shares_preferred": shares_data["preferred"],
                 "roe_pct": roe_pct,
-                "roe_note": cfg.get("note", roe_note),
+                "roe_note": cfg.get("note") or roe_note,
                 "equity_cagr_pct": equity_cagr,
                 "equity_series": equity_series,
                 "roe_ref": roe_hist,
