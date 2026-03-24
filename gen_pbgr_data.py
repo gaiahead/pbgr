@@ -302,11 +302,15 @@ def main():
             # 2. wisereport 추정 평균 ROE (2026E~2028E 평균) — 기본값
             # 3. wisereport 자본총계 CAGR (실적 기반) — 추정 없을 때
             # 4. wisereport 실적 평균 ROE — 최종 폴백
-            if cfg.get("roe") is not None:
-                roe_pct = cfg["roe"]
+            roe_pct = 0
+            roe_note = "미확인"
+            cfg_roe = cfg.get("roe")
+            est_avg = roe_hist.get("estimate_avg")
+            if cfg_roe is not None:
+                roe_pct = cfg_roe
                 roe_note = "config 수동 입력"
-            elif roe_hist.get("estimate_avg") is not None:
-                roe_pct = roe_hist["estimate_avg"]
+            elif est_avg is not None:
+                roe_pct = est_avg
                 roe_note = "wisereport 추정 평균 ROE 자동"
             elif equity_cagr is not None:
                 roe_pct = equity_cagr
