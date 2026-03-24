@@ -23,7 +23,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance scipy
+        run: |
+          pip install yfinance scipy playwright
+          playwright install chromium --with-deps
 
       - name: Generate PBGR data
         run: python gen_pbgr_data.py
