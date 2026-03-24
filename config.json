@@ -2,12 +2,12 @@
   "kr": {
     "required_return": 0.10,
     "assets": {
-      "005930": { "name": "삼성전자",   "roe": null, "preferred_ticker": "005935", "note": "wisereport 자본CAGR 자동" },
-      "000660": { "name": "SK하이닉스", "roe": null, "preferred_ticker": null,     "note": "wisereport 자본CAGR 자동" },
-      "042700": { "name": "한미반도체", "roe": null, "preferred_ticker": null,     "note": "wisereport 자본CAGR 자동" },
-      "058470": { "name": "리노공업",   "roe": null, "preferred_ticker": null,     "note": "wisereport 자본CAGR 자동" },
-      "000100": { "name": "유한양행",   "roe": null, "preferred_ticker": "000105", "note": "wisereport 자본CAGR 자동" },
-      "035420": { "name": "NAVER",      "roe": null, "preferred_ticker": null,     "note": "wisereport 자본CAGR 자동" }
+      "005930": { "name": "삼성전자",   "roe": null, "preferred_ticker": "005935" },
+      "000660": { "name": "SK하이닉스", "roe": null, "preferred_ticker": null },
+      "042700": { "name": "한미반도체", "roe": null, "preferred_ticker": null },
+      "058470": { "name": "리노공업",   "roe": null, "preferred_ticker": null },
+      "000100": { "name": "유한양행",   "roe": null, "preferred_ticker": "000105" },
+      "035420": { "name": "NAVER",      "roe": null, "preferred_ticker": null }
     }
   }
 }
