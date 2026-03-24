@@ -148,12 +148,19 @@ def get_wisereport_equity_cagr(code):
                 f"https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={code}",
                 wait_until="networkidle", timeout=30000
             )
+            # Financial Summary 연간 탭 클릭 (2026E~2028E 3년치 표시)
+            try:
+                page.click("#cns_Tab21", timeout=5000)
+                page.wait_for_timeout(1500)
+            except:
+                pass
+
             result = page.evaluate("""() => {
                 const tables = document.querySelectorAll('table');
                 for (let t of tables) {
                     if (!t.innerText.includes('자본총계(지배)')) continue;
                     const ths = Array.from(t.querySelectorAll('th')).map(h=>h.innerText.trim());
-                    // 연도 헤더 파싱 (연간 컬럼만: YYYY/MM 또는 YYYY/MM(E))
+                    // 연도 헤더 파싱 (YYYY/MM 또는 YYYY/MM(E))
                     const yearCols = [];
                     ths.forEach((h, i) => {
                         const m = h.match(/(\\d{4}\\/\\d{2})(\\(E\\))?/);
