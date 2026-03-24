@@ -194,20 +194,29 @@ def get_wisereport_equity_cagr(code):
         if not actual_keys:
             return None, equity_series
 
-        oldest = actual_keys[0]
+        # base = 최신 실적 연도
+        base_key = actual_keys[-1]
+        base_val = equity_series[base_key]
 
-        # 최신 추정치 우선, 없으면 최신 실적
+        # target = 최신 추정치(E), 없으면 최신 실적
         est_keys = sorted([k for k in equity_series if "(E)" in k])
-        latest = est_keys[-1].replace("(E)", "") if est_keys else actual_keys[-1]
-        latest_val_key = est_keys[-1] if est_keys else actual_keys[-1]
-        latest_val = equity_series[latest_val_key]
-        oldest_val = equity_series[oldest]
+        if est_keys:
+            target_key = est_keys[-1]
+            target_val = equity_series[target_key]
+            target_year = target_key.replace("(E)", "")
+        else:
+            target_key = actual_keys[-1]
+            target_val = equity_series[target_key]
+            target_year = target_key
 
-        n = int(latest[:4]) - int(oldest[:4])
-        if n <= 0 or oldest_val <= 0:
+        n = int(target_year[:4]) - int(base_key[:4])
+        if n <= 0 or base_val <= 0:
+            # n=0이면 단순 성장률로 대체
+            if base_val > 0:
+                return round((target_val / base_val - 1) * 100, 2), actual_series
             return None, actual_series
 
-        cagr = (latest_val / oldest_val) ** (1 / n) - 1
+        cagr = (target_val / base_val) ** (1 / n) - 1
         return round(cagr * 100, 2), actual_series
 
     except Exception as e:
