@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-24 20:13",
+  "updated": "2026-03-24 20:16",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -15,7 +15,7 @@
       "shares_common": 5919637922,
       "shares_preferred": 815974664,
       "roe_pct": 28.41,
-      "roe_note": "wisereport 자본CAGR 자동",
+      "roe_note": "wisereport 추정 평균 ROE 자동",
       "equity_cagr_pct": 32.94,
       "equity_series": {
         "2021/12": 2962377,
@@ -81,7 +81,7 @@
       "shares_common": 712702365,
       "shares_preferred": null,
       "roe_pct": 50.49,
-      "roe_note": "wisereport 자본CAGR 자동",
+      "roe_note": "wisereport 추정 평균 ROE 자동",
       "equity_cagr_pct": 69.57,
       "equity_series": {
         "2021/12": 621571,
@@ -147,7 +147,7 @@
       "shares_common": 95312200,
       "shares_preferred": null,
       "roe_pct": 40.9,
-      "roe_note": "wisereport 자본CAGR 자동",
+      "roe_note": "wisereport 추정 평균 ROE 자동",
       "equity_cagr_pct": 48.34,
       "equity_series": {
         "2021/12": 3468,
@@ -209,7 +209,7 @@
       "shares_common": 76211850,
       "shares_preferred": null,
       "roe_pct": 22.33,
-      "roe_note": "wisereport 자본CAGR 자동",
+      "roe_note": "wisereport 추정 평균 ROE 자동",
       "equity_cagr_pct": 18.21,
       "equity_series": {
         "2020/12": 3373,
@@ -275,7 +275,7 @@
       "shares_common": 79647601,
       "shares_preferred": 1180940,
       "roe_pct": 8.62,
-      "roe_note": "wisereport 자본CAGR 자동",
+      "roe_note": "wisereport 추정 평균 ROE 자동",
       "equity_cagr_pct": 6.04,
       "equity_series": {
         "2021/12": 19269,
@@ -337,7 +337,7 @@
       "shares_common": 156852638,
       "shares_preferred": null,
       "roe_pct": 8.02,
-      "roe_note": "wisereport 자본CAGR 자동",
+      "roe_note": "wisereport 추정 평균 ROE 자동",
       "equity_cagr_pct": 7.04,
       "equity_series": {
         "2021/12": 235356,
