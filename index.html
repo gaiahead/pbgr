@@ -115,7 +115,7 @@
       <th>현재 자본 (추정)</th>
       <th>PBGR</th>
       <th>ROE ✎</th>
-      <th style="color:#334155;font-weight:500">ROE 참고</th>
+      <th style="color:#334155;font-weight:500">자본CAGR</th>
       <th style="color:#334155;font-weight:500">주식수</th>
     </tr></thead>
     <tbody id="kr-body"></tbody>
@@ -283,17 +283,15 @@ function renderTable() {
     roeTd.appendChild(roeCell);
     tr.appendChild(roeTd);
 
-    // ROE 참고 컬럼
+    // 자본CAGR 컬럼 (계산에 실제 사용된 값)
     const histTd = document.createElement('td');
     histTd.style.cssText = 'text-align:right;white-space:nowrap';
-    const ref = a.roe_ref;
-    if (ref) {
-      let html = '';
-      if (ref.actual_avg != null)
-        html += `<div style="font-size:0.78rem;color:#64748b">실적 평균 <span style="color:#94a3b8;font-weight:600">${ref.actual_avg.toFixed(1)}%</span></div>`;
-      if (ref.estimate_avg != null)
-        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">추정 평균 <span style="color:#475569;font-weight:600">${ref.estimate_avg.toFixed(1)}%</span></div>`;
-      histTd.innerHTML = html || '—';
+    if (a.roe_pct != null) {
+      const eq = a.equity_series;
+      const eqYears = eq ? Object.keys(eq).sort() : [];
+      const baseYr = eqYears.length ? eqYears[eqYears.length - 1] : null;
+      histTd.innerHTML = `<div style="font-size:0.9rem;color:#94a3b8;font-weight:700">${a.roe_pct.toFixed(1)}%</div>`
+        + (baseYr ? `<div style="font-size:0.7rem;color:#475569;margin-top:1px">자본CAGR</div>` : '');
     } else {
       histTd.textContent = '—';
     }
