@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-24 20:16",
+  "updated": "2026-03-24 20:38",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -10,12 +10,12 @@
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 4310590.0,
-      "equity_now_100m": 4660160.5,
+      "equity_now_100m": 4710814.6,
       "shares": 6735612586,
       "shares_common": 5919637922,
       "shares_preferred": 815974664,
-      "roe_pct": 28.41,
-      "roe_note": "wisereport 추정 평균 ROE 자동",
+      "roe_pct": 32.94,
+      "roe_note": "자본총계 추정 CAGR 자동",
       "equity_cagr_pct": 32.94,
       "equity_series": {
         "2021/12": 2962377,
@@ -65,8 +65,8 @@
         "estimate_avg": 28.41
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.5957,
-      "fair_price": 318446.0
+      "pbgr": 0.4179,
+      "fair_price": 453988.0
     },
     {
       "name": "SK하이닉스",
@@ -76,12 +76,12 @@
       "base_date": "2025.12",
       "bps_actual": 174538,
       "equity_y0_100m": 1243936.5,
-      "equity_now_100m": 1413025.6,
+      "equity_now_100m": 1466613.3,
       "shares": 712702365,
       "shares_common": 712702365,
       "shares_preferred": null,
-      "roe_pct": 50.49,
-      "roe_note": "wisereport 추정 평균 ROE 자동",
+      "roe_pct": 69.57,
+      "roe_note": "자본총계 추정 CAGR 자동",
       "equity_cagr_pct": 69.57,
       "equity_series": {
         "2021/12": 621571,
@@ -131,8 +131,8 @@
         "estimate_avg": 50.49
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.224,
-      "fair_price": 4401484.0
+      "pbgr": 0.0661,
+      "fair_price": 14923076.0
     },
     {
       "name": "한미반도체",
@@ -142,12 +142,12 @@
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6936.8,
-      "equity_now_100m": 7719.6,
+      "equity_now_100m": 7844.5,
       "shares": 95312200,
       "shares_common": 95312200,
       "shares_preferred": null,
-      "roe_pct": 40.9,
-      "roe_note": "wisereport 추정 평균 ROE 자동",
+      "roe_pct": 48.34,
+      "roe_note": "자본총계 추정 CAGR 자동",
       "equity_cagr_pct": 48.34,
       "equity_series": {
         "2021/12": 3468,
@@ -193,8 +193,8 @@
         "estimate_avg": 40.9
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.1681,
-      "fair_price": 93588.0
+      "pbgr": 1.8717,
+      "fair_price": 158416.0
     },
     {
       "name": "리노공업",
@@ -204,12 +204,12 @@
       "base_date": "2024.12",
       "bps_actual": 8204,
       "equity_y0_100m": 6252.4,
-      "equity_now_100m": 8144.7,
+      "equity_now_100m": 7786.8,
       "shares": 76211850,
       "shares_common": 76211850,
       "shares_preferred": null,
-      "roe_pct": 22.33,
-      "roe_note": "wisereport 추정 평균 ROE 자동",
+      "roe_pct": 18.21,
+      "roe_note": "자본총계 추정 CAGR 자동",
       "equity_cagr_pct": 18.21,
       "equity_series": {
         "2020/12": 3373,
@@ -259,8 +259,8 @@
         "estimate_avg": 22.33
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.5289,
-      "fair_price": 30406.0
+      "pbgr": 5.1845,
+      "fair_price": 20696.0
     },
     {
       "name": "유한양행",
@@ -270,12 +270,12 @@
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 24939.6,
-      "equity_now_100m": 25591.0,
+      "equity_now_100m": 25399.9,
       "shares": 80828541,
       "shares_common": 79647601,
       "shares_preferred": 1180940,
-      "roe_pct": 8.62,
-      "roe_note": "wisereport 추정 평균 ROE 자동",
+      "roe_pct": 6.04,
+      "roe_note": "자본총계 추정 CAGR 자동",
       "equity_cagr_pct": 6.04,
       "equity_series": {
         "2021/12": 19269,
@@ -321,8 +321,8 @@
         "estimate_avg": 8.62
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.4495,
-      "fair_price": 27714.0
+      "pbgr": 4.4111,
+      "fair_price": 21673.0
     },
     {
       "name": "NAVER",
@@ -332,12 +332,12 @@
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 289230.0,
-      "equity_now_100m": 296272.2,
+      "equity_now_100m": 295431.4,
       "shares": 156852638,
       "shares_common": 156852638,
       "shares_preferred": null,
-      "roe_pct": 8.02,
-      "roe_note": "wisereport 추정 평균 ROE 자동",
+      "roe_pct": 7.04,
+      "roe_note": "자본총계 추정 CAGR 자동",
       "equity_cagr_pct": 7.04,
       "equity_series": {
         "2021/12": 235356,
@@ -383,8 +383,8 @@
         "estimate_avg": 8.02
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.3642,
-      "fair_price": 156503.0
+      "pbgr": 1.4975,
+      "fair_price": 142573.0
     }
   ]
 }
