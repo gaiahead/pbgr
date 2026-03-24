@@ -187,52 +187,71 @@ def get_wisereport_equity_cagr(code):
     cagr = (equity_series[latest] / equity_series[oldest]) ** (1 / n) - 1
     return round(cagr * 100, 2), equity_series
 
-def get_wisereport_roe(code, ext_y=3):
-    """wisereport Financial Summary에서 5년 실적 + 추정 ROE 수집"""
-    def fetch(ey):
-        url = (f"https://navercomp.wisereport.co.kr/v2/company/ajax/cF1001.aspx"
-               f"?cmp_cd={code}&fin_typ=0&freq_typ=A&extY={ey}&extQ=0"
-               f"&encparam=alV0blgxYnRzZldFanllNFlqU3Ezdz09")
+def get_naver_roe(code):
+    """네이버 금융 주요재무정보 테이블에서 연간 실적·추정 ROE 수집"""
+    try:
+        url = f"https://finance.naver.com/item/main.naver?code={code}"
         req = urllib.request.Request(url, headers={
             "User-Agent": "Mozilla/5.0",
-            "Referer": f"https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={code}",
+            "Referer": "https://finance.naver.com/",
         })
         with urllib.request.urlopen(req, timeout=15) as res:
-            return res.read().decode("utf-8", errors="ignore")
+            html = res.read().decode("utf-8", errors="ignore")
 
-    def parse(html, n_annual):
-        q_start = html.find(">분기<")
-        after_q = html[q_start:]
-        trs = re.findall(r"<tr[^>]*>(.*?)</tr>", after_q, re.DOTALL)
-        if not trs:
-            return [], []
-        ths = re.findall(r"<th[^>]*>(.*?)</th>", trs[0], re.DOTALL)
-        years = []
-        for th in ths:
-            c = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", th)).strip()
-            m = re.match(r"(\d{4}/\d{2})(\(E\))?", c)
+        # ROE가 포함된 테이블 추출
+        tables = re.findall(r"<table[^>]*>(.*?)</table>", html, re.DOTALL)
+        roe_table = None
+        for t in tables:
+            if "ROE" in t:
+                roe_table = t
+                break
+        if not roe_table:
+            return {"actual": [], "actual_avg": None, "estimate": [], "estimate_avg": None}
+
+        # 헤더에서 연도 파싱 (예: 2023.12, 2024.12, 2026.12(E))
+        ths = re.findall(r"<th[^>]*>(.*?)</th>", roe_table, re.DOTALL)
+        ths_clean = [re.sub(r"<[^>]+>", "", h).replace("&#40;", "(").replace("&#41;", ")").strip() for h in ths]
+
+        year_cols = []  # (col_index, year_str, is_estimate)
+        for i, h in enumerate(ths_clean):
+            m = re.match(r"(\d{4})\.(\d{2})(\(E\))?", h)
             if m:
-                years.append((m.group(1), "(E)" in c))
-        roe_idx = html.find("ROE(%)")
-        titles = re.findall(r'<td[^>]*title="(-?[0-9.N/A]+)"', html[roe_idx:roe_idx+3000])
-        return years[:n_annual], titles[:n_annual]
+                yr = f"{m.group(1)}/{m.group(2)}"
+                is_est = bool(m.group(3))
+                year_cols.append((i, yr, is_est))
 
-    try:
-        html0 = fetch(0)
-        act_years, act_titles = parse(html0, 4)
-        actual = []
-        for (yr, _), t in zip(act_years, act_titles):
-            try: actual.append({"year": yr, "roe_pct": float(t)})
-            except: pass
+        # ROE 행에서 값 파싱
+        trs = re.findall(r"<tr[^>]*>(.*?)</tr>", roe_table, re.DOTALL)
+        roe_vals = []
+        for tr in trs:
+            if "ROE" in tr:
+                tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+                tds_clean = [re.sub(r"<[^>]+>", "", d).strip() for d in tds]
+                for v in tds_clean:
+                    try:
+                        roe_vals.append(float(v.replace(",", "")))
+                    except:
+                        roe_vals.append(None)
+                break
 
-        estimate = []
-        if ext_y > 0:
-            htmlE = fetch(ext_y)
-            est_years, est_titles = parse(htmlE, 4 + ext_y)
-            for (yr, is_est), t in zip(est_years, est_titles):
-                if is_est:
-                    try: estimate.append({"year": yr, "roe_pct": float(t)})
-                    except: pass
+        # 연간 실적 컬럼만 (최근 연간 실적 = 처음 3개 연도 컬럼)
+        # 헤더 구조: ['주요재무정보', '최근 연간 실적', '최근 분기 실적', 연도들...]
+        # 연도 컬럼 인덱스는 헤더 순서대로 매핑
+        actual, estimate = [], []
+        for idx, (col_i, yr, is_est) in enumerate(year_cols):
+            if idx >= len(roe_vals):
+                break
+            v = roe_vals[idx]
+            if v is None:
+                continue
+            entry = {"year": yr, "roe_pct": v}
+            if is_est:
+                estimate.append(entry)
+            else:
+                actual.append(entry)
+
+        # 최근 연간 실적 3개만 (분기 제외)
+        actual = actual[:3]
 
         act_avg = round(sum(h["roe_pct"] for h in actual) / len(actual), 2) if actual else None
         est_avg = round(sum(h["roe_pct"] for h in estimate) / len(estimate), 2) if estimate else None
@@ -245,6 +264,11 @@ def get_wisereport_roe(code, ext_y=3):
         }
     except Exception as e:
         return {"actual": [], "actual_avg": None, "estimate": [], "estimate_avg": None}
+
+
+def get_wisereport_roe(code, ext_y=3):
+    """네이버 금융으로 ROE 수집 (wisereport 대체)"""
+    return get_naver_roe(code)
 
 # ─── PBGR 계산 ───────────────────────────────────────────
 def calc_kr(price, equity_100m, roe_pct, shares, dv, req_return):
