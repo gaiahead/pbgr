@@ -306,6 +306,7 @@ def main():
             roe_note = "미확인"
             cfg_roe = cfg.get("roe")
             est_avg = roe_hist.get("estimate_avg")
+            print(f"    [DEBUG] cfg_roe={cfg_roe} est_avg={est_avg} equity_cagr={equity_cagr}")
             if cfg_roe is not None:
                 roe_pct = cfg_roe
                 roe_note = "config 수동 입력"
