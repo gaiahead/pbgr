@@ -298,24 +298,19 @@ def main():
             equity_cagr, equity_series, roe_hist = get_wisereport_data(ticker)
 
             # ROE 기본값 우선순위:
-            # 1. config.json에 roe가 명시된 경우 (null 아님) — 사용자 수동 입력
-            # 2. wisereport 추정 평균 ROE (2026E~2028E 평균) — 기본값
-            # 3. wisereport 자본총계 CAGR (실적 기반) — 추정 없을 때
-            # 4. wisereport 실적 평균 ROE — 최종 폴백
+            # 1. config.json 수동 입력 (roe 필드)
+            # 2. 자본총계(지배) CAGR — 기본값 (최신 실적A → 최신 추정E 복리)
+            # 3. 실적 평균 ROE — 최종 폴백
             roe_pct = 0
             roe_note = "미확인"
             cfg_roe = cfg.get("roe")
-            est_avg = roe_hist.get("estimate_avg")
 
             if cfg_roe is not None:
                 roe_pct = cfg_roe
                 roe_note = "config 수동 입력"
-            elif est_avg is not None:
-                roe_pct = est_avg
-                roe_note = "wisereport 추정 평균 ROE 자동"
             elif equity_cagr is not None:
                 roe_pct = equity_cagr
-                roe_note = "wisereport 자본CAGR 자동"
+                roe_note = "자본총계 추정 CAGR 자동"
             else:
                 roe_pct = roe_hist.get("actual_avg") or 0
                 roe_note = "wisereport 실적 평균 ROE 자동"
