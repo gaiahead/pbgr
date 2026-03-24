@@ -324,7 +324,13 @@ def main():
 
             # BPS × 주식수 = 자본총계
             bps_actual = latest.get("bps")
-            equity_100m = (bps_actual * shares / 1e8) if bps_actual and shares else None
+            bps_equity_100m = (bps_actual * shares / 1e8) if bps_actual and shares else None
+            # wisereport 자본총계(지배) 실적 최신값 우선 사용 (더 정확)
+            actual_eq_keys = sorted([k for k in equity_series if "(E)" not in k])
+            if actual_eq_keys:
+                equity_100m = equity_series[actual_eq_keys[-1]]
+            else:
+                equity_100m = bps_equity_100m
 
             dv = date_value(latest_yr, today) if latest_yr else 0
 
