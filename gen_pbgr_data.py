@@ -147,12 +147,17 @@ def get_wisereport_data(code):
                 f"https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={code}",
                 wait_until="networkidle", timeout=30000
             )
-            # Financial Summary 연간 탭 클릭 (2028E까지 표시됨)
+            # Financial Summary 연간 탭 클릭 (2026E~2028E 3년치 표시)
+            # 클릭 후 2027(E) 또는 2028(E) 컬럼이 나타날 때까지 대기
             try:
-                page.click("#cns_Tab21", timeout=5000)
-                page.wait_for_timeout(1500)
+                page.click("#cns_Tab21", timeout=8000)
+                # 추정 컬럼 나타날 때까지 최대 5초 대기
+                page.wait_for_function(
+                    "() => document.body.innerText.includes('2027') || document.body.innerText.includes('2028')",
+                    timeout=5000
+                )
             except:
-                pass
+                page.wait_for_timeout(2000)
 
             result = page.evaluate("""() => {
                 const tables = document.querySelectorAll('table');
