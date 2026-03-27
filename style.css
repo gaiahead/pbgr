@@ -1,0 +1,101 @@
+/* PBGR 가치평가 모니터 */
+* { box-sizing: border-box; margin: 0; padding: 0 }
+
+body {
+  font-family: 'Apple SD Gothic Neo', 'Pretendard', sans-serif;
+  background: #0f1117;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* ─── Header ─── */
+header {
+  padding: 20px 28px 14px;
+  border-bottom: 1px solid #1e2535;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.header-left h1 { font-size: 1.2rem; font-weight: 700; color: #f8fafc }
+.header-left p  { font-size: 0.74rem; color: #475569; margin-top: 4px }
+.header-right   { display: flex; align-items: center; gap: 8px }
+
+/* ─── Save Button ─── */
+.save-btn {
+  font-size: 0.75rem; font-weight: 600; padding: 7px 16px; border-radius: 8px;
+  border: 1px solid #1e3a5f; background: #1e293b; color: #60a5fa; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.save-btn:hover   { background: #1e3a5f; color: #93c5fd }
+.save-btn.saved   { border-color: #166534; background: #14532d; color: #4ade80 }
+.save-btn.unsaved { border-color: #92400e; background: #451a03; color: #fbbf24 }
+
+/* ─── Section ─── */
+.section { padding: 24px 28px 0 }
+.section:last-of-type { padding-bottom: 32px }
+
+.section-title {
+  font-size: 0.75rem; font-weight: 700; color: #64748b;
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+}
+.param {
+  font-size: 0.78rem; color: #94a3b8; font-weight: 500;
+  text-transform: none; letter-spacing: 0;
+  background: #161b27; border: 1px solid #1e2535; border-radius: 6px;
+  padding: 4px 12px; display: flex; align-items: center; gap: 6px;
+}
+
+/* ─── Table ─── */
+table { width: 100%; border-collapse: collapse; font-size: 0.84rem }
+thead tr { border-bottom: 1px solid #1e2535 }
+th {
+  padding: 8px 14px; text-align: right; font-size: 0.68rem;
+  font-weight: 600; color: #475569; letter-spacing: .04em; white-space: nowrap;
+}
+th:first-child { text-align: left }
+tbody tr { border-bottom: 1px solid #161b27; transition: background .12s }
+tbody tr:hover { background: #141820 }
+td { padding: 12px 14px; text-align: right; color: #cbd5e1; white-space: nowrap }
+td:first-child { text-align: left }
+
+.name   { font-weight: 700; color: #f1f5f9; font-size: 0.88rem }
+.ticker { font-size: 0.68rem; color: #475569; margin-top: 2px }
+
+.pbgr-val { font-weight: 800; font-size: 1.05rem }
+.under { color: #4ade80 }
+.over  { color: #f87171 }
+
+/* ─── ROE Input ─── */
+.roe-cell { display: flex; align-items: center; justify-content: flex-end; gap: 6px }
+.roe-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; cursor: help }
+.roe-input {
+  -moz-appearance: textfield;
+  background: #1a2030; border: 1px solid #2d3748; border-radius: 6px;
+  color: #e2e8f0; font-size: 0.92rem; font-family: inherit;
+  width: 64px; text-align: right; outline: none; padding: 5px 8px;
+  transition: border-color .15s, color .15s;
+}
+.roe-input::-webkit-inner-spin-button,
+.roe-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
+.roe-input:focus { border-color: #60a5fa; color: #f1f5f9 }
+.roe-input.dirty { border-color: #92400e; color: #fbbf24 }
+.unit { color: #475569; font-size: 0.78rem }
+
+/* ─── Required Return Input ─── */
+.req-input {
+  -moz-appearance: textfield;
+  background: #1a2030; border: 1px solid #2d3748; border-radius: 6px;
+  color: #e2e8f0; font-size: 0.84rem; font-family: inherit;
+  width: 52px; text-align: right; outline: none; padding: 4px 8px;
+  transition: border-color .15s;
+}
+.req-input::-webkit-inner-spin-button,
+.req-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
+.req-input:focus { border-color: #60a5fa }
+
+/* ─── Misc ─── */
+.status-msg { font-size: 0.7rem; color: #475569 }
+.note { font-size: 0.68rem; color: #334155; padding: 12px 28px 24px }
