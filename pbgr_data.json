@@ -1,12 +1,12 @@
 {
-  "updated": "2026-03-30 07:40",
+  "updated": "2026-03-30 19:46",
   "kr_required_return": 0.1,
   "assets": [
     {
       "name": "삼성전자",
       "ticker": "005930",
       "market": "KR",
-      "price": 179700,
+      "price": 176300,
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 4243133,
@@ -68,14 +68,14 @@
         "estimate_avg": 28.49
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.3926,
+      "pbgr": 0.3852,
       "fair_price": 457665.0
     },
     {
       "name": "SK하이닉스",
       "ticker": "000660",
       "market": "KR",
-      "price": 922000,
+      "price": 873000,
       "base_date": "2025.12",
       "bps_actual": 174538,
       "equity_y0_100m": 1205162,
@@ -137,14 +137,14 @@
         "estimate_avg": 52.36
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.0403,
+      "pbgr": 0.0381,
       "fair_price": 22889044.0
     },
     {
       "name": "한미반도체",
       "ticker": "042700",
       "market": "KR",
-      "price": 275500,
+      "price": 260500,
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6903,
@@ -201,14 +201,14 @@
         "estimate_avg": 40.9
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.7365,
+      "pbgr": 1.642,
       "fair_price": 158650.0
     },
     {
       "name": "리노공업",
       "ticker": "058470",
       "market": "KR",
-      "price": 104900,
+      "price": 98400,
       "base_date": "2025.12",
       "bps_actual": 9635,
       "equity_y0_100m": 7312,
@@ -270,14 +270,14 @@
         "estimate_avg": 22.06
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.0575,
+      "pbgr": 3.8061,
       "fair_price": 25853.0
     },
     {
       "name": "유한양행",
       "ticker": "000100",
       "market": "KR",
-      "price": 100400,
+      "price": 98500,
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 23068,
@@ -334,14 +334,14 @@
         "estimate_avg": 8.62
       },
       "required_return_pct": 10.0,
-      "pbgr": 5.0037,
+      "pbgr": 4.909,
       "fair_price": 20065.0
     },
     {
       "name": "NAVER",
       "ticker": "035420",
       "market": "KR",
-      "price": 212500,
+      "price": 207000,
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 275820,
@@ -398,7 +398,7 @@
         "estimate_avg": 8.05
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.5538,
+      "pbgr": 1.5136,
       "fair_price": 136765.0
     }
   ]
