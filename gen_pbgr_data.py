@@ -161,6 +161,52 @@ def get_latest_actual(financials: dict[str, dict[str, Any]]) -> tuple[Optional[s
     return latest_yr, actual[latest_yr]
 
 
+def build_naver_roe_hist(financials: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """네이버 파이낸스 연간 ROE를 wisereport 형식으로 변환.
+
+    wisereport가 실패하거나 미설치인 환경에서도 PBGR 계산이 끊기지 않도록
+    최소한의 실적/추정 ROE 히스토리를 제공한다.
+    """
+    actual: list[dict[str, Any]] = []
+    estimate: list[dict[str, Any]] = []
+
+    for year in sorted(financials.keys()):
+        roe = financials[year].get("roe")
+        if roe is None:
+            continue
+        entry = {"year": year.replace("&#40;E&#41;", "").replace("(E)", ""), "roe_pct": roe}
+        if is_estimate(year):
+            estimate.append(entry)
+        else:
+            actual.append(entry)
+
+    actual = actual[-5:]
+    estimate = estimate[:3]
+    act_avg = round(sum(h["roe_pct"] for h in actual) / len(actual), 2) if actual else None
+    est_avg = round(sum(h["roe_pct"] for h in estimate) / len(estimate), 2) if estimate else None
+
+    return {
+        "actual": actual,
+        "actual_avg": act_avg,
+        "estimate": estimate,
+        "estimate_avg": est_avg,
+    }
+
+
+def merge_roe_hist(primary: dict[str, Any], fallback: dict[str, Any]) -> dict[str, Any]:
+    """wisereport 결과가 비어 있으면 네이버 파이낸스 히스토리로 보강."""
+    if primary.get("actual") or primary.get("estimate"):
+        merged = {**fallback, **primary}
+        if not merged.get("actual") and fallback.get("actual"):
+            merged["actual"] = fallback["actual"]
+            merged["actual_avg"] = fallback.get("actual_avg")
+        if not merged.get("estimate") and fallback.get("estimate"):
+            merged["estimate"] = fallback["estimate"]
+            merged["estimate_avg"] = fallback.get("estimate_avg")
+        return merged
+    return fallback
+
+
 # ─── Wisereport ───────────────────────────────────────────
 _EMPTY_ROE_HIST: dict[str, Any] = {
     "actual": [], "actual_avg": None,
@@ -340,7 +386,7 @@ def resolve_roe(cfg: dict[str, Any], equity_cagr: Optional[float],
     if equity_cagr is not None:
         return equity_cagr, "자본총계 추정 CAGR 자동"
     actual_avg = roe_hist.get("actual_avg") or 0
-    return actual_avg, "wisereport 실적 평균 ROE 자동"
+    return actual_avg, "실적 평균 ROE 자동"
 
 
 # ─── Equity Resolution ───────────────────────────────────
@@ -366,6 +412,8 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
     financials = get_naver_financials(ticker)
     latest_yr, latest = get_latest_actual(financials)
     equity_cagr, equity_series, roe_hist = get_wisereport_data(ticker)
+    naver_roe_hist = build_naver_roe_hist(financials)
+    roe_hist = merge_roe_hist(roe_hist, naver_roe_hist)
 
     roe_pct, roe_note = resolve_roe(cfg, equity_cagr, roe_hist)
     bps_actual = latest.get("bps")
