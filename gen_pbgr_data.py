@@ -251,73 +251,72 @@ def _scrape_wisereport(code: str) -> Optional[dict[str, dict[str, float]]]:
             page = browser.new_page(viewport={"width": 1400, "height": 900})
             page.goto(
                 f"https://navercomp.wisereport.co.kr/v2/company/c1010001.aspx?cmp_cd={code}",
-                wait_until="networkidle", timeout=30000,
+                wait_until="domcontentloaded", timeout=30000,
             )
-
-            # 연간 탭으로 전환해서 2026~2028E가 보이는 테이블을 강제로 연다.
-            try:
-                page.locator("#cns_Tab21").click(timeout=8000, force=True)
-                page.wait_for_function(
-                    """() => [...document.querySelectorAll('table')].some(t => {
-                        const text = t.innerText || '';
-                        return text.includes('자본총계(지배)')
-                            && text.includes('ROE(%)')
-                            && text.includes('2026/12(E)')
-                            && text.includes('2028/12(E)');
-                    })""",
-                    timeout=10000,
-                )
-            except Exception:
-                page.wait_for_timeout(3000)
-
+            page.wait_for_timeout(1500)
             return page.evaluate(_WISEREPORT_JS)
         finally:
             browser.close()
 
 
 # wisereport 테이블 파싱 JS (page.evaluate에 전달)
-_WISEREPORT_JS = """() => {
+_WISEREPORT_JS = """async () => {
     const norm = s => (s || '').replace(/\s+/g, ' ').trim();
-    const tables = [...document.querySelectorAll('table')];
-    const table = tables.find(t => {
-        const text = norm(t.innerText);
-        return text.includes('자본총계(지배)')
-            && text.includes('ROE(%)')
-            && text.includes('2026/12(E)');
-    });
-    if (!table) return null;
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    const firstHeadRow = table.querySelector('thead tr');
-    if (!firstHeadRow) return null;
-
-    const yearCols = [...firstHeadRow.querySelectorAll('th')]
-        .map(th => norm(th.innerText))
-        .map(text => {
-            const m = text.match(/(\d{4}\/\d{2})(\(E\))?/);
-            return m ? { year: m[1], isEst: !!m[2] } : null;
-        })
-        .filter(Boolean);
-
-    if (!yearCols.length) return null;
-
-    const rows = {};
-    table.querySelectorAll('tr').forEach(tr => {
-        const th = tr.querySelector('th');
-        if (!th) return;
-        const label = norm(th.innerText);
-        if (!['ROE(%)', '자본총계(지배)'].includes(label)) return;
-        const tds = [...tr.querySelectorAll('td')].map(td => norm(td.innerText));
-        const data = {};
-        yearCols.forEach((col, i) => {
-            const raw = tds[i];
-            if (!raw) return;
-            const v = parseFloat(raw.replace(/,/g, ''));
-            if (!Number.isNaN(v)) data[col.year + (col.isEst ? '(E)' : '')] = v;
+    const parseTable = () => {
+        const tables = [...document.querySelectorAll('table')];
+        const table = tables.find(t => {
+            const text = norm(t.innerText);
+            return text.includes('자본총계(지배)')
+                && text.includes('ROE(%)')
+                && text.includes('2026/12(E)')
+                && text.includes('2028/12(E)');
         });
-        rows[label] = data;
-    });
+        if (!table) return null;
 
-    return rows;
+        const firstHeadRow = table.querySelector('thead tr');
+        if (!firstHeadRow) return null;
+
+        const yearCols = [...firstHeadRow.querySelectorAll('th')]
+            .map(th => norm(th.innerText))
+            .map(text => {
+                const m = text.match(/(\d{4}\/\d{2})(\(E\))?/);
+                return m ? { year: m[1], isEst: !!m[2] } : null;
+            })
+            .filter(Boolean);
+
+        if (!yearCols.length) return null;
+
+        const rows = {};
+        table.querySelectorAll('tr').forEach(tr => {
+            const th = tr.querySelector('th');
+            if (!th) return;
+            const label = norm(th.innerText);
+            if (!['ROE(%)', '자본총계(지배)'].includes(label)) return;
+            const tds = [...tr.querySelectorAll('td')].map(td => norm(td.innerText));
+            const data = {};
+            yearCols.forEach((col, i) => {
+                const raw = tds[i];
+                if (!raw) return;
+                const v = parseFloat(raw.replace(/,/g, ''));
+                if (!Number.isNaN(v)) data[col.year + (col.isEst ? '(E)' : '')] = v;
+            });
+            rows[label] = data;
+        });
+
+        return rows;
+    };
+
+    for (let i = 0; i < 6; i++) {
+        const tab = document.querySelector('#cns_Tab21');
+        if (tab) tab.click();
+        await sleep(1200);
+        const parsed = parseTable();
+        if (parsed) return parsed;
+    }
+
+    return null;
 }"""
 
 
