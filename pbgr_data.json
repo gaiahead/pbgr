@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-13 09:44",
+  "updated": "2026-04-13 11:17",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -50,7 +50,7 @@
       "name": "SK하이닉스",
       "ticker": "000660",
       "market": "KR",
-      "price": 1030000,
+      "price": 1028000,
       "base_date": "2025.12",
       "bps_actual": 174538,
       "equity_y0_100m": 1243936.5,
@@ -78,14 +78,14 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.5747,
+      "pbgr": 0.5735,
       "fair_price": 1792350.0
     },
     {
       "name": "한미반도체",
       "ticker": "042700",
       "market": "KR",
-      "price": 277500,
+      "price": 277000,
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6936.8,
@@ -122,14 +122,14 @@
         "estimate_avg": 45.09
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.287,
+      "pbgr": 3.2811,
       "fair_price": 84423.0
     },
     {
       "name": "리노공업",
       "ticker": "058470",
       "market": "KR",
-      "price": 112100,
+      "price": 113200,
       "base_date": "2025.12",
       "bps_actual": 9635,
       "equity_y0_100m": 7343.0,
@@ -166,14 +166,14 @@
         "estimate_avg": 23.01
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.2788,
+      "pbgr": 4.3208,
       "fair_price": 26199.0
     },
     {
       "name": "유한양행",
       "ticker": "000100",
       "market": "KR",
-      "price": 91500,
+      "price": 91900,
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 24939.6,
@@ -210,14 +210,14 @@
         "estimate_avg": 7.17
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.0957,
+      "pbgr": 4.1136,
       "fair_price": 22340.0
     },
     {
       "name": "NAVER",
       "ticker": "035420",
       "market": "KR",
-      "price": 198000,
+      "price": 199200,
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 289230.0,
@@ -254,7 +254,7 @@
         "estimate_avg": 7.77
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.449,
+      "pbgr": 1.4578,
       "fair_price": 136642.0
     }
   ]
