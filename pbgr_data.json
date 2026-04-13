@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-13 11:17",
+  "updated": "2026-04-13 11:21",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -50,7 +50,7 @@
       "name": "SK하이닉스",
       "ticker": "000660",
       "market": "KR",
-      "price": 1028000,
+      "price": 1027500,
       "base_date": "2025.12",
       "bps_actual": 174538,
       "equity_y0_100m": 1243936.5,
@@ -78,14 +78,14 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.5735,
+      "pbgr": 0.5733,
       "fair_price": 1792350.0
     },
     {
       "name": "한미반도체",
       "ticker": "042700",
       "market": "KR",
-      "price": 277000,
+      "price": 277500,
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6936.8,
@@ -122,14 +122,14 @@
         "estimate_avg": 45.09
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.2811,
+      "pbgr": 3.287,
       "fair_price": 84423.0
     },
     {
       "name": "리노공업",
       "ticker": "058470",
       "market": "KR",
-      "price": 113200,
+      "price": 113300,
       "base_date": "2025.12",
       "bps_actual": 9635,
       "equity_y0_100m": 7343.0,
@@ -166,7 +166,7 @@
         "estimate_avg": 23.01
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.3208,
+      "pbgr": 4.3246,
       "fair_price": 26199.0
     },
     {
@@ -217,7 +217,7 @@
       "name": "NAVER",
       "ticker": "035420",
       "market": "KR",
-      "price": 199200,
+      "price": 199400,
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 289230.0,
@@ -254,7 +254,7 @@
         "estimate_avg": 7.77
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.4578,
+      "pbgr": 1.4593,
       "fair_price": 136642.0
     }
   ]
