@@ -275,10 +275,11 @@ _WISEREPORT_JS = """async () => {
         });
         if (!table) return null;
 
-        const firstHeadRow = table.querySelector('thead tr');
-        if (!firstHeadRow) return null;
+        const headRows = table.querySelectorAll('thead tr');
+        const yearHeadRow = headRows[headRows.length - 1];
+        if (!yearHeadRow) return null;
 
-        const yearCols = [...firstHeadRow.querySelectorAll('th')]
+        const yearCols = [...yearHeadRow.querySelectorAll('th')]
             .map(th => norm(th.innerText))
             .map(text => {
                 const m = text.match(/(\d{4}\/\d{2})(\(E\))?/);
