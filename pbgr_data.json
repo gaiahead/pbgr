@@ -1,100 +1,75 @@
 {
-  "updated": "2026-04-15 07:54",
+  "updated": "2026-04-16 07:51",
   "kr_required_return": 0.1,
   "assets": [
     {
       "name": "삼성전자",
       "ticker": "005930",
       "market": "KR",
-      "price": 206500,
+      "price": 211000,
       "base_date": "2025.12",
       "bps_actual": 63997,
-      "equity_y0_100m": 4243133,
-      "equity_now_100m": 4833583.9,
+      "equity_y0_100m": 4254936.4,
+      "equity_now_100m": 4379676.8,
       "shares": 6648649811,
       "shares_common": 5846278608,
       "shares_preferred": 802371203,
-      "roe_pct": 41.91,
-      "roe_note": "자본총계 추정 CAGR 자동",
-      "equity_cagr_pct": 41.91,
-      "equity_series": {
-        "2021/12": 2962377,
-        "2022/12": 3451861,
-        "2023/12": 3532338,
-        "2024/12": 3916876,
-        "2025/12": 4243133,
-        "2026/12(E)": 6470809,
-        "2027/12(E)": 9151892,
-        "2028/12(E)": 12126942
-      },
+      "roe_pct": 8.01,
+      "roe_note": "실적 평균 ROE 자동",
+      "equity_cagr_pct": null,
+      "equity_series": {},
       "roe_ref": {
         "actual": [
           {
-            "year": "2021/12",
-            "roe_pct": 13.92
-          },
-          {
-            "year": "2022/12",
-            "roe_pct": 17.07
-          },
-          {
-            "year": "2023/12",
+            "year": "2023.12",
             "roe_pct": 4.15
           },
           {
-            "year": "2024/12",
+            "year": "2024.12",
             "roe_pct": 9.03
           },
           {
-            "year": "2025/12",
+            "year": "2025.12",
             "roe_pct": 10.85
           }
         ],
-        "actual_avg": 11.0,
+        "actual_avg": 8.01,
         "estimate": [
           {
-            "year": "2026/12",
+            "year": "2026.12",
             "roe_pct": 44.98
-          },
-          {
-            "year": "2027/12",
-            "roe_pct": 37.57
-          },
-          {
-            "year": "2028/12",
-            "roe_pct": 28.08
           }
         ],
-        "estimate_avg": 36.88
+        "estimate_avg": 44.98
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.229,
-      "fair_price": 901719.0
+      "pbgr": 3.8695,
+      "fair_price": 54530.0
     },
     {
       "name": "SK하이닉스",
       "ticker": "000660",
       "market": "KR",
-      "price": 1103000,
+      "price": 1136000,
       "base_date": "2025.12",
       "bps_actual": 174538,
       "equity_y0_100m": 1205162,
-      "equity_now_100m": 1493491.7,
+      "equity_now_100m": 1504574.7,
       "shares": 712702365,
       "shares_common": 712702365,
       "shares_preferred": null,
-      "roe_pct": 77.94,
+      "roe_pct": 80.71000000000001,
       "roe_note": "자본총계 추정 CAGR 자동",
-      "equity_cagr_pct": 77.94,
+      "equity_cagr_pct": 80.71000000000001,
       "equity_series": {
         "2021/12": 621571,
         "2022/12": 632664,
         "2023/12": 535043,
         "2024/12": 739034,
         "2025/12": 1205162,
-        "2026/12(E)": 2707012,
-        "2027/12(E)": 4570659,
-        "2028/12(E)": 6789653
+        "2026/12(E)": 2741210,
+        "2027/12(E)": 4656768,
+        "2028/12(E)": 7112033
       },
       "roe_ref": {
         "actual": [
@@ -123,32 +98,32 @@
         "estimate": [
           {
             "year": "2026/12",
-            "roe_pct": 80.4
+            "roe_pct": 81.12
           },
           {
             "year": "2027/12",
-            "roe_pct": 51.83
+            "roe_pct": 52.18
           },
           {
             "year": "2028/12",
-            "roe_pct": 37.35
+            "roe_pct": 38.91
           }
         ],
-        "estimate_avg": 56.53
+        "estimate_avg": 57.4
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.045,
-      "fair_price": 24504593.0
+      "pbgr": 0.0395,
+      "fair_price": 28773015.0
     },
     {
       "name": "한미반도체",
       "ticker": "042700",
       "market": "KR",
-      "price": 284000,
+      "price": 295000,
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6903,
-      "equity_now_100m": 7994.4,
+      "equity_now_100m": 8003.1,
       "shares": 95312200,
       "shares_common": 95312200,
       "shares_preferred": null,
@@ -201,215 +176,140 @@
         "estimate_avg": 40.9
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.7591,
-      "fair_price": 161443.0
+      "pbgr": 1.8253,
+      "fair_price": 161620.0
     },
     {
       "name": "리노공업",
       "ticker": "058470",
       "market": "KR",
-      "price": 111600,
+      "price": 112800,
       "base_date": "2025.12",
       "bps_actual": 9635,
-      "equity_y0_100m": 7312,
-      "equity_now_100m": 7809.4,
+      "equity_y0_100m": 7343.0,
+      "equity_now_100m": 7885.2,
       "shares": 76211850,
       "shares_common": 76211850,
       "shares_preferred": null,
-      "roe_pct": 19.34,
-      "roe_note": "자본총계 추정 CAGR 자동",
-      "equity_cagr_pct": 19.34,
-      "equity_series": {
-        "2021/12": 4177,
-        "2022/12": 4932,
-        "2023/12": 5571,
-        "2024/12": 6226,
-        "2025/12": 7312,
-        "2026/12(E)": 8562,
-        "2027/12(E)": 10155,
-        "2028/12(E)": 12428
-      },
+      "roe_pct": 20.92,
+      "roe_note": "실적 평균 ROE 자동",
+      "equity_cagr_pct": null,
+      "equity_series": {},
       "roe_ref": {
         "actual": [
           {
-            "year": "2021/12",
-            "roe_pct": 27.5
-          },
-          {
-            "year": "2022/12",
-            "roe_pct": 25.11
-          },
-          {
-            "year": "2023/12",
+            "year": "2023.12",
             "roe_pct": 21.12
           },
           {
-            "year": "2024/12",
+            "year": "2024.12",
             "roe_pct": 19.2
           },
           {
-            "year": "2025/12",
+            "year": "2025.12",
             "roe_pct": 22.45
           }
         ],
-        "actual_avg": 23.08,
+        "actual_avg": 20.92,
         "estimate": [
           {
-            "year": "2026/12",
+            "year": "2026.12",
             "roe_pct": 23.17
-          },
-          {
-            "year": "2027/12",
-            "roe_pct": 23.6
-          },
-          {
-            "year": "2028/12",
-            "roe_pct": 25.14
           }
         ],
-        "estimate_avg": 23.97
+        "estimate_avg": 23.17
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.8925,
-      "fair_price": 22810.0
+      "pbgr": 4.2987,
+      "fair_price": 26240.0
     },
     {
       "name": "유한양행",
       "ticker": "000100",
       "market": "KR",
-      "price": 93600,
+      "price": 97200,
       "base_date": "2025.12",
       "bps_actual": 30855,
-      "equity_y0_100m": 23068,
-      "equity_now_100m": 23861.4,
+      "equity_y0_100m": 24939.6,
+      "equity_now_100m": 25519.4,
       "shares": 80828541,
       "shares_common": 79647601,
       "shares_preferred": 1180940,
-      "roe_pct": 9.51,
-      "roe_note": "자본총계 추정 CAGR 자동",
-      "equity_cagr_pct": 9.51,
-      "equity_series": {
-        "2021/12": 19269,
-        "2022/12": 19858,
-        "2023/12": 20513,
-        "2024/12": 21005,
-        "2025/12": 23068,
-        "2026/12(E)": 23848,
-        "2027/12(E)": 25829,
-        "2028/12(E)": 30292
-      },
+      "roe_pct": 6.32,
+      "roe_note": "실적 평균 ROE 자동",
+      "equity_cagr_pct": null,
+      "equity_series": {},
       "roe_ref": {
         "actual": [
           {
-            "year": "2021/12",
-            "roe_pct": 5.45
-          },
-          {
-            "year": "2022/12",
-            "roe_pct": 4.86
-          },
-          {
-            "year": "2023/12",
+            "year": "2023.12",
             "roe_pct": 6.75
           },
           {
-            "year": "2024/12",
+            "year": "2024.12",
             "roe_pct": 3.4
           },
           {
-            "year": "2025/12",
+            "year": "2025.12",
             "roe_pct": 8.81
           }
         ],
-        "actual_avg": 5.85,
+        "actual_avg": 6.32,
         "estimate": [
           {
-            "year": "2026/12",
+            "year": "2026.12",
             "roe_pct": 7.12
-          },
-          {
-            "year": "2027/12",
-            "roe_pct": 9.61
-          },
-          {
-            "year": "2028/12",
-            "roe_pct": 15.54
           }
         ],
-        "estimate_avg": 10.76
+        "estimate_avg": 7.12
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.3406,
-      "fair_price": 28019.0
+      "pbgr": 4.3487,
+      "fair_price": 22352.0
     },
     {
       "name": "NAVER",
       "ticker": "035420",
       "market": "KR",
-      "price": 201500,
+      "price": 211000,
       "base_date": "2025.12",
       "bps_actual": 184396,
-      "equity_y0_100m": 275820,
-      "equity_now_100m": 282312.4,
+      "equity_y0_100m": 289230.0,
+      "equity_now_100m": 296204.2,
       "shares": 156852638,
       "shares_common": 156852638,
       "shares_preferred": null,
-      "roe_pct": 6.45,
-      "roe_note": "자본총계 추정 CAGR 자동",
-      "equity_cagr_pct": 6.45,
-      "equity_series": {
-        "2021/12": 235356,
-        "2022/12": 227441,
-        "2023/12": 232060,
-        "2024/12": 254599,
-        "2025/12": 275820,
-        "2026/12(E)": 293249,
-        "2027/12(E)": 314239,
-        "2028/12(E)": 332676
-      },
+      "roe_pct": 6.56,
+      "roe_note": "실적 평균 ROE 자동",
+      "equity_cagr_pct": null,
+      "equity_series": {},
       "roe_ref": {
         "actual": [
           {
-            "year": "2021/12",
-            "roe_pct": 106.72
-          },
-          {
-            "year": "2022/12",
-            "roe_pct": 3.29
-          },
-          {
-            "year": "2023/12",
+            "year": "2023.12",
             "roe_pct": 4.41
           },
           {
-            "year": "2024/12",
+            "year": "2024.12",
             "roe_pct": 7.9
           },
           {
-            "year": "2025/12",
+            "year": "2025.12",
             "roe_pct": 7.36
           }
         ],
-        "actual_avg": 25.94,
+        "actual_avg": 6.56,
         "estimate": [
           {
-            "year": "2026/12",
+            "year": "2026.12",
             "roe_pct": 7.7
-          },
-          {
-            "year": "2027/12",
-            "roe_pct": 8.09
-          },
-          {
-            "year": "2028/12",
-            "roe_pct": 7.9
           }
         ],
-        "estimate_avg": 7.9
+        "estimate_avg": 7.7
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.5623,
-      "fair_price": 128975.0
+      "pbgr": 1.5434,
+      "fair_price": 136715.0
     }
   ]
 }
