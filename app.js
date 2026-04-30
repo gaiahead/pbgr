@@ -16,7 +16,7 @@ function saveSettings() {
     if (!isNaN(val) && Math.abs(val - def) > 0.001) s.roe[inp.dataset.ticker] = val;
   });
   localStorage.setItem(LS_KEY, JSON.stringify(s));
-  setStatus('✓ 저장됨', '#4ade80');
+  setStatus('✓ 저장됨', '#16a34a');
   const btn = document.getElementById('save-btn');
   btn.className = 'save-btn saved';
   btn.textContent = '✓ 저장됨';
@@ -34,7 +34,7 @@ function setStatus(msg, color = '#475569') {
 function markDirty() {
   document.getElementById('save-btn').className = 'save-btn unsaved';
   document.getElementById('save-btn').textContent = '● 저장';
-  setStatus('수정됨', '#fbbf24');
+  setStatus('수정됨', '#c2410c');
   // ROE는 포커스 잃을 때 재계산 (입력 중 방해 안 함)
   if (document.activeElement && document.activeElement.classList.contains('roe-input')) return;
   renderTable();
@@ -73,7 +73,7 @@ function fmtPct(v) {
 function gap(pbgr) {
   if (!pbgr) return '—';
   const pct = ((1 / pbgr) - 1) * 100;
-  return `<span style="color:${pct >= 0 ? '#4ade80' : '#f87171'}">${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%</span>`;
+  return `<span style="color:${pct >= 0 ? '#16a34a' : '#dc2626'}">${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%</span>`;
 }
 
 function pbgrHtml(pbgr) {
@@ -154,11 +154,11 @@ function renderTable() {
       <td>${fmtKR(a.price)}</td>
       <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td>${gap(calc?.pbgr)}</td>
-      <td style="color:#64748b;font-size:0.8rem">${fmtEquity(eqActual)}</td>
-      <td style="color:#64748b;font-size:0.8rem">${fmtEquity(equityNow)}</td>
-      <td style="color:#64748b;font-size:0.8rem">${fmtEquity(eqEst)}</td>
-      <td style="color:#94a3b8;font-size:0.8rem;font-weight:600">${fmtPct(a.actual_equity_cagr_pct)}</td>
-      <td style="color:#e2e8f0;font-size:0.8rem;font-weight:700">${fmtPct(a.equity_cagr_pct)}</td>
+      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqActual)}</td>
+      <td style="color:#475569;font-size:0.8rem">${fmtEquity(equityNow)}</td>
+      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqEst)}</td>
+      <td style="color:#475569;font-size:0.8rem;font-weight:600">${fmtPct(a.actual_equity_cagr_pct)}</td>
+      <td style="color:#2563eb;font-size:0.8rem;font-weight:700">${fmtPct(a.equity_cagr_pct)}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
     `;
 
@@ -169,7 +169,7 @@ function renderTable() {
 
     const dot = document.createElement('span');
     dot.className = 'roe-dot';
-    dot.style.background = isCustom ? '#60a5fa' : '#2d3748';
+    dot.style.background = isCustom ? '#2563eb' : '#cbd5e1';
     dot.title = isCustom ? '수정됨 (더블클릭 복원)' : (a.roe_note || '기본값');
 
     const inp = document.createElement('input');
@@ -183,7 +183,7 @@ function renderTable() {
     inp.addEventListener('input', () => {
       document.getElementById('save-btn').className = 'save-btn unsaved';
       document.getElementById('save-btn').textContent = '● 저장';
-      setStatus('수정됨', '#fbbf24');
+      setStatus('수정됨', '#c2410c');
     });
     inp.addEventListener('blur', renderTable);
     inp.addEventListener('dblclick', () => {
@@ -206,9 +206,9 @@ function renderTable() {
     if (ref) {
       let html = '';
       if (ref?.actual_avg != null)
-        html += `<div style="font-size:0.78rem;color:#64748b">실적 ROE <span style="color:#94a3b8;font-weight:600">${ref.actual_avg.toFixed(1)}%</span></div>`;
+        html += `<div style="font-size:0.78rem;color:#475569">실적 ROE <span style="color:#2563eb;font-weight:700">${ref.actual_avg.toFixed(1)}%</span></div>`;
       if (ref?.estimate_avg != null)
-        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">추정 ROE <span style="color:#94a3b8;font-weight:600">${ref.estimate_avg.toFixed(1)}%</span></div>`;
+        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">추정 ROE <span style="color:#2563eb;font-weight:700">${ref.estimate_avg.toFixed(1)}%</span></div>`;
       histTd.innerHTML = html || '—';
     } else {
       histTd.textContent = '—';
@@ -222,8 +222,8 @@ function renderTable() {
       const total = a.shares || a.shares_common;
       const common = a.shares_common;
       const preferred = a.shares_preferred;
-      let html = `<div style="font-size:0.78rem;color:#94a3b8">전체 ${fmtShares(total)}</div>`;
-      html += `<div style="font-size:0.72rem;color:#475569;margin-top:1px">보통주 ${fmtShares(common)}`;
+      let html = `<div style="font-size:0.78rem;color:#475569">전체 ${fmtShares(total)}</div>`;
+      html += `<div style="font-size:0.72rem;color:#64748b;margin-top:1px">보통주 ${fmtShares(common)}`;
       if (preferred) html += ` / 우선주 ${fmtShares(preferred)}`;
       html += '</div>';
       sharesTd.innerHTML = html;
