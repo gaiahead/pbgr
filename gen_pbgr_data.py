@@ -214,31 +214,32 @@ _EMPTY_ROE_HIST: dict[str, Any] = {
 }
 
 
-def get_wisereport_data(code: str) -> tuple[Optional[float], dict[str, float], dict[str, Any]]:
+def get_wisereport_data(code: str) -> tuple[Optional[float], Optional[float], dict[str, float], dict[str, Any]]:
     """wisereport에서 자본총계(지배) + ROE 동시 수집.
 
     - #cns_Tab21 (연간 탭) 클릭 → 2026E~2028E 3년치 표시
-    - 반환: (equity_cagr_pct, equity_series, roe_hist)
+    - 반환: (expected_equity_cagr_pct, actual_equity_cagr_pct, equity_series, roe_hist)
     """
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
         print("    [WARN] playwright 미설치, wisereport 건너뜀")
-        return None, {}, {**_EMPTY_ROE_HIST}
+        return None, None, {}, {**_EMPTY_ROE_HIST}
 
     try:
         result = _scrape_wisereport(code)
     except Exception as e:
         print(f"    [WARN] wisereport 스크래핑 실패: {e}")
-        return None, {}, {**_EMPTY_ROE_HIST}
+        return None, None, {}, {**_EMPTY_ROE_HIST}
 
     if not result:
-        return None, {}, {**_EMPTY_ROE_HIST}
+        return None, None, {}, {**_EMPTY_ROE_HIST}
 
     equity_cagr = _calc_equity_cagr(result)
     equity_series = _build_equity_series(result)
+    actual_equity_cagr = _calc_actual_equity_cagr(equity_series)
     roe_hist = _build_roe_hist(result)
-    return equity_cagr, equity_series, roe_hist
+    return equity_cagr, actual_equity_cagr, equity_series, roe_hist
 
 
 def _scrape_wisereport(code: str) -> Optional[dict[str, dict[str, float]]]:
@@ -349,6 +350,20 @@ def _build_equity_series(result: dict[str, dict[str, float]]) -> dict[str, float
     return result.get("자본총계(지배)", {})
 
 
+def _calc_actual_equity_cagr(equity_series: dict[str, float]) -> Optional[float]:
+    """최근 실적 자본총계(지배) 구간의 CAGR 계산."""
+    actual_keys = sorted(k for k in equity_series if "(E)" not in k)
+    if len(actual_keys) < 2:
+        return None
+    start_key, target_key = actual_keys[0], actual_keys[-1]
+    start_val = equity_series[start_key]
+    target_val = equity_series[target_key]
+    n = int(target_key[:4]) - int(start_key[:4])
+    if n <= 0 or start_val <= 0 or target_val <= 0:
+        return None
+    return round((target_val / start_val) ** (1 / n) - 1, 4) * 100
+
+
 def _build_roe_hist(result: dict[str, dict[str, float]]) -> dict[str, Any]:
     """ROE 실적/추정 분리 및 평균 계산"""
     roe_all = result.get("ROE(%)", {})
@@ -398,13 +413,16 @@ def calc_kr(price: int, equity_100m: float, roe_pct: float,
 
 # ─── ROE Resolution ──────────────────────────────────────
 def resolve_roe(cfg: dict[str, Any], equity_cagr: Optional[float],
+                actual_equity_cagr: Optional[float],
                 roe_hist: dict[str, Any]) -> tuple[float, str]:
-    """ROE 결정 (우선순위: config 수동 > 자본CAGR > 실적 평균)"""
+    """성장률 가정 결정 (우선순위: config 수동 > 기대 자본CAGR > 실적 자본CAGR > 실적 ROE 평균)"""
     cfg_roe = cfg.get("roe")
     if cfg_roe is not None:
         return cfg_roe, "config 수동 입력"
     if equity_cagr is not None:
-        return equity_cagr, "자본총계 추정 CAGR 자동"
+        return equity_cagr, "자본총계 기대 CAGR 자동"
+    if actual_equity_cagr is not None:
+        return actual_equity_cagr, "자본총계 실적 CAGR 자동"
     actual_avg = roe_hist.get("actual_avg") or 0
     return actual_avg, "실적 평균 ROE 자동"
 
@@ -431,11 +449,11 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
     shares = shares_data["total"]
     financials = get_naver_financials(ticker)
     latest_yr, latest = get_latest_actual(financials)
-    equity_cagr, equity_series, roe_hist = get_wisereport_data(ticker)
+    equity_cagr, actual_equity_cagr, equity_series, roe_hist = get_wisereport_data(ticker)
     naver_roe_hist = build_naver_roe_hist(financials)
     roe_hist = merge_roe_hist(roe_hist, naver_roe_hist)
 
-    roe_pct, roe_note = resolve_roe(cfg, equity_cagr, roe_hist)
+    roe_pct, roe_note = resolve_roe(cfg, equity_cagr, actual_equity_cagr, roe_hist)
     bps_actual = latest.get("bps")
     equity_100m = resolve_equity(equity_series, bps_actual, shares)
     dv = date_value(latest_yr, today) if latest_yr else 0
@@ -461,6 +479,7 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
         "shares_preferred": shares_data["preferred"],
         "roe_pct": roe_pct,
         "roe_note": cfg.get("note") or roe_note,
+        "actual_equity_cagr_pct": actual_equity_cagr,
         "equity_cagr_pct": equity_cagr,
         "equity_series": equity_series,
         "roe_ref": roe_hist,

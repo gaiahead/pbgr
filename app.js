@@ -66,6 +66,10 @@ function fmtShares(v) {
   return v ? (v / 1e8).toFixed(2) + '억주' : '—';
 }
 
+function fmtPct(v) {
+  return v != null ? Number(v).toFixed(1) + '%' : '—';
+}
+
 function gap(pbgr) {
   if (!pbgr) return '—';
   const pct = ((1 / pbgr) - 1) * 100;
@@ -153,10 +157,12 @@ function renderTable() {
       <td style="color:#64748b;font-size:0.8rem">${fmtEquity(eqActual)}</td>
       <td style="color:#64748b;font-size:0.8rem">${fmtEquity(equityNow)}</td>
       <td style="color:#64748b;font-size:0.8rem">${fmtEquity(eqEst)}</td>
+      <td style="color:#94a3b8;font-size:0.8rem;font-weight:600">${fmtPct(a.actual_equity_cagr_pct)}</td>
+      <td style="color:#e2e8f0;font-size:0.8rem;font-weight:700">${fmtPct(a.equity_cagr_pct)}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
     `;
 
-    // 자본 CAGR 입력 컬럼
+    // 성장률 가정 입력 컬럼
     const roeTd = document.createElement('td');
     const roeCell = document.createElement('div');
     roeCell.className = 'roe-cell';
@@ -193,17 +199,16 @@ function renderTable() {
     roeTd.appendChild(roeCell);
     tr.appendChild(roeTd);
 
-    // 참고 지표 컬럼
+    // ROE 참고 컬럼
     const histTd = document.createElement('td');
     histTd.style.cssText = 'text-align:right;white-space:nowrap';
     const ref = a.roe_ref;
-    const cagr = a.equity_cagr_pct;
-    if (ref || cagr != null) {
+    if (ref) {
       let html = '';
       if (ref?.actual_avg != null)
         html += `<div style="font-size:0.78rem;color:#64748b">실적 ROE <span style="color:#94a3b8;font-weight:600">${ref.actual_avg.toFixed(1)}%</span></div>`;
-      if (cagr != null)
-        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">자본 CAGR <span style="color:#e2e8f0;font-weight:700">${cagr.toFixed(1)}%</span></div>`;
+      if (ref?.estimate_avg != null)
+        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">추정 ROE <span style="color:#94a3b8;font-weight:600">${ref.estimate_avg.toFixed(1)}%</span></div>`;
       histTd.innerHTML = html || '—';
     } else {
       histTd.textContent = '—';
