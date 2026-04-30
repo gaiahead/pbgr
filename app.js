@@ -67,7 +67,7 @@ function fmtShares(v) {
 }
 
 function fmtPct(v) {
-  return v != null ? Number(v).toFixed(1) + '%' : '—';
+  return v != null ? Number(v).toFixed(2) + '%' : '—';
 }
 
 function gap(pbgr) {
@@ -198,22 +198,6 @@ function renderTable() {
     roeCell.append(dot, inp, unit);
     roeTd.appendChild(roeCell);
     tr.appendChild(roeTd);
-
-    // ROE 참고 컬럼
-    const histTd = document.createElement('td');
-    histTd.style.cssText = 'text-align:right;white-space:nowrap';
-    const ref = a.roe_ref;
-    if (ref) {
-      let html = '';
-      if (ref?.actual_avg != null)
-        html += `<div style="font-size:0.78rem;color:#475569">실적 ROE <span style="color:#2563eb;font-weight:700">${ref.actual_avg.toFixed(1)}%</span></div>`;
-      if (ref?.estimate_avg != null)
-        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">추정 ROE <span style="color:#2563eb;font-weight:700">${ref.estimate_avg.toFixed(1)}%</span></div>`;
-      histTd.innerHTML = html || '—';
-    } else {
-      histTd.textContent = '—';
-    }
-    tr.appendChild(histTd);
 
     // 주식수 컬럼
     const sharesTd = document.createElement('td');
