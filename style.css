@@ -72,7 +72,7 @@ td:first-child { text-align: left }
 .name   { font-weight: 800; color: #0f172a; font-size: 0.88rem }
 .ticker { font-size: 0.68rem; color: #64748b; margin-top: 2px }
 
-.pbgr-val { font-weight: 800; font-size: 1.05rem }
+.pbgr-val { font-weight: 800; font-size: 0.88rem }
 .under { color: #16a34a }
 .over  { color: #dc2626 }
 

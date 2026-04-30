@@ -153,13 +153,13 @@ function renderTable() {
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
       <td>${fmtKR(a.price)}</td>
       <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
+      <td>${pbgrHtml(calc?.pbgr)}</td>
       <td>${gap(calc?.pbgr)}</td>
       <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqActual)}</td>
       <td style="color:#475569;font-size:0.8rem">${fmtEquity(equityNow)}</td>
       <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqEst)}</td>
       <td style="color:#475569;font-size:0.8rem;font-weight:600">${fmtPct(a.actual_equity_cagr_pct)}</td>
       <td style="color:#2563eb;font-size:0.8rem;font-weight:700">${fmtPct(a.equity_cagr_pct)}</td>
-      <td>${pbgrHtml(calc?.pbgr)}</td>
     `;
 
     // 성장률 가정 입력 컬럼
