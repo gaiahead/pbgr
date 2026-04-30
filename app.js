@@ -156,7 +156,7 @@ function renderTable() {
       <td>${pbgrHtml(calc?.pbgr)}</td>
     `;
 
-    // ROE 입력 컬럼
+    // 자본 CAGR 입력 컬럼
     const roeTd = document.createElement('td');
     const roeCell = document.createElement('div');
     roeCell.className = 'roe-cell';
@@ -193,7 +193,7 @@ function renderTable() {
     roeTd.appendChild(roeCell);
     tr.appendChild(roeTd);
 
-    // ROE 참고 컬럼
+    // 참고 지표 컬럼
     const histTd = document.createElement('td');
     histTd.style.cssText = 'text-align:right;white-space:nowrap';
     const ref = a.roe_ref;
@@ -201,9 +201,9 @@ function renderTable() {
     if (ref || cagr != null) {
       let html = '';
       if (ref?.actual_avg != null)
-        html += `<div style="font-size:0.78rem;color:#64748b">실적 <span style="color:#94a3b8;font-weight:600">${ref.actual_avg.toFixed(1)}%</span></div>`;
+        html += `<div style="font-size:0.78rem;color:#64748b">실적 ROE <span style="color:#94a3b8;font-weight:600">${ref.actual_avg.toFixed(1)}%</span></div>`;
       if (cagr != null)
-        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">추정 <span style="color:#e2e8f0;font-weight:700">${cagr.toFixed(1)}%</span></div>`;
+        html += `<div style="font-size:0.78rem;color:#334155;margin-top:2px">자본 CAGR <span style="color:#e2e8f0;font-weight:700">${cagr.toFixed(1)}%</span></div>`;
       histTd.innerHTML = html || '—';
     } else {
       histTd.textContent = '—';
