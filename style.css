@@ -53,7 +53,7 @@ header {
 
 /* ─── Table ─── */
 table {
-  width: 100%; border-collapse: collapse; font-size: 0.84rem;
+  width: 100%; border-collapse: collapse; font-size: 0.84rem; line-height: 1.25;
   background: rgba(255, 255, 255, .92); border: 1px solid #dbe6f3;
   border-radius: 14px; overflow: hidden; box-shadow: 0 10px 26px rgba(15, 23, 42, .06);
 }
@@ -61,29 +61,33 @@ thead tr { border-bottom: 1px solid #dbe6f3; background: #f1f6fd }
 th {
   padding: 8px 14px; text-align: right; font-size: 0.68rem;
   font-weight: 800; color: #64748b; letter-spacing: .04em; white-space: nowrap;
+  line-height: 1.2; vertical-align: middle;
 }
 th:first-child { text-align: left }
 tbody tr { border-bottom: 1px solid #e6edf6; transition: background .12s }
 tbody tr:last-child { border-bottom: 0 }
 tbody tr:hover { background: #f8fbff }
-td { padding: 12px 14px; text-align: right; color: #334155; white-space: nowrap }
+td {
+  padding: 10px 14px; text-align: right; color: #334155; white-space: nowrap;
+  line-height: 1.25; vertical-align: middle;
+}
 td:first-child { text-align: left }
 
-.name   { font-weight: 800; color: #0f172a; font-size: 0.88rem }
-.ticker { font-size: 0.68rem; color: #64748b; margin-top: 2px }
+.name   { font-weight: 800; color: #0f172a; font-size: 0.88rem; line-height: 1.2 }
+.ticker { font-size: 0.68rem; color: #64748b; margin-top: 2px; line-height: 1.15 }
 
 .pbgr-val { font-weight: 800; font-size: 0.88rem }
 .under { color: #16a34a }
 .over  { color: #dc2626 }
 
 /* ─── ROE Input ─── */
-.roe-cell { display: flex; align-items: center; justify-content: flex-end; gap: 6px }
+.roe-cell { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-height: 28px; line-height: 1 }
 .roe-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; cursor: help }
 .roe-input {
   -moz-appearance: textfield;
   background: #ffffff; border: 1px solid #cbd5e1; border-radius: 7px;
-  color: #1e293b; font-size: 0.92rem; font-family: inherit;
-  width: 64px; text-align: right; outline: none; padding: 5px 8px;
+  color: #1e293b; font-size: 0.86rem; font-family: inherit; line-height: 1;
+  width: 64px; height: 28px; text-align: right; outline: none; padding: 0 8px;
   box-shadow: inset 0 1px 2px rgba(15, 23, 42, .04);
   transition: border-color .15s, color .15s, box-shadow .15s;
 }
@@ -91,7 +95,11 @@ td:first-child { text-align: left }
 .roe-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
 .roe-input:focus { border-color: #3b82f6; color: #0f172a; box-shadow: 0 0 0 3px rgba(59, 130, 246, .14) }
 .roe-input.dirty { border-color: #fb923c; color: #c2410c; background: #fff7ed }
-.unit { color: #64748b; font-size: 0.78rem }
+.unit { color: #64748b; font-size: 0.78rem; line-height: 28px }
+
+.shares-cell { text-align: right; white-space: nowrap }
+.shares-total { font-size: 0.78rem; color: #475569; line-height: 1.2 }
+.shares-detail { font-size: 0.72rem; color: #64748b; line-height: 1.15; margin-top: 2px }
 
 /* ─── Required Return Input ─── */
 .req-input {

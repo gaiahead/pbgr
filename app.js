@@ -201,13 +201,13 @@ function renderTable() {
 
     // 주식수 컬럼
     const sharesTd = document.createElement('td');
-    sharesTd.style.cssText = 'text-align:right;white-space:nowrap';
+    sharesTd.className = 'shares-cell';
     if (a.shares || a.shares_common) {
       const total = a.shares || a.shares_common;
       const common = a.shares_common;
       const preferred = a.shares_preferred;
-      let html = `<div style="font-size:0.78rem;color:#475569">전체 ${fmtShares(total)}</div>`;
-      html += `<div style="font-size:0.72rem;color:#64748b;margin-top:1px">보통주 ${fmtShares(common)}`;
+      let html = `<div class="shares-total">전체 ${fmtShares(total)}</div>`;
+      html += `<div class="shares-detail">보통주 ${fmtShares(common)}`;
       if (preferred) html += ` / 우선주 ${fmtShares(preferred)}`;
       html += '</div>';
       sharesTd.innerHTML = html;
