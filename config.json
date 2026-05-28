@@ -3,6 +3,7 @@
     "required_return": 0.10,
     "assets": {
       "005930": { "name": "삼성전자",   "roe": null, "preferred_ticker": "005935" },
+      "009150": { "name": "삼성전기",   "roe": null, "preferred_ticker": null },
       "000660": { "name": "SK하이닉스", "roe": null, "preferred_ticker": null },
       "042700": { "name": "한미반도체", "roe": null, "preferred_ticker": null },
       "058470": { "name": "리노공업",   "roe": null, "preferred_ticker": null },
