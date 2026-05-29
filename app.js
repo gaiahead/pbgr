@@ -97,7 +97,7 @@ function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_pct) {
   const r_t = Math.pow(y11 / y10, 1 / 12) - 1;
   const trailing = y10 * Math.pow(1 + r_t, dv - 1);
   const bps = trailing / Math.pow(1 + r, 10) * 1e8 / shares;
-  return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps) } : null;
+  return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps), equity10_100m: y10 } : null;
 }
 
 /* ─── Equity Estimation ─── */
@@ -145,8 +145,7 @@ function renderTable() {
     const eqSeries = a.equity_series || {};
     const actualEqKeys = Object.keys(eqSeries).filter(k => !k.includes('(E)')).sort();
     const eqActual = actualEqKeys.length ? eqSeries[actualEqKeys[actualEqKeys.length - 1]] : null;
-    const estKeys = Object.keys(eqSeries).filter(k => k.includes('(E)')).sort();
-    const eqEst = estKeys.length ? eqSeries[estKeys[estKeys.length - 1]] : null;
+    const eq10 = calc?.equity10_100m ?? null;
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -157,7 +156,7 @@ function renderTable() {
       <td>${gap(calc?.pbgr)}</td>
       <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqActual)}</td>
       <td style="color:#475569;font-size:0.8rem">${fmtEquity(equityNow)}</td>
-      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqEst)}</td>
+      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eq10)}</td>
       <td style="color:#475569;font-size:0.8rem;font-weight:600">${fmtPct(a.actual_equity_cagr_pct)}</td>
       <td style="color:#2563eb;font-size:0.8rem;font-weight:700">${fmtPct(a.equity_cagr_pct)}</td>
     `;
