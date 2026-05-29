@@ -53,7 +53,7 @@ header {
 .save-btn.unsaved { border-color: #fed7aa; background: #fff7ed; color: var(--orange) }
 
 /* ─── Section ─── */
-.section { padding: 22px 28px 0 }
+.section { padding: 22px 20px 0 }
 .section:last-of-type { padding-bottom: 30px }
 
 .section-title {
@@ -69,21 +69,32 @@ header {
 }
 
 /* ─── Table ─── */
-table {
-  width: 100%; border-collapse: collapse; table-layout: fixed;
-  font-size: 0.82rem; line-height: 1.25;
-  background: var(--panel); border: 1px solid var(--line);
-  border-radius: 12px; overflow: hidden;
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  -webkit-overflow-scrolling: touch;
 }
-.col-name { width: 9.5% }
-.col-price { width: 8.5% }
-.col-fair { width: 9.5% }
-.col-pbgr { width: 5.5% }
-.col-gap { width: 7% }
-.col-equity { width: 7.3% }
-.col-cagr { width: 6.8% }
-.col-assumption { width: 8.5% }
-.col-shares { width: 16.2% }
+.table-wrap::-webkit-scrollbar { height: 10px }
+.table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px }
+.table-wrap::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px }
+table {
+  width: 100%; min-width: 1220px; border-collapse: collapse; table-layout: fixed;
+  font-size: 0.82rem; line-height: 1.25;
+  background: var(--panel);
+}
+.col-name { width: 120px }
+.col-price { width: 105px }
+.col-fair { width: 120px }
+.col-pbgr { width: 65px }
+.col-gap { width: 85px }
+.col-equity { width: 90px }
+.col-cagr { width: 86px }
+.col-assumption { width: 110px }
+.col-shares { width: 173px }
 
 thead tr { border-bottom: 1px solid var(--line); background: var(--header) }
 thead .group-row th { background: var(--header-strong) }
@@ -117,10 +128,10 @@ tbody tr:last-child { border-bottom: 0 }
 tbody tr:hover { background: var(--panel-soft) }
 td {
   padding: 9px 10px; text-align: right; color: #334155; white-space: nowrap;
-  line-height: 1.25; vertical-align: middle;
+  line-height: 1.25; vertical-align: middle; overflow: hidden; text-overflow: ellipsis;
   font-variant-numeric: tabular-nums;
 }
-td:first-child { text-align: left }
+td:first-child { text-align: left; white-space: normal; overflow: visible }
 tbody td:nth-child(6),
 tbody td:nth-child(9) { border-left: 1px solid var(--line-soft) }
 tbody td:nth-child(8),
@@ -138,7 +149,7 @@ tbody td:nth-child(11) { border-right: 1px solid var(--line-soft) }
 .over, .negative { color: var(--red) }
 
 /* ─── CAGR Input ─── */
-.roe-cell { display: flex; align-items: center; justify-content: flex-end; gap: 5px; min-height: 26px; line-height: 1 }
+.roe-cell { display: flex; align-items: center; justify-content: flex-end; gap: 5px; min-height: 26px; line-height: 1; overflow: visible }
 .roe-dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; cursor: help }
 .roe-input {
   -moz-appearance: textfield;
@@ -153,7 +164,7 @@ tbody td:nth-child(11) { border-right: 1px solid var(--line-soft) }
 .roe-input.dirty { border-color: #fb923c; color: var(--orange); background: #fff7ed }
 .unit { color: var(--muted); font-size: 0.76rem; line-height: 26px }
 
-.shares-cell { text-align: right; white-space: nowrap }
+.shares-cell { text-align: right; white-space: normal; overflow: visible }
 .shares-total { font-size: 0.76rem; color: var(--subtle); line-height: 1.18; font-weight: 500 }
 .shares-detail { font-size: 0.69rem; color: var(--muted); line-height: 1.14; margin-top: 2px }
 
@@ -171,4 +182,4 @@ tbody td:nth-child(11) { border-right: 1px solid var(--line-soft) }
 
 /* ─── Misc ─── */
 .status-msg { font-size: 0.72rem; color: var(--muted) }
-.note { font-size: 0.72rem; color: var(--subtle); padding: 12px 28px 24px; line-height: 1.45 }
+.note { font-size: 0.72rem; color: var(--subtle); padding: 12px 20px 24px; line-height: 1.45 }
