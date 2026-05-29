@@ -51,26 +51,15 @@ async function loadConfig() {
 
 /* ─── Formatters ─── */
 
-function fmtPrice(v, currency = 'KRW') {
-  if (v == null || Number.isNaN(Number(v))) return '—';
-  if (currency === 'USD') return '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  return Number(v).toLocaleString('ko-KR') + '원';
-}
-
 function fmtKR(v) {
-  return fmtPrice(v, 'KRW');
+  return v != null ? Number(v).toLocaleString('ko-KR') + '원' : '—';
 }
 
-function fmtEquity(v, currency = 'KRW') {
-  if (v == null || Number.isNaN(Number(v))) return '—';
-  const sign = v < 0 ? '-' : '';
-  const av = Math.abs(Number(v));
-  if (currency === 'USD') {
-    return sign + '$' + (av / 10).toFixed(1) + 'B';
-  }
-  return sign + (av >= 10000
-    ? (av / 10000).toFixed(1) + '조'
-    : Math.round(av).toLocaleString('ko-KR') + '억');
+function fmtEquity(v) {
+  if (!v) return '—';
+  return v >= 10000
+    ? (v / 10000).toFixed(1) + '조'
+    : Math.round(v).toLocaleString('ko-KR') + '억';
 }
 
 function fmtShares(v) {
@@ -142,12 +131,10 @@ function renderTable() {
   });
 
   tbody.innerHTML = '';
-  const assets = rawData.assets.filter(a => !a.error);
+  const assets = rawData.assets.filter(a => a.market === 'KR');
 
   assets.forEach(a => {
-    const marketKey = (a.market || 'KR').toLowerCase();
-    const currency = a.currency || (a.market === 'US' ? 'USD' : 'KRW');
-    const configRoe = configData?.[marketKey]?.assets?.[a.ticker]?.roe ?? a.roe_pct;
+    const configRoe = configData?.kr?.assets?.[a.ticker]?.roe ?? a.roe_pct;
     const roe = currentRoe[a.ticker] ?? s.roe?.[a.ticker] ?? configRoe;
     const isCustom = Math.abs(roe - configRoe) > 0.001;
     const calc = recalcKR(a.price, a.equity_y0_100m, roe, a.shares, a.base_date, reqKR);
@@ -162,14 +149,14 @@ function renderTable() {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><div class="name">${a.name}</div><div class="ticker">${a.market || 'KR'} · ${a.ticker}</div></td>
-      <td>${fmtPrice(a.price, currency)}</td>
-      <td>${calc ? fmtPrice(calc.fair_price, currency) : '—'}</td>
+      <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
+      <td>${fmtKR(a.price)}</td>
+      <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
       <td>${gap(calc?.pbgr)}</td>
-      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqActual, currency)}</td>
-      <td style="color:#475569;font-size:0.8rem">${fmtEquity(equityNow, currency)}</td>
-      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eq10, currency)}</td>
+      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqActual)}</td>
+      <td style="color:#475569;font-size:0.8rem">${fmtEquity(equityNow)}</td>
+      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eq10)}</td>
       <td style="color:#475569;font-size:0.8rem;font-weight:600">${fmtPct(a.actual_equity_cagr_pct)}</td>
       <td style="color:#2563eb;font-size:0.8rem;font-weight:700">${fmtPct(a.equity_cagr_pct)}</td>
     `;
@@ -188,9 +175,9 @@ function renderTable() {
     inp.type = 'text';
     inp.inputMode = 'decimal';
     inp.className = 'roe-input' + (isCustom ? ' dirty' : '');
-    inp.value = Number(roe || 0).toFixed(2);
+    inp.value = roe.toFixed(2);
     inp.dataset.ticker = a.ticker;
-    inp.dataset.default = configRoe ?? 0;
+    inp.dataset.default = configRoe;
     inp.addEventListener('change', markDirty);
     inp.addEventListener('input', () => {
       document.getElementById('save-btn').className = 'save-btn unsaved';
@@ -199,7 +186,7 @@ function renderTable() {
     });
     inp.addEventListener('blur', renderTable);
     inp.addEventListener('dblclick', () => {
-      inp.value = Number(configRoe || 0).toFixed(2);
+      inp.value = configRoe.toFixed(2);
       markDirty();
     });
 
@@ -235,7 +222,7 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=dell-20260529').then(r => r.json()),
+    fetch('pbgr_data.json?v=20260324c').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;

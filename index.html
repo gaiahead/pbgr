@@ -4,14 +4,14 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=dell-20260529"/>
+  <link rel="stylesheet" href="style.css?v=align-20260528"/>
 </head>
 <body>
 
 <header>
   <div class="header-left">
     <h1>📊 PBGR 가치평가 모니터</h1>
-    <p>Price to Book Growth Ratio · 한국·미국 주식 · <span id="updated"></span> 기준</p>
+    <p>Price to Book Growth Ratio · 한국 주식 · <span id="updated"></span> 기준</p>
   </div>
   <div class="header-right">
     <span class="status-msg" id="status-msg"></span>
@@ -21,7 +21,7 @@
 
 <div class="section">
   <div class="section-title">
-    📈 모니터
+    🇰🇷 한국
     <span class="param">
       요구수익률
       <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
@@ -31,7 +31,7 @@
   <table>
     <thead><tr>
       <th>종목</th>
-      <th>종가</th>
+      <th>전일 종가</th>
       <th>적정가</th>
       <th>PBGR</th>
       <th>괴리율</th>
@@ -52,6 +52,6 @@
   자본 CAGR 가정 더블클릭 = 기본값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
 </div>
 
-<script src="app.js?v=dell-20260529"></script>
+<script src="app.js?v=equity10-20260529"></script>
 </body>
 </html>
