@@ -73,7 +73,8 @@ function fmtPct(v) {
 function gap(pbgr) {
   if (!pbgr) return '—';
   const pct = ((1 / pbgr) - 1) * 100;
-  return `<span style="color:${pct >= 0 ? '#16a34a' : '#dc2626'}">${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%</span>`;
+  const cls = pct >= 0 ? 'positive' : 'negative';
+  return `<span class="gap-val ${cls}">${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%</span>`;
 }
 
 function pbgrHtml(pbgr) {
@@ -154,11 +155,11 @@ function renderTable() {
       <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
       <td>${gap(calc?.pbgr)}</td>
-      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eqActual)}</td>
-      <td style="color:#475569;font-size:0.8rem">${fmtEquity(equityNow)}</td>
-      <td style="color:#475569;font-size:0.8rem">${fmtEquity(eq10)}</td>
-      <td style="color:#475569;font-size:0.8rem;font-weight:600">${fmtPct(a.actual_equity_cagr_pct)}</td>
-      <td style="color:#2563eb;font-size:0.8rem;font-weight:700">${fmtPct(a.equity_cagr_pct)}</td>
+      <td class="metric-cell equity-cell">${fmtEquity(eqActual)}</td>
+      <td class="metric-cell equity-cell">${fmtEquity(equityNow)}</td>
+      <td class="metric-cell equity-cell">${fmtEquity(eq10)}</td>
+      <td class="metric-cell cagr-cell cagr-actual">${fmtPct(a.actual_equity_cagr_pct)}</td>
+      <td class="metric-cell cagr-cell cagr-expected">${fmtPct(a.equity_cagr_pct)}</td>
     `;
 
     // 성장률 가정 입력 컬럼
