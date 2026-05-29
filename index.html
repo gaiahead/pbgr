@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=align-20260528"/>
+  <link rel="stylesheet" href="style.css?v=grouped-headers-20260529"/>
 </head>
 <body>
 
@@ -29,20 +29,26 @@
     </span>
   </div>
   <table>
-    <thead><tr>
-      <th>종목</th>
-      <th>전일 종가</th>
-      <th>적정가</th>
-      <th>PBGR</th>
-      <th>괴리율</th>
-      <th style="color:#334155;font-weight:500">자본총계 (최근)</th>
-      <th style="color:#334155;font-weight:500">자본총계 (현재)</th>
-      <th style="color:#334155;font-weight:500">자본총계 (+10년)</th>
-      <th style="color:#334155;font-weight:500">자본 CAGR (5년 실적)</th>
-      <th style="color:#334155;font-weight:500">자본 CAGR (3년 기대)</th>
-      <th>자본 CAGR (가정) ✎</th>
-      <th style="color:#334155;font-weight:500">주식수</th>
-    </tr></thead>
+    <thead>
+      <tr class="group-row">
+        <th rowspan="2">종목</th>
+        <th rowspan="2">전일 종가</th>
+        <th rowspan="2">적정가</th>
+        <th rowspan="2">PBGR</th>
+        <th rowspan="2">괴리율</th>
+        <th class="group-head" colspan="3">자본총계</th>
+        <th class="group-head" colspan="3">자본 CAGR</th>
+        <th rowspan="2" style="color:#334155;font-weight:500">주식수</th>
+      </tr>
+      <tr class="sub-row">
+        <th>최근</th>
+        <th>현재</th>
+        <th>+10년</th>
+        <th>5년 실적</th>
+        <th>3년 기대</th>
+        <th>가정 ✎</th>
+      </tr>
+    </thead>
     <tbody id="kr-body"></tbody>
   </table>
 </div>
