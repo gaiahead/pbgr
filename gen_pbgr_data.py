@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 PBGR (Price to Book Growth Ratio) 데이터 생성기
-- 전체 데이터: 네이버 파이낸스 (한국 종목 전용)
+- 한국 데이터: 네이버 파이낸스 / WiseReport
+- 미국 데이터: yfinance
 - ROE·요구수익률: config.json
 - wisereport: 자본총계(지배) CAGR, ROE 실적/추정
 """
@@ -391,6 +392,134 @@ def _build_roe_hist(result: dict[str, dict[str, float]]) -> dict[str, Any]:
     }
 
 
+
+# ─── Yahoo Finance (US) ─────────────────────────────────────
+def _series_value(frame: Any, row_names: list[str], col: Any) -> Optional[float]:
+    """yfinance DataFrame에서 후보 row 중 첫 유효값 반환."""
+    if frame is None or getattr(frame, "empty", True):
+        return None
+    for row in row_names:
+        if row in frame.index:
+            try:
+                val = frame.loc[row, col]
+                if val == val:
+                    return float(val)
+            except Exception:
+                continue
+    return None
+
+
+def _latest_us_col(frame: Any) -> Any:
+    if frame is None or getattr(frame, "empty", True):
+        return None
+    return sorted(frame.columns)[-1]
+
+
+def _fmt_us_base_date(col: Any) -> Optional[str]:
+    try:
+        return col.strftime("%Y.%m")
+    except Exception:
+        return str(col)[:7].replace("-", ".") if col is not None else None
+
+
+def _calc_positive_cagr(values_by_year: dict[str, float]) -> Optional[float]:
+    keys = sorted(k for k, v in values_by_year.items() if v and v > 0)
+    if len(keys) < 2:
+        return None
+    start_key, target_key = keys[0], keys[-1]
+    start_val, target_val = values_by_year[start_key], values_by_year[target_key]
+    n = int(target_key[:4]) - int(start_key[:4])
+    if n <= 0 or start_val <= 0 or target_val <= 0:
+        return None
+    return round((target_val / start_val) ** (1 / n) - 1, 4) * 100
+
+
+def get_us_data(ticker: str) -> dict[str, Any]:
+    """yfinance로 미국 종목의 가격·주식수·자본총계 시계열 수집."""
+    try:
+        import yfinance as yf
+    except ImportError as e:
+        raise RuntimeError("yfinance 미설치") from e
+
+    y = yf.Ticker(ticker)
+    fast = dict(y.fast_info)
+    info = y.info or {}
+    price = (
+        fast.get("regularMarketPreviousClose")
+        or fast.get("previousClose")
+        or info.get("regularMarketPreviousClose")
+        or info.get("previousClose")
+        or fast.get("lastPrice")
+        or info.get("currentPrice")
+    )
+    shares = fast.get("shares") or info.get("sharesOutstanding")
+    currency = fast.get("currency") or info.get("currency") or "USD"
+
+    bs = y.balance_sheet
+    latest_col = _latest_us_col(bs)
+    equity = _series_value(bs, ["Common Stock Equity", "Stockholders Equity", "Total Equity Gross Minority Interest"], latest_col)
+
+    equity_series: dict[str, float] = {}
+    if bs is not None and not bs.empty:
+        for col in sorted(bs.columns):
+            v = _series_value(bs, ["Common Stock Equity", "Stockholders Equity", "Total Equity Gross Minority Interest"], col)
+            key = _fmt_us_base_date(col)
+            if key and v is not None:
+                equity_series[key] = round(v / 1e8, 2)
+
+    actual_equity_cagr = _calc_positive_cagr(equity_series)
+    base_date = _fmt_us_base_date(latest_col)
+
+    return {
+        "price": round(float(price), 2) if price is not None else None,
+        "shares": int(shares) if shares is not None else None,
+        "currency": currency,
+        "base_date": base_date,
+        "equity_100m": round(equity / 1e8, 2) if equity is not None else None,
+        "equity_series": equity_series,
+        "actual_equity_cagr": actual_equity_cagr,
+    }
+
+
+def process_us_asset(ticker: str, cfg: dict[str, Any], req_us: float,
+                     today: datetime) -> dict[str, Any]:
+    """미국 종목 처리 — yfinance 기반. 음수 자본총계 종목은 PBGR 계산이 불가할 수 있음."""
+    us = get_us_data(ticker)
+    roe_pct, roe_note = resolve_roe(cfg, None, us.get("actual_equity_cagr"), {**_EMPTY_ROE_HIST})
+    equity_100m = us.get("equity_100m")
+    dv = date_value(us["base_date"], today) if us.get("base_date") else 0
+    equity_now = None
+    if equity_100m and roe_pct and equity_100m > 0:
+        equity_now = round(equity_100m * (1 + roe_pct / 100) ** (dv / 12), 1)
+    calc = calc_kr(us.get("price"), equity_100m, roe_pct, us.get("shares"), dv, req_us)
+    note = cfg.get("note") or roe_note
+    if equity_100m is not None and equity_100m <= 0:
+        note = "자본총계 음수로 PBGR 계산 불가"
+
+    return {
+        "name": cfg["name"],
+        "ticker": ticker,
+        "market": "US",
+        "currency": us.get("currency", "USD"),
+        "price": us.get("price"),
+        "base_date": us.get("base_date"),
+        "bps_actual": None,
+        "equity_y0_100m": equity_100m,
+        "equity_now_100m": equity_now,
+        "shares": us.get("shares"),
+        "shares_common": us.get("shares"),
+        "shares_preferred": None,
+        "roe_pct": roe_pct,
+        "roe_note": note,
+        "actual_equity_cagr_pct": us.get("actual_equity_cagr"),
+        "equity_cagr_pct": None,
+        "equity_series": us.get("equity_series", {}),
+        "roe_ref": {**_EMPTY_ROE_HIST},
+        "required_return_pct": round(req_us * 100, 1),
+        "pbgr": calc["pbgr"] if calc else None,
+        "fair_price": calc["fair_price"] if calc else None,
+    }
+
 # ─── PBGR Calculation ────────────────────────────────────
 def calc_kr(price: int, equity_100m: float, roe_pct: float,
             shares: int, dv: float, req_return: float) -> Optional[dict[str, float]]:
@@ -493,6 +622,7 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
 def main() -> None:
     config = load_config()
     kr_cfg = config["kr"]
+    us_cfg = config.get("us", {"required_return": kr_cfg["required_return"], "assets": {}})
     today = datetime.now()
     updated = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
 
@@ -501,6 +631,7 @@ def main() -> None:
     result: dict[str, Any] = {
         "updated": updated,
         "kr_required_return": kr_cfg["required_return"],
+        "us_required_return": us_cfg.get("required_return", kr_cfg["required_return"]),
         "assets": [],
     }
 
@@ -525,6 +656,27 @@ def main() -> None:
             print(f"오류: {e}")
             result["assets"].append({
                 "name": name, "ticker": ticker, "market": "KR", "error": str(e),
+            })
+
+    req_us = us_cfg.get("required_return", req_kr)
+    for ticker, cfg in us_cfg.get("assets", {}).items():
+        name = cfg["name"]
+        print(f"  [US] {name} ({ticker}) ...", end=" ", flush=True)
+        try:
+            asset = process_us_asset(ticker, cfg, req_us, today)
+            result["assets"].append(asset)
+            if asset["pbgr"]:
+                print(
+                    f"PBGR={asset['pbgr']:.3f} | 종가={asset['price']:,} {asset.get('currency','USD')} | "
+                    f"적정가={asset['fair_price']:,.0f} | "
+                    f"자본={asset['equity_y0_100m']:.0f}억{asset.get('currency','USD')} ({asset['base_date']})"
+                )
+            else:
+                print(asset.get("roe_note") or "계산 실패")
+        except Exception as e:
+            print(f"오류: {e}")
+            result["assets"].append({
+                "name": name, "ticker": ticker, "market": "US", "error": str(e),
             })
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:

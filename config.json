@@ -1,14 +1,51 @@
 {
   "kr": {
-    "required_return": 0.10,
+    "required_return": 0.1,
     "assets": {
-      "005930": { "name": "삼성전자",   "roe": null, "preferred_ticker": "005935" },
-      "009150": { "name": "삼성전기",   "roe": null, "preferred_ticker": null },
-      "000660": { "name": "SK하이닉스", "roe": null, "preferred_ticker": null },
-      "042700": { "name": "한미반도체", "roe": null, "preferred_ticker": null },
-      "058470": { "name": "리노공업",   "roe": null, "preferred_ticker": null },
-      "000100": { "name": "유한양행",   "roe": null, "preferred_ticker": "000105" },
-      "035420": { "name": "NAVER",      "roe": null, "preferred_ticker": null }
+      "005930": {
+        "name": "삼성전자",
+        "roe": null,
+        "preferred_ticker": "005935"
+      },
+      "009150": {
+        "name": "삼성전기",
+        "roe": null,
+        "preferred_ticker": null
+      },
+      "000660": {
+        "name": "SK하이닉스",
+        "roe": null,
+        "preferred_ticker": null
+      },
+      "042700": {
+        "name": "한미반도체",
+        "roe": null,
+        "preferred_ticker": null
+      },
+      "058470": {
+        "name": "리노공업",
+        "roe": null,
+        "preferred_ticker": null
+      },
+      "000100": {
+        "name": "유한양행",
+        "roe": null,
+        "preferred_ticker": "000105"
+      },
+      "035420": {
+        "name": "NAVER",
+        "roe": null,
+        "preferred_ticker": null
+      }
+    }
+  },
+  "us": {
+    "required_return": 0.1,
+    "assets": {
+      "DELL": {
+        "name": "Dell Technologies",
+        "roe": null
+      }
     }
   }
 }
