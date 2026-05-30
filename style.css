@@ -53,7 +53,7 @@ header {
 .save-btn.unsaved { border-color: #fed7aa; background: #fff7ed; color: var(--orange) }
 
 /* ─── Section ─── */
-.section { padding: 22px 20px 0 }
+.section { padding: 22px 10px 0 }
 .section:last-of-type { padding-bottom: 30px }
 
 .section-title {
@@ -120,31 +120,31 @@ header {
 .table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px }
 .table-wrap::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px }
 table {
-  width: 100%; min-width: 1480px; border-collapse: collapse; table-layout: fixed;
+  width: 100%; min-width: 1220px; border-collapse: collapse; table-layout: fixed;
   font-size: 0.82rem; line-height: 1.25;
   background: var(--panel);
 }
-.col-name { width: 126px }
-.col-marketcap { width: 96px }
-.col-fairmarketcap { width: 118px }
-.col-price { width: 100px }
-.col-fair { width: 112px }
-.col-pbgr { width: 72px }
-.col-gap { width: 82px }
-.col-equity { width: 90px }
-.col-cagr { width: 88px }
-.col-assumption { width: 106px }
-.col-shares { width: 180px }
+.col-name { width: 104px }
+.col-marketcap { width: 82px }
+.col-fairmarketcap { width: 102px }
+.col-price { width: 92px }
+.col-fair { width: 98px }
+.col-pbgr { width: 64px }
+.col-gap { width: 80px }
+.col-equity { width: 80px }
+.col-cagr { width: 76px }
+.col-assumption { width: 96px }
+.col-shares { width: 132px }
 
 thead tr { border-bottom: 1px solid var(--line); background: var(--header) }
 thead .group-row th { background: var(--header-strong) }
 thead .sub-row th { background: var(--panel-soft) }
 th {
-  padding: 8px 10px; text-align: right; font-size: 0.72rem;
+  padding: 8px 10px; text-align: center; font-size: 0.72rem;
   font-weight: 720; color: var(--subtle); letter-spacing: .015em; white-space: nowrap;
   line-height: 1.2; vertical-align: middle;
 }
-th[rowspan] { background: var(--header-strong) }
+th[rowspan] { background: var(--header-strong); color: #334155 }
 .group-head {
   text-align: center;
   color: #334155;
@@ -156,13 +156,16 @@ th[rowspan] { background: var(--header-strong) }
   border-bottom: 1px solid var(--line);
 }
 .sub-row th {
+  text-align: center;
   color: var(--subtle);
   font-weight: 650;
   border-left: 1px solid var(--line-soft);
 }
 .sub-row th:nth-child(3),
 .sub-row th:nth-child(6) { border-right: 1px solid var(--line) }
-thead .group-row th:first-child { text-align: left }
+thead .group-row th:nth-child(8),
+thead .group-row th:nth-child(9),
+thead .group-row th:nth-child(10) { border-left: 1px solid var(--line-soft) }
 tbody tr { border-bottom: 1px solid var(--line-soft); transition: background .12s }
 tbody tr:last-child { border-bottom: 0 }
 tbody tr:hover { background: var(--panel-soft) }
