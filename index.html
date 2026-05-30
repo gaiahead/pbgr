@@ -4,14 +4,14 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=discount-hint-20260530"/>
+  <link rel="stylesheet" href="style.css?v=discount-box-20260530"/>
 </head>
 <body>
 
 <header>
   <div class="header-left">
     <h1>📊 PBGR 가치평가 모니터</h1>
-    <p>Price to Book Growth Ratio · 한국 주식 · <span id="updated"></span> 기준</p>
+    <p>Price to Book Growth Ratio · <span id="updated"></span> 기준</p>
   </div>
   <div class="header-right">
     <span class="status-msg" id="status-msg"></span>
@@ -21,12 +21,16 @@
 
 <div class="section">
   <div class="section-title">
-    🇰🇷 한국
     <span class="param">
-      요구수익률
-      <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
-      <span class="unit">%</span>
-      <span class="discount-hint" id="req-kr-discount">1 / 1.10^10 = 0.386배</span>
+      <span class="param-label">요구수익률</span>
+      <span class="param-input-box">
+        <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
+        <span class="unit">%</span>
+      </span>
+      <span class="discount-box">
+        <span class="discount-label">10년 할인계수</span>
+        <span class="discount-hint" id="req-kr-discount">1 / 1.10^10 = 0.386배</span>
+      </span>
     </span>
   </div>
   <div class="table-wrap">
@@ -79,6 +83,6 @@
   자본 CAGR (가정) 더블클릭 = 기본값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
 </div>
 
-<script src="app.js?v=discount-hint-20260530"></script>
+<script src="app.js?v=discount-box-20260530"></script>
 </body>
 </html>

@@ -64,9 +64,39 @@ header {
 .param {
   font-size: 0.78rem; color: var(--subtle); font-weight: 650;
   text-transform: none; letter-spacing: 0;
-  background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
-  padding: 4px 10px; display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: stretch; gap: 0;
   flex-wrap: wrap;
+}
+.param-label,
+.param-input-box,
+.discount-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+}
+.param-label {
+  padding: 4px 10px;
+  border-radius: 8px 0 0 8px;
+  border-right: 0;
+}
+.param-input-box {
+  padding: 4px 8px;
+  gap: 5px;
+  border-right: 0;
+}
+.discount-box {
+  padding: 4px 10px;
+  gap: 8px;
+  border-radius: 0 8px 8px 0;
+  background: #f8fbff;
+}
+.discount-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  white-space: nowrap;
 }
 .discount-hint {
   color: #1d4ed8;
