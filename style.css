@@ -82,19 +82,20 @@ header {
 .table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px }
 .table-wrap::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px }
 table {
-  width: 100%; min-width: 1220px; border-collapse: collapse; table-layout: fixed;
+  width: 100%; min-width: 1380px; border-collapse: collapse; table-layout: fixed;
   font-size: 0.82rem; line-height: 1.25;
   background: var(--panel);
 }
-.col-name { width: 120px }
-.col-price { width: 105px }
-.col-fair { width: 120px }
-.col-pbgr { width: 65px }
-.col-gap { width: 85px }
+.col-name { width: 126px }
+.col-marketcap { width: 96px }
+.col-price { width: 100px }
+.col-fair { width: 112px }
+.col-pbgr { width: 72px }
+.col-gap { width: 82px }
 .col-equity { width: 90px }
-.col-cagr { width: 86px }
-.col-assumption { width: 110px }
-.col-shares { width: 173px }
+.col-cagr { width: 88px }
+.col-assumption { width: 106px }
+.col-shares { width: 180px }
 
 thead tr { border-bottom: 1px solid var(--line); background: var(--header) }
 thead .group-row th { background: var(--header-strong) }
@@ -130,16 +131,18 @@ td {
   padding: 9px 10px; text-align: right; color: #334155; white-space: nowrap;
   line-height: 1.25; vertical-align: middle; overflow: hidden; text-overflow: ellipsis;
   font-variant-numeric: tabular-nums;
+  overflow: hidden; text-overflow: ellipsis;
 }
 td:first-child { text-align: left; white-space: normal; overflow: visible }
-tbody td:nth-child(6),
-tbody td:nth-child(9) { border-left: 1px solid var(--line-soft) }
-tbody td:nth-child(8),
-tbody td:nth-child(11) { border-right: 1px solid var(--line-soft) }
+tbody td:nth-child(7),
+tbody td:nth-child(10) { border-left: 1px solid var(--line-soft) }
+tbody td:nth-child(9),
+tbody td:nth-child(12) { border-right: 1px solid var(--line-soft) }
 
 .name   { font-weight: 720; color: #0f172a; font-size: 0.86rem; line-height: 1.22; letter-spacing: -.01em }
 .ticker { font-size: 0.72rem; color: var(--muted); margin-top: 2px; line-height: 1.16 }
 .metric-cell { color: var(--subtle); font-size: 0.82rem; font-weight: 500 }
+.marketcap-cell { color: #334155; font-weight: 650 }
 .cagr-actual { color: var(--subtle); font-weight: 560 }
 .cagr-expected { color: #1d4ed8; font-weight: 650 }
 

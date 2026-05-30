@@ -66,6 +66,16 @@ function fmtShares(v) {
   return v ? (v / 1e8).toFixed(2) + '억주' : '—';
 }
 
+function fmtMarketCapKR(price, shares) {
+  if (!price || !shares) return '—';
+  const won = Number(price) * Number(shares);
+  if (!Number.isFinite(won) || won <= 0) return '—';
+  const jo = won / 1e12;
+  return jo >= 1
+    ? jo.toFixed(1) + '조'
+    : Math.round(won / 1e8).toLocaleString('ko-KR') + '억';
+}
+
 function fmtPct(v) {
   return v != null ? Number(v).toFixed(2) + '%' : '—';
 }
@@ -151,6 +161,7 @@ function renderTable() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
+      <td class="metric-cell marketcap-cell">${fmtMarketCapKR(a.price, a.shares)}</td>
       <td>${fmtKR(a.price)}</td>
       <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
