@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=marketcap-20260530"/>
+  <link rel="stylesheet" href="style.css?v=faircap-20260530"/>
 </head>
 <body>
 
@@ -33,10 +33,11 @@
       <colgroup>
         <col class="col-name">
         <col class="col-marketcap">
-        <col class="col-price">
-        <col class="col-fair">
+        <col class="col-fairmarketcap">
         <col class="col-pbgr">
         <col class="col-gap">
+        <col class="col-price">
+        <col class="col-fair">
         <col class="col-equity">
         <col class="col-equity">
         <col class="col-equity">
@@ -49,10 +50,11 @@
         <tr class="group-row">
           <th rowspan="2">종목</th>
           <th rowspan="2">시가총액</th>
-          <th rowspan="2">종가</th>
-          <th rowspan="2">적정가</th>
+          <th rowspan="2">적정 시가총액</th>
           <th rowspan="2">PBGR</th>
           <th rowspan="2">괴리율</th>
+          <th rowspan="2">종가</th>
+          <th rowspan="2">적정가</th>
           <th class="group-head" colspan="3">자본총계</th>
           <th class="group-head" colspan="3">자본 CAGR</th>
           <th rowspan="2" style="color:#334155;font-weight:500">주식수</th>
@@ -76,6 +78,6 @@
   자본 CAGR (가정) 더블클릭 = 기본값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
 </div>
 
-<script src="app.js?v=marketcap-20260530"></script>
+<script src="app.js?v=faircap-20260530"></script>
 </body>
 </html>

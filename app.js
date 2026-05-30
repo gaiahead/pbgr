@@ -162,10 +162,11 @@ function renderTable() {
     tr.innerHTML = `
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
       <td class="metric-cell marketcap-cell">${fmtMarketCapKR(a.price, a.shares)}</td>
-      <td>${fmtKR(a.price)}</td>
-      <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
+      <td class="metric-cell fair-marketcap-cell">${calc ? fmtMarketCapKR(calc.fair_price, a.shares) : '—'}</td>
       <td>${pbgrHtml(calc?.pbgr)}</td>
       <td>${gap(calc?.pbgr)}</td>
+      <td>${fmtKR(a.price)}</td>
+      <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td class="metric-cell equity-cell">${fmtEquity(eqActual)}</td>
       <td class="metric-cell equity-cell">${fmtEquity(equityNow)}</td>
       <td class="metric-cell equity-cell">${fmtEquity(eq10)}</td>

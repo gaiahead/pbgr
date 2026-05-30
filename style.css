@@ -82,12 +82,13 @@ header {
 .table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px }
 .table-wrap::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px }
 table {
-  width: 100%; min-width: 1380px; border-collapse: collapse; table-layout: fixed;
+  width: 100%; min-width: 1480px; border-collapse: collapse; table-layout: fixed;
   font-size: 0.82rem; line-height: 1.25;
   background: var(--panel);
 }
 .col-name { width: 126px }
 .col-marketcap { width: 96px }
+.col-fairmarketcap { width: 118px }
 .col-price { width: 100px }
 .col-fair { width: 112px }
 .col-pbgr { width: 72px }
@@ -134,15 +135,16 @@ td {
   overflow: hidden; text-overflow: ellipsis;
 }
 td:first-child { text-align: left; white-space: normal; overflow: visible }
-tbody td:nth-child(7),
-tbody td:nth-child(10) { border-left: 1px solid var(--line-soft) }
-tbody td:nth-child(9),
-tbody td:nth-child(12) { border-right: 1px solid var(--line-soft) }
+tbody td:nth-child(8),
+tbody td:nth-child(11) { border-left: 1px solid var(--line-soft) }
+tbody td:nth-child(10),
+tbody td:nth-child(13) { border-right: 1px solid var(--line-soft) }
 
 .name   { font-weight: 720; color: #0f172a; font-size: 0.86rem; line-height: 1.22; letter-spacing: -.01em }
 .ticker { font-size: 0.72rem; color: var(--muted); margin-top: 2px; line-height: 1.16 }
 .metric-cell { color: var(--subtle); font-size: 0.82rem; font-weight: 500 }
 .marketcap-cell { color: #334155; font-weight: 650 }
+.fair-marketcap-cell { color: #1d4ed8; font-weight: 650 }
 .cagr-actual { color: var(--subtle); font-weight: 560 }
 .cagr-expected { color: #1d4ed8; font-weight: 650 }
 
