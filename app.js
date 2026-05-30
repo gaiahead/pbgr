@@ -32,6 +32,7 @@ function setStatus(msg, color = '#475569') {
 }
 
 function markDirty() {
+  updateRequiredReturnHint();
   document.getElementById('save-btn').className = 'save-btn unsaved';
   document.getElementById('save-btn').textContent = '● 저장';
   setStatus('수정됨', '#c2410c');
@@ -78,6 +79,22 @@ function fmtMarketCapKR(price, shares) {
 
 function fmtPct(v) {
   return v != null ? Number(v).toFixed(2) + '%' : '—';
+}
+
+function updateRequiredReturnHint() {
+  const input = document.getElementById('req-kr');
+  const hint = document.getElementById('req-kr-discount');
+  if (!input || !hint) return;
+
+  const reqPct = parseFloat(input.value);
+  if (!Number.isFinite(reqPct) || reqPct <= -100) {
+    hint.textContent = '할인계수 계산 불가';
+    return;
+  }
+
+  const rate = 1 + reqPct / 100;
+  const discountFactor = 1 / Math.pow(rate, 10);
+  hint.textContent = `1 / ${rate.toFixed(2)}^10 = ${discountFactor.toFixed(3)}배`;
 }
 
 function gap(pbgr) {
@@ -242,6 +259,7 @@ async function init() {
   document.getElementById('updated').textContent = rawData.updated;
   const s = loadSettings();
   document.getElementById('req-kr').value = s.req_kr ?? (configData.kr.required_return * 100).toFixed(1);
+  updateRequiredReturnHint();
   document.getElementById('req-kr').addEventListener('input', markDirty);
   renderTable();
 }

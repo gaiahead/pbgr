@@ -66,6 +66,14 @@ header {
   text-transform: none; letter-spacing: 0;
   background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
   padding: 4px 10px; display: flex; align-items: center; gap: 6px;
+  flex-wrap: wrap;
+}
+.discount-hint {
+  color: #1d4ed8;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 /* ─── Table ─── */

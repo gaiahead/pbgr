@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=faircap-20260530"/>
+  <link rel="stylesheet" href="style.css?v=discount-hint-20260530"/>
 </head>
 <body>
 
@@ -25,7 +25,8 @@
     <span class="param">
       요구수익률
       <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
-      <span style="color:#64748b;font-size:0.78rem">%</span>
+      <span class="unit">%</span>
+      <span class="discount-hint" id="req-kr-discount">1 / 1.10^10 = 0.386배</span>
     </span>
   </div>
   <div class="table-wrap">
@@ -78,6 +79,6 @@
   자본 CAGR (가정) 더블클릭 = 기본값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
 </div>
 
-<script src="app.js?v=faircap-20260530"></script>
+<script src="app.js?v=discount-hint-20260530"></script>
 </body>
 </html>
