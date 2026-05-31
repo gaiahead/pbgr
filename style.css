@@ -151,9 +151,9 @@ th[rowspan] { background: var(--header-strong); color: #334155 }
 .group-head {
   text-align: center;
   color: #334155;
-  font-size: 0.74rem;
-  font-weight: 760;
-  letter-spacing: .04em;
+  font-size: 0.72rem;
+  font-weight: 720;
+  letter-spacing: .015em;
   border-left: 1px solid #cbd9ea;
   border-right: 1px solid #cbd9ea;
   border-bottom: 1px solid var(--line);
