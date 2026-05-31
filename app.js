@@ -124,12 +124,14 @@ function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_pct) {
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const dv = months + (today.getDate() - 1) / daysInMonth;
   const roe = roe_pct / 100, r = req_pct / 100;
-  const y10 = equity_100m * Math.pow(1 + roe, 10);
-  const y11 = equity_100m * Math.pow(1 + roe, 11);
-  const r_t = Math.pow(y11 / y10, 1 / 12) - 1;
-  const trailing = y10 * Math.pow(1 + r_t, dv - 1);
-  const bps = trailing / Math.pow(1 + r, 10) * 1e8 / shares;
-  return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps), equity10_100m: y10 } : null;
+  const y10FromBase = equity_100m * Math.pow(1 + roe, 10);
+  const y11FromBase = equity_100m * Math.pow(1 + roe, 11);
+  const monthlyGrowth = Math.pow(y11FromBase / y10FromBase, 1 / 12) - 1;
+  // 자본총계 (+10년)는 최근 실적 기준 +10년이 아니라, 현 시점에서 +10년 값이다.
+  // 따라서 적정가 계산에 쓰는 현재시점 보정 후 10년 자본과 화면 표시값을 일치시킨다.
+  const equity10FromNow = y10FromBase * Math.pow(1 + monthlyGrowth, dv - 1);
+  const bps = equity10FromNow / Math.pow(1 + r, 10) * 1e8 / shares;
+  return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps), equity10_100m: equity10FromNow } : null;
 }
 
 /* ─── Equity Estimation ─── */
