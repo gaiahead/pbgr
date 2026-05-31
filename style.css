@@ -120,21 +120,24 @@ header {
 .table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px }
 .table-wrap::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px }
 table {
-  width: 100%; min-width: 1220px; border-collapse: collapse; table-layout: fixed;
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
   font-size: 0.82rem; line-height: 1.25;
   background: var(--panel);
 }
-.col-name { width: 104px }
-.col-marketcap { width: 82px }
-.col-fairmarketcap { width: 102px }
-.col-price { width: 92px }
-.col-fair { width: 98px }
-.col-pbgr { width: 64px }
-.col-gap { width: 80px }
-.col-equity { width: 80px }
-.col-cagr { width: 76px }
-.col-assumption { width: 96px }
-.col-shares { width: 132px }
+.col-name { min-width: 104px }
+.col-marketcap { min-width: 82px }
+.col-fairmarketcap { min-width: 102px }
+.col-price { min-width: 92px }
+.col-fair { min-width: 118px }
+.col-pbgr { min-width: 64px }
+.col-gap { min-width: 80px }
+.col-equity { min-width: 80px }
+.col-cagr { min-width: 76px }
+.col-assumption { min-width: 96px }
+.col-shares { min-width: 132px }
 
 thead tr { border-bottom: 1px solid var(--line); background: var(--header) }
 thead .group-row th { background: var(--header-strong) }
@@ -171,9 +174,8 @@ tbody tr:last-child { border-bottom: 0 }
 tbody tr:hover { background: var(--panel-soft) }
 td {
   padding: 9px 10px; text-align: right; color: #334155; white-space: nowrap;
-  line-height: 1.25; vertical-align: middle; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.25; vertical-align: middle; overflow: visible; text-overflow: clip;
   font-variant-numeric: tabular-nums;
-  overflow: hidden; text-overflow: ellipsis;
 }
 td:first-child { text-align: left; white-space: normal; overflow: visible }
 tbody td:nth-child(8),
