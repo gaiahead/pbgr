@@ -56,11 +56,18 @@ function fmtKR(v) {
   return v != null ? Number(v).toLocaleString('ko-KR') + '원' : '—';
 }
 
+function fmtKoreanEok(v) {
+  if (v == null || !Number.isFinite(Number(v)) || Number(v) === 0) return '—';
+  const n = Number(v);
+  const abs = Math.abs(n);
+  const sign = n < 0 ? '-' : '';
+  if (abs >= 100000000) return sign + (abs / 100000000).toFixed(2).replace(/\.00$/, '') + '경';
+  if (abs >= 10000) return sign + (abs / 10000).toFixed(1).replace(/\.0$/, '') + '조';
+  return sign + Math.round(abs).toLocaleString('ko-KR') + '억';
+}
+
 function fmtEquity(v) {
-  if (!v) return '—';
-  return v >= 10000
-    ? (v / 10000).toFixed(1) + '조'
-    : Math.round(v).toLocaleString('ko-KR') + '억';
+  return fmtKoreanEok(v);
 }
 
 function fmtShares(v) {
@@ -71,10 +78,7 @@ function fmtMarketCapKR(price, shares) {
   if (!price || !shares) return '—';
   const won = Number(price) * Number(shares);
   if (!Number.isFinite(won) || won <= 0) return '—';
-  const jo = won / 1e12;
-  return jo >= 1
-    ? jo.toFixed(1) + '조'
-    : Math.round(won / 1e8).toLocaleString('ko-KR') + '억';
+  return fmtKoreanEok(won / 1e8);
 }
 
 function fmtPct(v) {
