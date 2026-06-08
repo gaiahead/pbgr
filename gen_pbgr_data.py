@@ -32,6 +32,26 @@ def load_config() -> dict[str, Any]:
         return json.load(f)
 
 
+def load_previous_assets() -> dict[str, dict[str, Any]]:
+    """기존 pbgr_data.json의 종목별 데이터를 로드.
+
+    WiseReport가 일시적으로 timeout 나는 경우에도 이미 검증된 자본총계
+    시계열을 잃지 않기 위한 안전장치다.
+    """
+    if not OUTPUT_PATH.exists():
+        return {}
+    try:
+        with open(OUTPUT_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {
+        a["ticker"]: a
+        for a in data.get("assets", [])
+        if isinstance(a, dict) and a.get("ticker")
+    }
+
+
 # ─── Date Helpers ─────────────────────────────────────────
 def date_value(base_date_str: str, today: Optional[datetime] = None) -> float:
     """기준일(YYYY-MM-DD 또는 YYYY.MM)로부터 경과 월 (일할 포함)"""
@@ -441,7 +461,8 @@ def resolve_equity(equity_series: dict[str, float], bps_actual: Optional[int],
 
 # ─── Asset Processing ────────────────────────────────────
 def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
-                  today: datetime) -> dict[str, Any]:
+                  today: datetime,
+                  previous_asset: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     """단일 종목 처리 — 데이터 수집 + PBGR 계산"""
     preferred_ticker = cfg.get("preferred_ticker")
     price = get_naver_price(ticker)
@@ -450,6 +471,14 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
     financials = get_naver_financials(ticker)
     latest_yr, latest = get_latest_actual(financials)
     equity_cagr, actual_equity_cagr, equity_series, roe_hist = get_wisereport_data(ticker)
+
+    if not equity_series and previous_asset and previous_asset.get("equity_series"):
+        print("    [WARN] wisereport 이전 자본총계 데이터 재사용", end=" ")
+        equity_series = previous_asset.get("equity_series") or {}
+        equity_cagr = previous_asset.get("equity_cagr_pct")
+        actual_equity_cagr = previous_asset.get("actual_equity_cagr_pct")
+        roe_hist = previous_asset.get("roe_ref") or roe_hist
+
     naver_roe_hist = build_naver_roe_hist(financials)
     roe_hist = merge_roe_hist(roe_hist, naver_roe_hist)
 
@@ -493,6 +522,7 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
 def main() -> None:
     config = load_config()
     kr_cfg = config["kr"]
+    previous_assets = load_previous_assets()
     today = datetime.now()
     updated = datetime.now(KST).strftime("%Y-%m-%d %H:%M")
 
@@ -510,7 +540,7 @@ def main() -> None:
         name = cfg["name"]
         print(f"  [KR] {name} ({ticker}) ...", end=" ", flush=True)
         try:
-            asset = process_asset(ticker, cfg, req_kr, today)
+            asset = process_asset(ticker, cfg, req_kr, today, previous_assets.get(ticker))
             result["assets"].append(asset)
             calc = asset
             if calc["pbgr"]:
@@ -526,6 +556,18 @@ def main() -> None:
             result["assets"].append({
                 "name": name, "ticker": ticker, "market": "KR", "error": str(e),
             })
+
+    missing_equity = []
+    for asset in result["assets"]:
+        ticker = asset.get("ticker")
+        prev = previous_assets.get(ticker) if ticker else None
+        if prev and prev.get("equity_series") and not asset.get("equity_series"):
+            missing_equity.append(f"{asset.get('name', ticker)}({ticker})")
+    if missing_equity:
+        raise RuntimeError(
+            "기존 WiseReport 자본총계 시계열이 사라진 종목: "
+            + ", ".join(missing_equity)
+        )
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)

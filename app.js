@@ -258,7 +258,7 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=20260324c').then(r => r.json()),
+    fetch('pbgr_data.json?v=20260608-fix').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;
