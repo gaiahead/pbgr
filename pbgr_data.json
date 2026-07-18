@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-18 07:56",
+  "updated": "2026-07-19 07:57",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -10,7 +10,7 @@
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 4243133,
-      "equity_now_100m": 5542690.6,
+      "equity_now_100m": 5549022.7,
       "shares": 6648649811,
       "shares_common": 5846278608,
       "shares_preferred": 802371203,
@@ -69,8 +69,8 @@
         "estimate_avg": 45.37
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.1175,
-      "fair_price": 2169358.0
+      "pbgr": 0.1174,
+      "fair_price": 2171836.0
     },
     {
       "name": "삼성전기",
@@ -80,7 +80,7 @@
       "base_date": "2025.12",
       "bps_actual": 126302,
       "equity_y0_100m": 95418,
-      "equity_now_100m": 107724.4,
+      "equity_now_100m": 107780.2,
       "shares": 74693696,
       "shares_common": 74693696,
       "shares_preferred": null,
@@ -139,8 +139,8 @@
         "estimate_avg": 20.24
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.3926,
-      "fair_price": 376407.0
+      "pbgr": 3.3908,
+      "fair_price": 376602.0
     },
     {
       "name": "SK하이닉스",
@@ -150,7 +150,7 @@
       "base_date": "2025.12",
       "bps_actual": 171751,
       "equity_y0_100m": 1205162,
-      "equity_now_100m": 1859944.6,
+      "equity_now_100m": 1863396.9,
       "shares": 712702365,
       "shares_common": 712702365,
       "shares_preferred": null,
@@ -209,8 +209,8 @@
         "estimate_avg": 66.34
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.0196,
-      "fair_price": 94111629.0
+      "pbgr": 0.0195,
+      "fair_price": 94286312.0
     },
     {
       "name": "한미반도체",
@@ -220,7 +220,7 @@
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6903,
-      "equity_now_100m": 8586.8,
+      "equity_now_100m": 8594.8,
       "shares": 95312200,
       "shares_common": 95312200,
       "shares_preferred": null,
@@ -279,8 +279,8 @@
         "estimate_avg": 41.77
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.2365,
-      "fair_price": 108429.0
+      "pbgr": 2.2344,
+      "fair_price": 108531.0
     },
     {
       "name": "리노공업",
@@ -290,7 +290,7 @@
       "base_date": "2025.12",
       "bps_actual": 9635,
       "equity_y0_100m": 7312,
-      "equity_now_100m": 8080.1,
+      "equity_now_100m": 8083.6,
       "shares": 76211850,
       "shares_common": 76211850,
       "shares_preferred": null,
@@ -349,8 +349,8 @@
         "estimate_avg": 24.28
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.6624,
-      "fair_price": 19741.0
+      "pbgr": 3.6609,
+      "fair_price": 19749.0
     },
     {
       "name": "유한양행",
@@ -360,7 +360,7 @@
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 23068,
-      "equity_now_100m": 24037.0,
+      "equity_now_100m": 24041.2,
       "shares": 80828541,
       "shares_common": 79647601,
       "shares_preferred": 1180940,
@@ -419,8 +419,8 @@
         "estimate_avg": 8.37
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.2279,
-      "fair_price": 21933.0
+      "pbgr": 3.2274,
+      "fair_price": 21937.0
     },
     {
       "name": "NAVER",
@@ -430,7 +430,7 @@
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 275820,
-      "equity_now_100m": 289888.9,
+      "equity_now_100m": 289950.5,
       "shares": 156944242,
       "shares_common": 156944242,
       "shares_preferred": null,
@@ -489,8 +489,8 @@
         "estimate_avg": 7.23
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.2178,
-      "fair_price": 156018.0
+      "pbgr": 1.2176,
+      "fair_price": 156051.0
     }
   ]
 }
