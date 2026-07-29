@@ -8,7 +8,16 @@
       "042700": { "name": "한미반도체", "roe": null, "preferred_ticker": null },
       "058470": { "name": "리노공업",   "roe": null, "preferred_ticker": null },
       "000100": { "name": "유한양행",   "roe": null, "preferred_ticker": "000105" },
-      "035420": { "name": "NAVER",      "roe": null, "preferred_ticker": null }
+      "035420": { "name": "NAVER",      "roe": null, "preferred_ticker": null },
+      "357780": { "name": "솔브레인",   "roe": null, "preferred_ticker": null },
+      "064760": { "name": "티씨케이",   "roe": null, "preferred_ticker": null },
+      "079940": { "name": "가비아",     "roe": null, "preferred_ticker": null },
+      "093320": { "name": "케이아이엔엑스", "roe": null, "preferred_ticker": null },
+      "108320": { "name": "LX세미콘",   "roe": null, "preferred_ticker": null },
+      "005290": { "name": "동진쎄미켐", "roe": null, "preferred_ticker": null },
+      "086450": { "name": "동국제약",   "roe": null, "preferred_ticker": null },
+      "112610": { "name": "씨에스윈드", "roe": null, "preferred_ticker": null },
+      "030190": { "name": "NICE평가정보", "roe": null, "preferred_ticker": null }
     }
   }
 }
