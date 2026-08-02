@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-02 08:00",
+  "updated": "2026-08-03 08:01",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -10,7 +10,7 @@
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 4243133,
-      "equity_now_100m": 5656439.2,
+      "equity_now_100m": 5662973.8,
       "shares": 6648649811,
       "shares_common": 5846278608,
       "shares_preferred": 802371203,
@@ -69,8 +69,8 @@
         "estimate_avg": 46.35
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.1131,
-      "fair_price": 2320941.0
+      "pbgr": 0.113,
+      "fair_price": 2323622.0
     },
     {
       "name": "삼성전기",
@@ -80,7 +80,7 @@
       "base_date": "2025.12",
       "bps_actual": 126302,
       "equity_y0_100m": 95418,
-      "equity_now_100m": 109873.7,
+      "equity_now_100m": 109936.0,
       "shares": 74693696,
       "shares_common": 74693696,
       "shares_preferred": null,
@@ -139,8 +139,8 @@
         "estimate_avg": 22.27
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.4908,
-      "fair_price": 458478.0
+      "pbgr": 2.4894,
+      "fair_price": 458738.0
     },
     {
       "name": "SK하이닉스",
@@ -150,7 +150,7 @@
       "base_date": "2025.12",
       "bps_actual": 171751,
       "equity_y0_100m": 1205162,
-      "equity_now_100m": 1929515.3,
+      "equity_now_100m": 1933165.9,
       "shares": 730492365,
       "shares_common": 730492365,
       "shares_preferred": null,
@@ -210,7 +210,7 @@
       },
       "required_return_pct": 10.0,
       "pbgr": 0.0158,
-      "fair_price": 108689265.0
+      "fair_price": 108894901.0
     },
     {
       "name": "한미반도체",
@@ -220,7 +220,7 @@
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6903,
-      "equity_now_100m": 8707.8,
+      "equity_now_100m": 8715.9,
       "shares": 95312200,
       "shares_common": 95312200,
       "shares_preferred": null,
@@ -279,8 +279,8 @@
         "estimate_avg": 41.77
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.9508,
-      "fair_price": 109957.0
+      "pbgr": 1.9489,
+      "fair_price": 110060.0
     },
     {
       "name": "리노공업",
@@ -290,7 +290,7 @@
       "base_date": "2025.12",
       "bps_actual": 9635,
       "equity_y0_100m": 7312,
-      "equity_now_100m": 8132.0,
+      "equity_now_100m": 8135.5,
       "shares": 76211850,
       "shares_common": 76211850,
       "shares_preferred": null,
@@ -349,8 +349,8 @@
         "estimate_avg": 24.28
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.2263,
-      "fair_price": 19868.0
+      "pbgr": 3.225,
+      "fair_price": 19876.0
     },
     {
       "name": "유한양행",
@@ -360,7 +360,7 @@
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 23068,
-      "equity_now_100m": 24179.0,
+      "equity_now_100m": 24183.5,
       "shares": 80828541,
       "shares_common": 79647601,
       "shares_preferred": 1180940,
@@ -419,8 +419,8 @@
         "estimate_avg": 8.89
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.1747,
-      "fair_price": 23152.0
+      "pbgr": 3.1741,
+      "fair_price": 23156.0
     },
     {
       "name": "NAVER",
@@ -430,7 +430,7 @@
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 275820,
-      "equity_now_100m": 291875.0,
+      "equity_now_100m": 291941.3,
       "shares": 156944242,
       "shares_common": 156944242,
       "shares_preferred": null,
@@ -489,8 +489,8 @@
         "estimate_avg": 7.19
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.2546,
-      "fair_price": 165788.0
+      "pbgr": 1.2543,
+      "fair_price": 165826.0
     },
     {
       "name": "솔브레인",
@@ -500,7 +500,7 @@
       "base_date": "2025.12",
       "bps_actual": 137853,
       "equity_y0_100m": 10558,
-      "equity_now_100m": 11575.2,
+      "equity_now_100m": 11579.4,
       "shares": 7778566,
       "shares_common": 7778566,
       "shares_preferred": null,
@@ -559,8 +559,8 @@
         "estimate_avg": 15.2
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.1266,
-      "fair_price": 224129.0
+      "pbgr": 1.1262,
+      "fair_price": 224211.0
     },
     {
       "name": "티씨케이",
@@ -570,7 +570,7 @@
       "base_date": "2025.12",
       "bps_actual": 46452,
       "equity_y0_100m": 5193,
-      "equity_now_100m": 5832.6,
+      "equity_now_100m": 5835.3,
       "shares": 11179416,
       "shares_common": 11179416,
       "shares_preferred": null,
@@ -629,8 +629,8 @@
         "estimate_avg": 20.71
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.472,
-      "fair_price": 112430.0
+      "pbgr": 1.4713,
+      "fair_price": 112482.0
     },
     {
       "name": "가비아",
@@ -640,7 +640,7 @@
       "base_date": "2025.12",
       "bps_actual": 13565,
       "equity_y0_100m": 1769,
-      "equity_now_100m": 1945.2,
+      "equity_now_100m": 1945.9,
       "shares": 13420684,
       "shares_common": 13420684,
       "shares_preferred": null,
@@ -683,8 +683,8 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.0603,
-      "fair_price": 22812.0
+      "pbgr": 2.0596,
+      "fair_price": 22821.0
     },
     {
       "name": "케이아이엔엑스",
@@ -694,7 +694,7 @@
       "base_date": "2025.12",
       "bps_actual": 42214,
       "equity_y0_100m": 2042,
-      "equity_now_100m": 2217.6,
+      "equity_now_100m": 2218.4,
       "shares": 4880000,
       "shares_common": 4880000,
       "shares_preferred": null,
@@ -737,8 +737,8 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.18,
-      "fair_price": 59495.0
+      "pbgr": 2.1793,
+      "fair_price": 59514.0
     },
     {
       "name": "LX세미콘",
@@ -748,7 +748,7 @@
       "base_date": "2025.12",
       "bps_actual": 69207,
       "equity_y0_100m": 11256,
-      "equity_now_100m": 11561.4,
+      "equity_now_100m": 11562.6,
       "shares": 16264300,
       "shares_common": 16264300,
       "shares_preferred": null,
@@ -807,8 +807,8 @@
         "estimate_avg": 6.1
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.8394,
-      "fair_price": 40745.0
+      "pbgr": 0.8393,
+      "fair_price": 40749.0
     },
     {
       "name": "동진쎄미켐",
@@ -818,7 +818,7 @@
       "base_date": "2025.12",
       "bps_actual": 21091,
       "equity_y0_100m": 10838,
-      "equity_now_100m": 12128.4,
+      "equity_now_100m": 12133.8,
       "shares": 50970126,
       "shares_common": 50970126,
       "shares_preferred": null,
@@ -861,8 +861,8 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.8061,
-      "fair_price": 48565.0
+      "pbgr": 0.8058,
+      "fair_price": 48587.0
     },
     {
       "name": "동국제약",
@@ -872,7 +872,7 @@
       "base_date": "2025.12",
       "bps_actual": 14714,
       "equity_y0_100m": 6637,
-      "equity_now_100m": 7194.2,
+      "equity_now_100m": 7196.6,
       "shares": 45230420,
       "shares_common": 45230420,
       "shares_preferred": null,
@@ -931,8 +931,8 @@
         "estimate_avg": 13.11
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.8643,
-      "fair_price": 20247.0
+      "pbgr": 0.864,
+      "fair_price": 20254.0
     },
     {
       "name": "씨에스윈드",
@@ -942,7 +942,7 @@
       "base_date": "2025.12",
       "bps_actual": 27826,
       "equity_y0_100m": 11531,
-      "equity_now_100m": 12509.5,
+      "equity_now_100m": 12513.6,
       "shares": 42171403,
       "shares_common": 42171403,
       "shares_preferred": null,
@@ -1001,8 +1001,8 @@
         "estimate_avg": 15.46
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.9758,
-      "fair_price": 38227.0
+      "pbgr": 0.9754,
+      "fair_price": 38239.0
     },
     {
       "name": "NICE평가정보",
@@ -1012,7 +1012,7 @@
       "base_date": "2025.12",
       "bps_actual": 7931,
       "equity_y0_100m": 4639,
-      "equity_now_100m": 5036.2,
+      "equity_now_100m": 5037.9,
       "shares": 58911527,
       "shares_common": 58911527,
       "shares_preferred": null,
@@ -1071,8 +1071,8 @@
         "estimate_avg": 18.18
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.2674,
-      "fair_price": 11133.0
+      "pbgr": 1.2669,
+      "fair_price": 11137.0
     }
   ]
 }
