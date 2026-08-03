@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-03 20:55",
+  "updated": "2026-08-03 22:53",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -1177,6 +1177,366 @@
       "required_return_pct": 10.0,
       "pbgr": 11.2575,
       "fair_price": 9656.0
+    },
+    {
+      "name": "LS ELECTRIC",
+      "ticker": "010120",
+      "market": "KR",
+      "price": 188400,
+      "base_date": "2025.12",
+      "bps_actual": 13920,
+      "equity_y0_100m": 20698,
+      "equity_now_100m": 21894.2,
+      "shares": 150000000,
+      "shares_common": 150000000,
+      "shares_preferred": null,
+      "roe_pct": 23.27,
+      "roe_note": "자본총계 기대 CAGR 자동",
+      "actual_equity_cagr_pct": 8.72,
+      "equity_cagr_pct": 23.27,
+      "valuation_cagr_pct": 8.72,
+      "market_implied_cagr_pct": 40.0567,
+      "equity_series": {
+        "2021/12": 14816,
+        "2022/12": 15535,
+        "2023/12": 17128,
+        "2024/12": 18388,
+        "2025/12": 20698,
+        "2026/12(E)": 24762,
+        "2027/12(E)": 30874,
+        "2028/12(E)": 38766
+      },
+      "roe_ref": {
+        "actual": [
+          {
+            "year": "2021/12",
+            "roe_pct": 5.86
+          },
+          {
+            "year": "2022/12",
+            "roe_pct": 5.95
+          },
+          {
+            "year": "2023/12",
+            "roe_pct": 12.61
+          },
+          {
+            "year": "2024/12",
+            "roe_pct": 13.44
+          },
+          {
+            "year": "2025/12",
+            "roe_pct": 14.67
+          }
+        ],
+        "actual_avg": 10.51,
+        "estimate": [
+          {
+            "year": "2026/12",
+            "roe_pct": 23.81
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 27.96
+          },
+          {
+            "year": "2028/12",
+            "roe_pct": 28.92
+          }
+        ],
+        "estimate_avg": 26.9
+      },
+      "required_return_pct": 10.0,
+      "pbgr": 14.6117,
+      "fair_price": 12894.0
+    },
+    {
+      "name": "효성중공업",
+      "ticker": "298040",
+      "market": "KR",
+      "price": 2495000,
+      "base_date": "2025.12",
+      "bps_actual": 252555,
+      "equity_y0_100m": 23517,
+      "equity_now_100m": 27472.9,
+      "shares": 9324548,
+      "shares_common": 9324548,
+      "shares_preferred": null,
+      "roe_pct": 40.410000000000004,
+      "roe_note": "자본총계 기대 CAGR 자동",
+      "actual_equity_cagr_pct": 26.029999999999998,
+      "equity_cagr_pct": 40.410000000000004,
+      "valuation_cagr_pct": 26.029999999999998,
+      "market_implied_cagr_pct": 35.8593,
+      "equity_series": {
+        "2021/12": 9322,
+        "2022/12": 9746,
+        "2023/12": 10803,
+        "2024/12": 19085,
+        "2025/12": 23517,
+        "2026/12(E)": 38260,
+        "2027/12(E)": 49693,
+        "2028/12(E)": 65098
+      },
+      "roe_ref": {
+        "actual": [
+          {
+            "year": "2021/12",
+            "roe_pct": 6.35
+          },
+          {
+            "year": "2022/12",
+            "roe_pct": 1.07
+          },
+          {
+            "year": "2023/12",
+            "roe_pct": 11.29
+          },
+          {
+            "year": "2024/12",
+            "roe_pct": 14.9
+          },
+          {
+            "year": "2025/12",
+            "roe_pct": 24.41
+          }
+        ],
+        "actual_avg": 11.6,
+        "estimate": [
+          {
+            "year": "2026/12",
+            "roe_pct": 24.6
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 25.91
+          },
+          {
+            "year": "2028/12",
+            "roe_pct": 27.07
+          }
+        ],
+        "estimate_avg": 25.86
+      },
+      "required_return_pct": 10.0,
+      "pbgr": 2.2149,
+      "fair_price": 1126462.0
+    },
+    {
+      "name": "HD현대일렉트릭",
+      "ticker": "267260",
+      "market": "KR",
+      "price": 673000,
+      "base_date": "2025.12",
+      "bps_actual": 56366,
+      "equity_y0_100m": 20288,
+      "equity_now_100m": 24587.5,
+      "shares": 36047135,
+      "shares_common": 36047135,
+      "shares_preferred": null,
+      "roe_pct": 31.97,
+      "roe_note": "자본총계 기대 CAGR 자동",
+      "actual_equity_cagr_pct": 33.11,
+      "equity_cagr_pct": 31.97,
+      "valuation_cagr_pct": 33.11,
+      "market_implied_cagr_pct": 38.3135,
+      "equity_series": {
+        "2021/12": 6462,
+        "2022/12": 8226,
+        "2023/12": 10481,
+        "2024/12": 15018,
+        "2025/12": 20288,
+        "2026/12(E)": 27082,
+        "2027/12(E)": 35764,
+        "2028/12(E)": 46629
+      },
+      "roe_ref": {
+        "actual": [
+          {
+            "year": "2021/12",
+            "roe_pct": -5.08
+          },
+          {
+            "year": "2022/12",
+            "roe_pct": 22.13
+          },
+          {
+            "year": "2023/12",
+            "roe_pct": 27.71
+          },
+          {
+            "year": "2024/12",
+            "roe_pct": 39.34
+          },
+          {
+            "year": "2025/12",
+            "roe_pct": 41.5
+          }
+        ],
+        "actual_avg": 25.12,
+        "estimate": [
+          {
+            "year": "2026/12",
+            "roe_pct": 40.51
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 38.67
+          },
+          {
+            "year": "2028/12",
+            "roe_pct": 36.34
+          }
+        ],
+        "estimate_avg": 38.51
+      },
+      "required_return_pct": 10.0,
+      "pbgr": 1.5009,
+      "fair_price": 448407.0
+    },
+    {
+      "name": "LS",
+      "ticker": "006260",
+      "market": "KR",
+      "price": 273000,
+      "base_date": "2025.12",
+      "bps_actual": 182946,
+      "equity_y0_100m": 50031,
+      "equity_now_100m": 53007.6,
+      "shares": 31200000,
+      "shares_common": 31200000,
+      "shares_preferred": null,
+      "roe_pct": 11.59,
+      "roe_note": "자본총계 기대 CAGR 자동",
+      "actual_equity_cagr_pct": 8.98,
+      "equity_cagr_pct": 11.59,
+      "valuation_cagr_pct": 8.98,
+      "market_implied_cagr_pct": 15.0574,
+      "equity_series": {
+        "2021/12": 35466,
+        "2022/12": 43198,
+        "2023/12": 47337,
+        "2024/12": 45919,
+        "2025/12": 50031,
+        "2026/12(E)": 55148,
+        "2027/12(E)": 61732,
+        "2028/12(E)": 69522
+      },
+      "roe_ref": {
+        "actual": [
+          {
+            "year": "2021/12",
+            "roe_pct": 8.15
+          },
+          {
+            "year": "2022/12",
+            "roe_pct": 20.17
+          },
+          {
+            "year": "2023/12",
+            "roe_pct": 9.63
+          },
+          {
+            "year": "2024/12",
+            "roe_pct": 5.09
+          },
+          {
+            "year": "2025/12",
+            "roe_pct": 5.64
+          }
+        ],
+        "actual_avg": 9.74,
+        "estimate": [
+          {
+            "year": "2026/12",
+            "roe_pct": 11.68
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 12.51
+          },
+          {
+            "year": "2028/12",
+            "roe_pct": 12.72
+          }
+        ],
+        "estimate_avg": 12.3
+      },
+      "required_return_pct": 10.0,
+      "pbgr": 1.7764,
+      "fair_price": 153678.0
+    },
+    {
+      "name": "대한전선",
+      "ticker": "001440",
+      "market": "KR",
+      "price": 23950,
+      "base_date": "2025.12",
+      "bps_actual": 8622,
+      "equity_y0_100m": 16016,
+      "equity_now_100m": 20455.9,
+      "shares": 195992596,
+      "shares_common": 195992596,
+      "shares_preferred": null,
+      "roe_pct": 11.3,
+      "roe_note": "자본총계 기대 CAGR 자동",
+      "actual_equity_cagr_pct": 43.919999999999995,
+      "equity_cagr_pct": 11.3,
+      "valuation_cagr_pct": 43.919999999999995,
+      "market_implied_cagr_pct": 21.1139,
+      "equity_series": {
+        "2021/12": 3733,
+        "2022/12": 8664,
+        "2023/12": 9365,
+        "2024/12": 14732,
+        "2025/12": 16016,
+        "2026/12(E)": 17319,
+        "2027/12(E)": 19833,
+        "2028/12(E)": 22083
+      },
+      "roe_ref": {
+        "actual": [
+          {
+            "year": "2021/12",
+            "roe_pct": 7.78
+          },
+          {
+            "year": "2022/12",
+            "roe_pct": 3.32
+          },
+          {
+            "year": "2023/12",
+            "roe_pct": 7.83
+          },
+          {
+            "year": "2024/12",
+            "roe_pct": 5.85
+          },
+          {
+            "year": "2025/12",
+            "roe_pct": 5.48
+          }
+        ],
+        "actual_avg": 6.05,
+        "estimate": [
+          {
+            "year": "2026/12",
+            "roe_pct": 5.46
+          },
+          {
+            "year": "2027/12",
+            "roe_pct": 9.27
+          },
+          {
+            "year": "2028/12",
+            "roe_pct": 10.61
+          }
+        ],
+        "estimate_avg": 8.45
+      },
+      "required_return_pct": 10.0,
+      "pbgr": 0.1609,
+      "fair_price": 148829.0
     }
   ]
 }

@@ -18,7 +18,12 @@
       "086450": { "name": "동국제약",   "roe": null, "preferred_ticker": null },
       "112610": { "name": "씨에스윈드", "roe": null, "preferred_ticker": null },
       "030190": { "name": "NICE평가정보", "roe": null, "preferred_ticker": null },
-      "058610": { "name": "에스피지",     "roe": null, "preferred_ticker": null }
+      "058610": { "name": "에스피지",     "roe": null, "preferred_ticker": null },
+      "010120": { "name": "LS ELECTRIC",  "roe": null, "preferred_ticker": null },
+      "298040": { "name": "효성중공업",    "roe": null, "preferred_ticker": null },
+      "267260": { "name": "HD현대일렉트릭", "roe": null, "preferred_ticker": null },
+      "006260": { "name": "LS",           "roe": null, "preferred_ticker": null },
+      "001440": { "name": "대한전선",      "roe": null, "preferred_ticker": null }
     }
   }
 }

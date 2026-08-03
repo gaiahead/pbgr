@@ -228,7 +228,7 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=20260803-actual-market').then(r => r.json()),
+    fetch('pbgr_data.json?v=20260803-power5').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;
