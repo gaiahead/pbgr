@@ -121,7 +121,7 @@ header {
 .table-wrap::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px }
 table {
   width: 100%;
-  min-width: 1242px;
+  min-width: 1248px;
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 0.82rem; line-height: 1.25;
@@ -132,7 +132,7 @@ table {
 .col-fairmarketcap { width: 102px }
 .col-price { width: 92px }
 .col-fair { width: 98px }
-.col-pbgr { width: 64px }
+.col-pbgr { width: 70px }
 .col-gap { width: 80px }
 .col-equity { width: 80px }
 .col-cagr { width: 76px }
