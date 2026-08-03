@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-03 20:35",
+  "updated": "2026-08-03 20:55",
   "kr_required_return": 0.1,
   "assets": [
     {
@@ -10,7 +10,7 @@
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 4243133,
-      "equity_now_100m": 5662973.8,
+      "equity_now_100m": 4507211.8,
       "shares": 6648649811,
       "shares_common": 5846278608,
       "shares_preferred": 802371203,
@@ -18,6 +18,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 9.4,
       "equity_cagr_pct": 53.65,
+      "valuation_cagr_pct": 9.4,
+      "market_implied_cagr_pct": 23.9748,
       "equity_series": {
         "2021/12": 2962377,
         "2022/12": 3451861,
@@ -69,8 +71,8 @@
         "estimate_avg": 46.35
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.1031,
-      "fair_price": 2323622.0
+      "pbgr": 3.7596,
+      "fair_price": 63704.0
     },
     {
       "name": "삼성전기",
@@ -80,7 +82,7 @@
       "base_date": "2025.12",
       "bps_actual": 126302,
       "equity_y0_100m": 95418,
-      "equity_now_100m": 109936.0,
+      "equity_now_100m": 101207.0,
       "shares": 74693696,
       "shares_common": 74693696,
       "shares_preferred": null,
@@ -88,6 +90,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 9.16,
       "equity_cagr_pct": 23.46,
+      "valuation_cagr_pct": 9.16,
+      "market_implied_cagr_pct": 34.9931,
       "equity_series": {
         "2021/12": 67189,
         "2022/12": 75385,
@@ -139,8 +143,8 @@
         "estimate_avg": 22.27
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.5745,
-      "fair_price": 458738.0
+      "pbgr": 9.4795,
+      "fair_price": 124584.0
     },
     {
       "name": "SK하이닉스",
@@ -150,7 +154,7 @@
       "base_date": "2025.12",
       "bps_actual": 171751,
       "equity_y0_100m": 1205162,
-      "equity_now_100m": 1933165.9,
+      "equity_now_100m": 1346955.4,
       "shares": 730492365,
       "shares_common": 730492365,
       "shares_preferred": null,
@@ -158,6 +162,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 18.0,
       "equity_cagr_pct": 102.01,
+      "valuation_cagr_pct": 18.0,
+      "market_implied_cagr_pct": 35.338,
       "equity_series": {
         "2021/12": 621571,
         "2022/12": 632664,
@@ -209,8 +215,8 @@
         "estimate_avg": 67.05
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.0144,
-      "fair_price": 108894901.0
+      "pbgr": 4.27,
+      "fair_price": 366978.0
     },
     {
       "name": "한미반도체",
@@ -220,7 +226,7 @@
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6903,
-      "equity_now_100m": 8715.9,
+      "equity_now_100m": 7749.4,
       "shares": 95312200,
       "shares_common": 95312200,
       "shares_preferred": null,
@@ -228,6 +234,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 18.78,
       "equity_cagr_pct": 41.48,
+      "valuation_cagr_pct": 18.78,
+      "market_implied_cagr_pct": 49.8658,
       "equity_series": {
         "2021/12": 3468,
         "2022/12": 3901,
@@ -279,8 +287,8 @@
         "estimate_avg": 41.77
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.8399,
-      "fair_price": 110060.0
+      "pbgr": 11.7227,
+      "fair_price": 17274.0
     },
     {
       "name": "리노공업",
@@ -290,7 +298,7 @@
       "base_date": "2025.12",
       "bps_actual": 9635,
       "equity_y0_100m": 7312,
-      "equity_now_100m": 8135.5,
+      "equity_now_100m": 8033.5,
       "shares": 76211850,
       "shares_common": 76211850,
       "shares_preferred": null,
@@ -298,6 +306,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 15.03,
       "equity_cagr_pct": 17.21,
+      "valuation_cagr_pct": 15.03,
+      "market_implied_cagr_pct": 30.3841,
       "equity_series": {
         "2021/12": 4177,
         "2022/12": 4932,
@@ -349,8 +359,8 @@
         "estimate_avg": 24.28
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.0891,
-      "fair_price": 19876.0
+      "pbgr": 3.7685,
+      "fair_price": 16293.0
     },
     {
       "name": "유한양행",
@@ -360,7 +370,7 @@
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 23068,
-      "equity_now_100m": 24183.5,
+      "equity_now_100m": 23775.9,
       "shares": 80828541,
       "shares_common": 79647601,
       "shares_preferred": 1180940,
@@ -368,6 +378,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 4.6,
       "equity_cagr_pct": 7.28,
+      "valuation_cagr_pct": 4.6,
+      "market_implied_cagr_pct": 19.6595,
       "equity_series": {
         "2021/12": 19269,
         "2022/12": 19858,
@@ -419,8 +431,8 @@
         "estimate_avg": 8.89
       },
       "required_return_pct": 10.0,
-      "pbgr": 3.1784,
-      "fair_price": 23156.0
+      "pbgr": 4.1547,
+      "fair_price": 17715.0
     },
     {
       "name": "NAVER",
@@ -430,7 +442,7 @@
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 275820,
-      "equity_now_100m": 291941.3,
+      "equity_now_100m": 283278.2,
       "shares": 156944242,
       "shares_common": 156944242,
       "shares_preferred": null,
@@ -438,6 +450,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 4.05,
       "equity_cagr_pct": 8.82,
+      "valuation_cagr_pct": 4.05,
+      "market_implied_cagr_pct": 11.1486,
       "equity_series": {
         "2021/12": 235356,
         "2022/12": 227441,
@@ -489,8 +503,8 @@
         "estimate_avg": 7.19
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.2513,
-      "fair_price": 165826.0
+      "pbgr": 2.0114,
+      "fair_price": 103163.0
     },
     {
       "name": "솔브레인",
@@ -500,7 +514,7 @@
       "base_date": "2025.12",
       "bps_actual": 137853,
       "equity_y0_100m": 10558,
-      "equity_now_100m": 11579.4,
+      "equity_now_100m": 11498.6,
       "shares": 7778566,
       "shares_common": 7778566,
       "shares_preferred": null,
@@ -508,6 +522,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 13.54,
       "equity_cagr_pct": 14.729999999999999,
+      "valuation_cagr_pct": 13.54,
+      "market_implied_cagr_pct": 16.0896,
       "equity_series": {
         "2021/12": 6352,
         "2022/12": 7787,
@@ -559,8 +575,8 @@
         "estimate_avg": 15.2
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.1329,
-      "fair_price": 224211.0
+      "pbgr": 1.2651,
+      "fair_price": 200776.0
     },
     {
       "name": "티씨케이",
@@ -570,7 +586,7 @@
       "base_date": "2025.12",
       "bps_actual": 46452,
       "equity_y0_100m": 5193,
-      "equity_now_100m": 5835.3,
+      "equity_now_100m": 5577.4,
       "shares": 11179416,
       "shares_common": 11179416,
       "shares_preferred": null,
@@ -578,6 +594,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 11.21,
       "equity_cagr_pct": 18.95,
+      "valuation_cagr_pct": 11.21,
+      "market_implied_cagr_pct": 23.7018,
       "equity_series": {
         "2021/12": 3395,
         "2022/12": 4169,
@@ -629,8 +647,8 @@
         "estimate_avg": 20.71
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.514,
-      "fair_price": 112482.0
+      "pbgr": 3.087,
+      "fair_price": 55167.0
     },
     {
       "name": "가비아",
@@ -648,6 +666,8 @@
       "roe_note": "자본총계 실적 CAGR 자동",
       "actual_equity_cagr_pct": 15.24,
       "equity_cagr_pct": null,
+      "valuation_cagr_pct": 15.24,
+      "market_implied_cagr_pct": 23.3775,
       "equity_series": {
         "2021/12": 1003,
         "2022/12": 1262,
@@ -702,6 +722,8 @@
       "roe_note": "자본총계 실적 CAGR 자동",
       "actual_equity_cagr_pct": 13.120000000000001,
       "equity_cagr_pct": null,
+      "valuation_cagr_pct": 13.120000000000001,
+      "market_implied_cagr_pct": 22.3365,
       "equity_series": {
         "2021/12": 1247,
         "2022/12": 1456,
@@ -748,7 +770,7 @@
       "base_date": "2025.12",
       "bps_actual": 69207,
       "equity_y0_100m": 11256,
-      "equity_now_100m": 11562.6,
+      "equity_now_100m": 11919.8,
       "shares": 16264300,
       "shares_common": 16264300,
       "shares_preferred": null,
@@ -756,6 +778,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 8.9,
       "equity_cagr_pct": 4.08,
+      "valuation_cagr_pct": 8.9,
+      "market_implied_cagr_pct": 2.1866,
       "equity_series": {
         "2021/12": 8003,
         "2022/12": 9504,
@@ -807,8 +831,8 @@
         "estimate_avg": 6.1
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.8233,
-      "fair_price": 40749.0
+      "pbgr": 0.5098,
+      "fair_price": 65811.0
     },
     {
       "name": "동진쎄미켐",
@@ -826,6 +850,8 @@
       "roe_note": "자본총계 실적 CAGR 자동",
       "actual_equity_cagr_pct": 18.3,
       "equity_cagr_pct": null,
+      "valuation_cagr_pct": 18.3,
+      "market_implied_cagr_pct": 15.8134,
       "equity_series": {
         "2021/12": 5534,
         "2022/12": 6968,
@@ -872,7 +898,7 @@
       "base_date": "2025.12",
       "bps_actual": 14714,
       "equity_y0_100m": 6637,
-      "equity_now_100m": 7196.6,
+      "equity_now_100m": 7072.6,
       "shares": 45230420,
       "shares_common": 45230420,
       "shares_preferred": null,
@@ -880,6 +906,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 9.92,
       "equity_cagr_pct": 12.8,
+      "valuation_cagr_pct": 9.92,
+      "market_implied_cagr_pct": 11.296,
       "equity_series": {
         "2021/12": 4546,
         "2022/12": 5019,
@@ -931,8 +959,8 @@
         "estimate_avg": 13.11
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.8675,
-      "fair_price": 20254.0
+      "pbgr": 1.1408,
+      "fair_price": 15402.0
     },
     {
       "name": "씨에스윈드",
@@ -942,7 +970,7 @@
       "base_date": "2025.12",
       "bps_actual": 27826,
       "equity_y0_100m": 11531,
-      "equity_now_100m": 12513.6,
+      "equity_now_100m": 12034.0,
       "shares": 42171403,
       "shares_common": 42171403,
       "shares_preferred": null,
@@ -950,6 +978,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 6.5600000000000005,
       "equity_cagr_pct": 12.94,
+      "valuation_cagr_pct": 6.5600000000000005,
+      "market_implied_cagr_pct": 12.9708,
       "equity_series": {
         "2021/12": 8942,
         "2022/12": 8795,
@@ -1001,8 +1031,8 @@
         "estimate_avg": 15.46
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.0029,
-      "fair_price": 38239.0
+      "pbgr": 1.8563,
+      "fair_price": 20659.0
     },
     {
       "name": "NICE평가정보",
@@ -1012,7 +1042,7 @@
       "base_date": "2025.12",
       "bps_actual": 7931,
       "equity_y0_100m": 4639,
-      "equity_now_100m": 5037.9,
+      "equity_now_100m": 4987.2,
       "shares": 58911527,
       "shares_common": 58911527,
       "shares_preferred": null,
@@ -1020,6 +1050,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 11.37,
       "equity_cagr_pct": 13.059999999999999,
+      "valuation_cagr_pct": 11.37,
+      "market_implied_cagr_pct": 15.6534,
       "equity_series": {
         "2021/12": 3015,
         "2022/12": 3416,
@@ -1071,8 +1103,8 @@
         "estimate_avg": 18.18
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.2714,
-      "fair_price": 11137.0
+      "pbgr": 1.4913,
+      "fair_price": 9495.0
     },
     {
       "name": "에스피지",
@@ -1082,7 +1114,7 @@
       "base_date": "2025.12",
       "bps_actual": 11633,
       "equity_y0_100m": 2580,
-      "equity_now_100m": 2703.1,
+      "equity_now_100m": 2708.7,
       "shares": 22177360,
       "shares_common": 22177360,
       "shares_preferred": null,
@@ -1090,6 +1122,8 @@
       "roe_note": "자본총계 기대 CAGR 자동",
       "actual_equity_cagr_pct": 7.51,
       "equity_cagr_pct": 7.180000000000001,
+      "valuation_cagr_pct": 7.51,
+      "market_implied_cagr_pct": 35.1286,
       "equity_series": {
         "2021/12": 1931,
         "2022/12": 2135,
@@ -1141,8 +1175,8 @@
         "estimate_avg": 7.62
       },
       "required_return_pct": 10.0,
-      "pbgr": 11.63,
-      "fair_price": 9346.0
+      "pbgr": 11.2575,
+      "fair_price": 9656.0
     }
   ]
 }

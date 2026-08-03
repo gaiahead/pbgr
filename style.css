@@ -136,7 +136,7 @@ table {
 .col-gap { width: 80px }
 .col-equity { width: 80px }
 .col-cagr { width: 76px }
-.col-assumption { width: 96px }
+.col-market-eval { width: 96px }
 .col-shares { width: 132px }
 
 thead tr { border-bottom: 1px solid var(--line); background: var(--header) }
@@ -190,26 +190,13 @@ tbody td:nth-child(13) { border-right: 1px solid var(--line-soft) }
 .fair-marketcap-cell { color: #1d4ed8; font-weight: 650 }
 .cagr-actual { color: var(--subtle); font-weight: 560 }
 .cagr-expected { color: #1d4ed8; font-weight: 650 }
+.cagr-market { color: #0f172a; font-weight: 650 }
 
 .pbgr-val,
 .gap-val { font-weight: 720; font-size: 0.84rem }
 .under, .positive { color: var(--green) }
 .over, .negative { color: var(--red) }
 
-/* ─── CAGR Input ─── */
-.roe-cell { display: flex; align-items: center; justify-content: flex-end; gap: 5px; min-height: 26px; line-height: 1; overflow: visible }
-.roe-dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; cursor: help }
-.roe-input {
-  -moz-appearance: textfield;
-  background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px;
-  color: var(--text); font-size: 0.82rem; font-family: inherit; line-height: 1;
-  width: 58px; height: 26px; text-align: right; outline: none; padding: 0 7px;
-  transition: border-color .15s, color .15s, box-shadow .15s;
-}
-.roe-input::-webkit-inner-spin-button,
-.roe-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
-.roe-input:focus { border-color: #3b82f6; color: #0f172a; box-shadow: 0 0 0 3px rgba(59, 130, 246, .12) }
-.roe-input.dirty { border-color: #fb923c; color: var(--orange); background: #fff7ed }
 .unit { color: var(--muted); font-size: 0.76rem; line-height: 26px }
 
 .shares-cell { text-align: right; white-space: normal; overflow: visible }

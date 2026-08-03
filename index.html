@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=spg-20260803"/>
+  <link rel="stylesheet" href="style.css?v=actual-market-20260803"/>
 </head>
 <body>
 
@@ -48,7 +48,7 @@
         <col class="col-equity">
         <col class="col-cagr">
         <col class="col-cagr">
-        <col class="col-assumption">
+        <col class="col-market-eval">
         <col class="col-shares">
       </colgroup>
       <thead>
@@ -70,7 +70,7 @@
           <th>+10년</th>
           <th>5년 실적</th>
           <th>3년 기대</th>
-          <th>가정 ✎</th>
+          <th title="현재 종가가 내포한 10년 자본 CAGR">시장 평가</th>
         </tr>
       </thead>
       <tbody id="kr-body"></tbody>
@@ -79,10 +79,11 @@
 </div>
 
 <div class="note">
-  자본 CAGR (가정) · 요구수익률 수정 후 <strong style="color:#2563eb">저장</strong> 클릭 → 브라우저에 영구 저장 &nbsp;|&nbsp;
-  자본 CAGR (가정) 더블클릭 = 기본값 복원 &nbsp;|&nbsp; PBGR &lt; 1 = 저평가
+  PBGR · 적정가 · 괴리율 = 5년 실적 자본 CAGR 기준 &nbsp;|&nbsp;
+  시장 평가 = 현재 종가가 내포한 10년 자본 CAGR &nbsp;|&nbsp;
+  요구수익률 수정 후 <strong style="color:#2563eb">저장</strong> 클릭
 </div>
 
-<script src="app.js?v=spg-20260803"></script>
+<script src="app.js?v=actual-market-20260803"></script>
 </body>
 </html>

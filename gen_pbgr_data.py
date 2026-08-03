@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import calendar
 import json
+import math
 import re
 import sys
 import urllib.request
@@ -412,14 +413,17 @@ def _build_roe_hist(result: dict[str, dict[str, float]]) -> dict[str, Any]:
 
 
 # ─── PBGR Calculation ────────────────────────────────────
-def calc_kr(price: int, equity_100m: float, roe_pct: float,
+def calc_kr(price: int, equity_100m: float, cagr_pct: float,
             shares: int, dv: float, req_return: float) -> Optional[dict[str, float]]:
-    """PBGR 및 적정가 계산"""
-    if not all([price, equity_100m, roe_pct, shares]):
+    """지정 자본 CAGR 기준 PBGR 및 적정가 계산."""
+    values = (price, equity_100m, cagr_pct, shares, dv, req_return)
+    if not all(isinstance(v, (int, float)) and math.isfinite(v) for v in values):
         return None
-    roe = roe_pct / 100
-    y10 = equity_100m * (1 + roe) ** 10
-    y11 = equity_100m * (1 + roe) ** 11
+    if price <= 0 or equity_100m <= 0 or shares <= 0 or cagr_pct <= -100 or req_return <= -1:
+        return None
+    cagr = cagr_pct / 100
+    y10 = equity_100m * (1 + cagr) ** 10
+    y11 = equity_100m * (1 + cagr) ** 11
     if y10 <= 0:
         return None
     r_t = (y11 / y10) ** (1 / 12) - 1
@@ -429,6 +433,28 @@ def calc_kr(price: int, equity_100m: float, roe_pct: float,
     if bps <= 0:
         return None
     return {"pbgr": round(price / bps, 4), "fair_price": round(bps, 0)}
+
+
+def implied_cagr_kr(price: int, equity_100m: float, shares: int,
+                    dv: float, req_return: float) -> Optional[float]:
+    """현재 종가와 적정가가 같아지는 시장 내재 자본 CAGR을 역산."""
+    values = (price, equity_100m, shares, dv, req_return)
+    if not all(isinstance(v, (int, float)) and math.isfinite(v) for v in values):
+        return None
+    if price <= 0 or equity_100m <= 0 or shares <= 0 or req_return <= -1:
+        return None
+
+    projection_years = 10 + (dv - 1) / 12
+    if projection_years <= 0:
+        return None
+
+    target_equity_100m = price * shares / 1e8 * (1 + req_return) ** 10
+    ratio = target_equity_100m / equity_100m
+    if ratio <= 0:
+        return None
+
+    implied = ratio ** (1 / projection_years) - 1
+    return round(implied * 100, 4) if math.isfinite(implied) else None
 
 
 # ─── ROE Resolution ──────────────────────────────────────
@@ -487,12 +513,20 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
     equity_100m = resolve_equity(equity_series, bps_actual, shares)
     dv = date_value(latest_yr, today) if latest_yr else 0
 
+    # 가치평가·괴리율은 5년 실적 자본 CAGR만 사용한다.
+    valuation_cagr_pct = actual_equity_cagr
+
     # 현재 시점 자본 추정
     equity_now = None
-    if equity_100m and roe_pct:
-        equity_now = round(equity_100m * (1 + roe_pct / 100) ** (dv / 12), 1)
+    if equity_100m and valuation_cagr_pct is not None and valuation_cagr_pct > -100:
+        equity_now = round(equity_100m * (1 + valuation_cagr_pct / 100) ** (dv / 12), 1)
 
-    calc = calc_kr(price, equity_100m, roe_pct, shares, dv, req_kr)
+    calc = None
+    market_implied_cagr = None
+    if equity_100m is not None and shares is not None:
+        market_implied_cagr = implied_cagr_kr(price, equity_100m, shares, dv, req_kr)
+        if valuation_cagr_pct is not None:
+            calc = calc_kr(price, equity_100m, valuation_cagr_pct, shares, dv, req_kr)
 
     return {
         "name": cfg["name"],
@@ -510,6 +544,8 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
         "roe_note": cfg.get("note") or roe_note,
         "actual_equity_cagr_pct": actual_equity_cagr,
         "equity_cagr_pct": equity_cagr,
+        "valuation_cagr_pct": valuation_cagr_pct,
+        "market_implied_cagr_pct": market_implied_cagr,
         "equity_series": equity_series,
         "roe_ref": roe_hist,
         "required_return_pct": round(req_kr * 100, 1),

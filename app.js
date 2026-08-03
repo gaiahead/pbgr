@@ -9,12 +9,7 @@ function loadSettings() {
 }
 
 function saveSettings() {
-  const s = { req_kr: parseFloat(document.getElementById('req-kr').value) || 10, roe: {} };
-  document.querySelectorAll('.roe-input').forEach(inp => {
-    const val = parseFloat(inp.value);
-    const def = parseFloat(inp.dataset.default);
-    if (!isNaN(val) && Math.abs(val - def) > 0.001) s.roe[inp.dataset.ticker] = val;
-  });
+  const s = { req_kr: parseFloat(document.getElementById('req-kr').value) || 10 };
   localStorage.setItem(LS_KEY, JSON.stringify(s));
   setStatus('✓ 저장됨', '#16a34a');
   const btn = document.getElementById('save-btn');
@@ -36,8 +31,6 @@ function markDirty() {
   document.getElementById('save-btn').className = 'save-btn unsaved';
   document.getElementById('save-btn').textContent = '● 저장';
   setStatus('수정됨', '#c2410c');
-  // ROE는 포커스 잃을 때 재계산 (입력 중 방해 안 함)
-  if (document.activeElement && document.activeElement.classList.contains('roe-input')) return;
   renderTable();
 }
 
@@ -116,38 +109,55 @@ function pbgrHtml(pbgr) {
 
 /* ─── PBGR Calculation ─── */
 
-function recalcKR(price, equity_100m, roe_pct, shares, base_date, req_pct) {
-  if (!price || !equity_100m || !roe_pct || !shares) return null;
-  const base = new Date(base_date);
-  const today = new Date();
-  const months = (today.getFullYear() - base.getFullYear()) * 12 + (today.getMonth() - base.getMonth());
+function dateValueMonths(baseDate, today = new Date()) {
+  const match = String(baseDate || '').match(/^(\d{4})[.-](\d{1,2})/);
+  if (!match) return null;
+  const baseYear = Number(match[1]);
+  const baseMonth = Number(match[2]) - 1;
+  if (baseMonth < 0 || baseMonth > 11) return null;
+  const months = (today.getFullYear() - baseYear) * 12 + (today.getMonth() - baseMonth);
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const dv = months + (today.getDate() - 1) / daysInMonth;
-  const roe = roe_pct / 100, r = req_pct / 100;
-  const y10FromBase = equity_100m * Math.pow(1 + roe, 10);
-  const y11FromBase = equity_100m * Math.pow(1 + roe, 11);
+  return months + (today.getDate() - 1) / daysInMonth;
+}
+
+function recalcKR(price, equity_100m, cagr_pct, shares, base_date, req_pct, today = new Date()) {
+  const values = [price, equity_100m, cagr_pct, shares, req_pct];
+  if (!values.every(v => Number.isFinite(Number(v)))) return null;
+  if (price <= 0 || equity_100m <= 0 || shares <= 0 || cagr_pct <= -100 || req_pct <= -100) return null;
+  const dv = dateValueMonths(base_date, today);
+  if (dv == null) return null;
+  const cagr = cagr_pct / 100, r = req_pct / 100;
+  const y10FromBase = equity_100m * Math.pow(1 + cagr, 10);
+  const y11FromBase = equity_100m * Math.pow(1 + cagr, 11);
   const monthlyGrowth = Math.pow(y11FromBase / y10FromBase, 1 / 12) - 1;
   // 자본총계 (+10년)는 최근 실적 기준 +10년이 아니라, 현 시점에서 +10년 값이다.
   // 따라서 적정가 계산에 쓰는 현재시점 보정 후 10년 자본과 화면 표시값을 일치시킨다.
   const equity10FromNow = y10FromBase * Math.pow(1 + monthlyGrowth, dv - 1);
   const bps = equity10FromNow / Math.pow(1 + r, 10) * 1e8 / shares;
-  return bps > 0 ? { pbgr: price / bps, fair_price: Math.round(bps), equity10_100m: equity10FromNow } : null;
+  const equityNow = equity_100m * Math.pow(1 + cagr, dv / 12);
+  return bps > 0 ? {
+    pbgr: price / bps,
+    fair_price: Math.round(bps),
+    equity_now_100m: equityNow,
+    equity10_100m: equity10FromNow
+  } : null;
 }
 
-/* ─── Equity Estimation ─── */
+function impliedCagrKR(price, equity_100m, shares, base_date, req_pct, today = new Date()) {
+  const values = [price, equity_100m, shares, req_pct];
+  if (!values.every(v => Number.isFinite(Number(v)))) return null;
+  if (price <= 0 || equity_100m <= 0 || shares <= 0 || req_pct <= -100) return null;
+  const dv = dateValueMonths(base_date, today);
+  if (dv == null) return null;
+  const projectionYears = 10 + (dv - 1) / 12;
+  if (projectionYears <= 0) return null;
 
-function estimateEquityNow(a) {
-  const roeDiff = Math.abs(a._roe - a.roe_pct) > 0.001;
-  if (roeDiff && a.equity_y0_100m && a._roe && a.base_date) {
-    const parts = a.base_date.split('.');
-    const bY = parseInt(parts[0]), bM = parseInt(parts[1]);
-    const base = new Date(bY, bM - 1, new Date(bY, bM, 0).getDate());
-    const t = new Date();
-    const m2 = (t.getFullYear() - bY) * 12 + (t.getMonth() - (bM - 1));
-    const dv2 = m2 + (t.getDate() - 1) / new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
-    return a.equity_y0_100m * Math.pow(1 + a._roe / 100, dv2 / 12);
-  }
-  return a.equity_now_100m;
+  const req = req_pct / 100;
+  const targetEquity100m = price * shares / 1e8 * Math.pow(1 + req, 10);
+  const ratio = targetEquity100m / equity_100m;
+  if (ratio <= 0) return null;
+  const implied = Math.pow(ratio, 1 / projectionYears) - 1;
+  return Number.isFinite(implied) ? implied * 100 : null;
 }
 
 /* ─── Table Rendering ─── */
@@ -157,23 +167,19 @@ let rawData = null;
 function renderTable() {
   const reqKR = parseFloat(document.getElementById('req-kr').value) || 10;
   const tbody = document.getElementById('kr-body');
-  const s = loadSettings();
-
-  const currentRoe = {};
-  document.querySelectorAll('.roe-input').forEach(inp => {
-    currentRoe[inp.dataset.ticker] = parseFloat(inp.value);
-  });
 
   tbody.innerHTML = '';
   const assets = rawData.assets.filter(a => a.market === 'KR');
 
   assets.forEach(a => {
-    const configRoe = configData?.kr?.assets?.[a.ticker]?.roe ?? a.roe_pct;
-    const roe = currentRoe[a.ticker] ?? s.roe?.[a.ticker] ?? configRoe;
-    const isCustom = Math.abs(roe - configRoe) > 0.001;
-    const calc = recalcKR(a.price, a.equity_y0_100m, roe, a.shares, a.base_date, reqKR);
-
-    const equityNow = estimateEquityNow(a);
+    const valuationCagr = a.actual_equity_cagr_pct;
+    const calc = recalcKR(
+      a.price, a.equity_y0_100m, valuationCagr, a.shares, a.base_date, reqKR
+    );
+    const marketImpliedCagr = impliedCagrKR(
+      a.price, a.equity_y0_100m, a.shares, a.base_date, reqKR
+    );
+    const equityNow = calc?.equity_now_100m ?? null;
 
     // 자본총계 시리즈
     const eqSeries = a.equity_series || {};
@@ -195,44 +201,8 @@ function renderTable() {
       <td class="metric-cell equity-cell">${fmtEquity(eq10)}</td>
       <td class="metric-cell cagr-cell cagr-actual">${fmtPct(a.actual_equity_cagr_pct)}</td>
       <td class="metric-cell cagr-cell cagr-expected">${fmtPct(a.equity_cagr_pct)}</td>
+      <td class="metric-cell cagr-cell cagr-market">${fmtPct(marketImpliedCagr)}</td>
     `;
-
-    // 성장률 가정 입력 컬럼
-    const roeTd = document.createElement('td');
-    const roeCell = document.createElement('div');
-    roeCell.className = 'roe-cell';
-
-    const dot = document.createElement('span');
-    dot.className = 'roe-dot';
-    dot.style.background = isCustom ? '#2563eb' : '#cbd5e1';
-    dot.title = isCustom ? '수정됨 (더블클릭 복원)' : (a.roe_note || '기본값');
-
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.inputMode = 'decimal';
-    inp.className = 'roe-input' + (isCustom ? ' dirty' : '');
-    inp.value = roe.toFixed(2);
-    inp.dataset.ticker = a.ticker;
-    inp.dataset.default = configRoe;
-    inp.addEventListener('change', markDirty);
-    inp.addEventListener('input', () => {
-      document.getElementById('save-btn').className = 'save-btn unsaved';
-      document.getElementById('save-btn').textContent = '● 저장';
-      setStatus('수정됨', '#c2410c');
-    });
-    inp.addEventListener('blur', renderTable);
-    inp.addEventListener('dblclick', () => {
-      inp.value = configRoe.toFixed(2);
-      markDirty();
-    });
-
-    const unit = document.createElement('span');
-    unit.className = 'unit';
-    unit.textContent = '%';
-
-    roeCell.append(dot, inp, unit);
-    roeTd.appendChild(roeCell);
-    tr.appendChild(roeTd);
 
     // 주식수 컬럼
     const sharesTd = document.createElement('td');
@@ -258,7 +228,7 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=20260803-spg').then(r => r.json()),
+    fetch('pbgr_data.json?v=20260803-actual-market').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;
@@ -270,4 +240,7 @@ async function init() {
   renderTable();
 }
 
-init();
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { dateValueMonths, recalcKR, impliedCagrKR };
+}
+if (typeof document !== 'undefined') init();
