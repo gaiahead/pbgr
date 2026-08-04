@@ -3,6 +3,7 @@ const {
   recalcKR,
   impliedCagrKR,
   normalizeMarketCagrOverrides,
+  removeMarketCagrOverride,
   resolveMarketCagrKR,
 } = require('./app.js');
 
@@ -90,6 +91,15 @@ const editedOverrides = normalizeMarketCagrOverrides({
   impossible: -100,
 });
 assert.deepEqual(editedOverrides, { '058610': 15.25 });
+const resetOverrides = removeMarketCagrOverride(
+  { '058610': 15.25, '005930': 9.4 },
+  '058610',
+);
+assert.deepEqual(resetOverrides, { '005930': 9.4 });
+assert.equal(
+  resolveMarketCagrKR(asset, fixture.requiredReturnPct, resetOverrides, today),
+  defaultMarketCagr,
+);
 const editedMarketCagr = resolveMarketCagrKR(
   asset,
   fixture.requiredReturnPct,

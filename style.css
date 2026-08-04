@@ -121,7 +121,7 @@ header {
 .table-wrap::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px }
 table {
   width: 100%;
-  min-width: 1268px;
+  min-width: 1298px;
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 0.82rem; line-height: 1.25;
@@ -136,7 +136,7 @@ table {
 .col-gap { width: 84px }
 .col-equity { width: 80px }
 .col-cagr { width: 80px }
-.col-market-eval { width: 96px }
+.col-market-eval { width: 126px }
 .col-shares { width: 132px }
 
 thead tr { border-bottom: 1px solid var(--line); background: var(--header) }
@@ -191,7 +191,7 @@ tbody td:nth-child(13) { border-right: 1px solid var(--line-soft) }
 .cagr-actual { color: var(--subtle); font-weight: 560 }
 .cagr-expected { color: #1d4ed8; font-weight: 650 }
 .cagr-market { color: #0f172a; font-weight: 650 }
-.market-cagr-editor { display: flex; align-items: center; justify-content: flex-end; gap: 4px }
+.market-cagr-editor { display: flex; align-items: center; justify-content: flex-end; gap: 3px }
 .market-cagr-input {
   -moz-appearance: textfield;
   width: 58px; height: 27px; padding: 0 6px;
@@ -206,6 +206,22 @@ tbody td:nth-child(13) { border-right: 1px solid var(--line-soft) }
 .market-cagr-input:focus {
   border-color: #f59e0b; background: #fff7d6;
   box-shadow: 0 0 0 3px rgba(245, 158, 11, .14);
+}
+.market-cagr-reset {
+  width: 25px; height: 27px; padding: 0;
+  border: 1px solid #bfdbfe; border-radius: 6px;
+  background: #eff6ff; color: #2563eb;
+  font: 700 0.86rem/1 sans-serif; cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s, opacity .15s;
+}
+.market-cagr-reset:hover:not(:disabled) {
+  border-color: #60a5fa; background: #dbeafe; color: #1d4ed8;
+}
+.market-cagr-reset:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, .35); outline-offset: 1px;
+}
+.market-cagr-reset:disabled {
+  opacity: .28; cursor: default; filter: grayscale(.35);
 }
 
 .pbgr-val,

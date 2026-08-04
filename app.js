@@ -183,6 +183,12 @@ function normalizeMarketCagrOverrides(raw) {
   return clean;
 }
 
+function removeMarketCagrOverride(raw, ticker) {
+  const clean = normalizeMarketCagrOverrides(raw);
+  delete clean[String(ticker)];
+  return clean;
+}
+
 function resolveMarketCagrKR(asset, reqPct, overrides = {}, today = new Date()) {
   const saved = Object.prototype.hasOwnProperty.call(overrides, asset.ticker)
     ? overrides[asset.ticker]
@@ -220,6 +226,10 @@ function renderTable() {
   const assets = rawData.assets.filter(a => a.market === 'KR');
 
   assets.forEach(a => {
+    const hasMarketOverride = Object.prototype.hasOwnProperty.call(
+      marketCagrOverrides,
+      a.ticker,
+    );
     const marketCagr = resolveMarketCagrKR(a, reqKR, marketCagrOverrides);
     const calc = recalcKR(
       a.price, a.equity_y0_100m, marketCagr, a.shares, a.base_date, reqKR
@@ -251,38 +261,55 @@ function renderTable() {
             aria-label="${a.name} 시장 평가 CAGR"
             title="괴리율·적정가·PBGR에 적용됩니다. 값을 비우면 종가 역산값으로 복원됩니다.">
           <span class="unit">%</span>
+          <button class="market-cagr-reset" type="button"
+            aria-label="${a.name} 시장 평가 초기화"
+            title="${a.name} 시장 평가 초기화"
+            ${hasMarketOverride ? '' : 'disabled'}>↺</button>
         </span>
       </td>
     `;
 
     const marketInput = tr.querySelector('.market-cagr-input');
+    const resetButton = tr.querySelector('.market-cagr-reset');
+    const restoreImpliedMarketCagr = () => {
+      marketCagrOverrides = removeMarketCagrOverride(marketCagrOverrides, a.ticker);
+      const currentReq = parseFloat(document.getElementById('req-kr').value) || 10;
+      const fallback = resolveMarketCagrKR(a, currentReq, marketCagrOverrides);
+      marketInput.value = isValidCagrPct(fallback) ? Number(fallback).toFixed(2) : '';
+      resetButton.disabled = true;
+      updateRowValuation(
+        tr,
+        a,
+        recalcKR(a.price, a.equity_y0_100m, fallback, a.shares, a.base_date, currentReq),
+      );
+    };
+
     marketInput.addEventListener('input', () => {
       const raw = marketInput.value.trim();
       const value = raw === '' ? null : Number(raw);
       let editedCalc = null;
       if (isValidCagrPct(value)) {
         marketCagrOverrides[a.ticker] = value;
+        resetButton.disabled = false;
         const currentReq = parseFloat(document.getElementById('req-kr').value) || 10;
         editedCalc = recalcKR(
           a.price, a.equity_y0_100m, value, a.shares, a.base_date, currentReq
         );
       } else {
-        delete marketCagrOverrides[a.ticker];
+        marketCagrOverrides = removeMarketCagrOverride(marketCagrOverrides, a.ticker);
+        resetButton.disabled = true;
       }
       updateRowValuation(tr, a, editedCalc);
       markDirty(false);
     });
     marketInput.addEventListener('change', () => {
       if (isValidCagrPct(marketInput.value.trim())) return;
-      delete marketCagrOverrides[a.ticker];
-      const currentReq = parseFloat(document.getElementById('req-kr').value) || 10;
-      const fallback = resolveMarketCagrKR(a, currentReq, marketCagrOverrides);
-      marketInput.value = isValidCagrPct(fallback) ? Number(fallback).toFixed(2) : '';
-      updateRowValuation(
-        tr,
-        a,
-        recalcKR(a.price, a.equity_y0_100m, fallback, a.shares, a.base_date, currentReq),
-      );
+      restoreImpliedMarketCagr();
+    });
+    resetButton.addEventListener('click', () => {
+      restoreImpliedMarketCagr();
+      markDirty(false);
+      marketInput.focus();
     });
 
     // 주식수 컬럼
@@ -309,7 +336,7 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=market-eval-edit-v3-20260804').then(r => r.json()),
+    fetch('pbgr_data.json?v=market-eval-reset-v1-20260804').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;
@@ -328,6 +355,7 @@ if (typeof module !== 'undefined' && module.exports) {
     recalcKR,
     impliedCagrKR,
     normalizeMarketCagrOverrides,
+    removeMarketCagrOverride,
     resolveMarketCagrKR,
   };
 }

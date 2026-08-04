@@ -56,6 +56,8 @@ class PbgrUiContractTest(unittest.TestCase):
         html = Path("index.html").read_text(encoding="utf-8")
 
         self.assertIn('class="market-cagr-input"', app)
+        self.assertIn('class="market-cagr-reset"', app)
+        self.assertIn("시장 평가 초기화", app)
         self.assertIn("resolveMarketCagrKR", app)
         self.assertIn("market_cagr_overrides", app)
         self.assertIn("PBGR · 적정가 · 괴리율 = 시장 평가 자본 CAGR 기준", html)
