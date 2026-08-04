@@ -37,7 +37,7 @@ assert.ok(marketCalc);
 assert.ok(Math.abs(marketCalc.pbgr - 1) < 1e-10);
 assert.equal(marketCalc.fair_price, fixture.price);
 
-const actualCalc = recalcKR(
+const conservativeCalc = recalcKR(
   fixture.price,
   fixture.equity,
   7.51,
@@ -46,18 +46,18 @@ const actualCalc = recalcKR(
   fixture.requiredReturnPct,
   today,
 );
-const expectedCalc = recalcKR(
+const aggressiveCalc = recalcKR(
   fixture.price,
   fixture.equity,
-  7.18,
+  15.25,
   fixture.shares,
   fixture.baseDate,
   fixture.requiredReturnPct,
   today,
 );
-assert.ok(actualCalc);
-assert.ok(expectedCalc);
-assert.notEqual(actualCalc.fair_price, expectedCalc.fair_price);
+assert.ok(conservativeCalc);
+assert.ok(aggressiveCalc);
+assert.notEqual(conservativeCalc.fair_price, aggressiveCalc.fair_price);
 
 const asset = {
   ticker: '058610',
@@ -120,4 +120,4 @@ assert.ok(editedCalc);
 assert.notEqual(editedCalc.pbgr, defaultCalc.pbgr);
 assert.notEqual((1 / editedCalc.pbgr) - 1, 0);
 
-console.log(JSON.stringify({ marketCagr, actualCalc, expectedCalc, defaultCalc, editedCalc }, null, 2));
+console.log(JSON.stringify({ marketCagr, conservativeCalc, aggressiveCalc, defaultCalc, editedCalc }, null, 2));

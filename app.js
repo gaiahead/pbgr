@@ -79,10 +79,6 @@ function fmtMarketCapKR(price, shares) {
   return fmtKoreanEok(won / 1e8);
 }
 
-function fmtPct(v) {
-  return v != null ? Number(v).toFixed(2) + '%' : '—';
-}
-
 function updateRequiredReturnHint() {
   const input = document.getElementById('req-kr');
   const hint = document.getElementById('req-kr-discount');
@@ -244,16 +240,6 @@ function renderTable() {
     tr.innerHTML = `
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
       <td class="metric-cell marketcap-cell">${fmtMarketCapKR(a.price, a.shares)}</td>
-      <td class="metric-cell fair-marketcap-cell" data-field="fair-marketcap">${calc ? fmtMarketCapKR(calc.fair_price, a.shares) : '—'}</td>
-      <td data-field="pbgr">${pbgrHtml(calc?.pbgr)}</td>
-      <td data-field="gap">${gap(calc?.pbgr)}</td>
-      <td>${fmtKR(a.price)}</td>
-      <td data-field="fair-price">${calc ? fmtKR(calc.fair_price) : '—'}</td>
-      <td class="metric-cell equity-cell">${fmtEquity(eqActual)}</td>
-      <td class="metric-cell equity-cell" data-field="equity-now">${fmtEquity(calc?.equity_now_100m ?? null)}</td>
-      <td class="metric-cell equity-cell" data-field="equity-10">${fmtEquity(calc?.equity10_100m ?? null)}</td>
-      <td class="metric-cell cagr-cell cagr-actual">${fmtPct(a.actual_equity_cagr_pct)}</td>
-      <td class="metric-cell cagr-cell cagr-expected">${fmtPct(a.equity_cagr_pct)}</td>
       <td class="metric-cell cagr-cell cagr-market">
         <span class="market-cagr-editor">
           <input class="market-cagr-input" type="number" step="0.01"
@@ -267,6 +253,14 @@ function renderTable() {
             ${hasMarketOverride ? '' : 'disabled'}>↺</button>
         </span>
       </td>
+      <td class="metric-cell fair-marketcap-cell" data-field="fair-marketcap">${calc ? fmtMarketCapKR(calc.fair_price, a.shares) : '—'}</td>
+      <td data-field="pbgr">${pbgrHtml(calc?.pbgr)}</td>
+      <td data-field="gap">${gap(calc?.pbgr)}</td>
+      <td>${fmtKR(a.price)}</td>
+      <td data-field="fair-price">${calc ? fmtKR(calc.fair_price) : '—'}</td>
+      <td class="metric-cell equity-cell">${fmtEquity(eqActual)}</td>
+      <td class="metric-cell equity-cell" data-field="equity-now">${fmtEquity(calc?.equity_now_100m ?? null)}</td>
+      <td class="metric-cell equity-cell" data-field="equity-10">${fmtEquity(calc?.equity10_100m ?? null)}</td>
     `;
 
     const marketInput = tr.querySelector('.market-cagr-input');

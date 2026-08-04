@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=market-eval-reset-v1-20260804"/>
+  <link rel="stylesheet" href="style.css?v=global-cagr-v1-20260804"/>
 </head>
 <body>
 
@@ -38,6 +38,7 @@
       <colgroup>
         <col class="col-name">
         <col class="col-marketcap">
+        <col class="col-market-eval">
         <col class="col-fairmarketcap">
         <col class="col-pbgr">
         <col class="col-gap">
@@ -46,31 +47,25 @@
         <col class="col-equity">
         <col class="col-equity">
         <col class="col-equity">
-        <col class="col-cagr">
-        <col class="col-cagr">
-        <col class="col-market-eval">
         <col class="col-shares">
       </colgroup>
       <thead>
         <tr class="group-row">
           <th rowspan="2">종목</th>
           <th rowspan="2">시가총액</th>
+          <th rowspan="2" title="괴리율·적정가·PBGR에 적용하는 편집 가능한 10년 자본 CAGR">시장 평가 ✎</th>
           <th rowspan="2">적정 시가총액</th>
           <th rowspan="2">PBGR</th>
           <th rowspan="2">괴리율</th>
           <th rowspan="2">종가</th>
           <th rowspan="2">적정가</th>
           <th class="group-head" colspan="3">자본총계</th>
-          <th class="group-head" colspan="3">자본 CAGR</th>
           <th rowspan="2">주식수</th>
         </tr>
         <tr class="sub-row">
           <th>최근</th>
           <th>현재</th>
           <th>+10년</th>
-          <th>5년 실적</th>
-          <th>3년 기대</th>
-          <th title="괴리율·적정가·PBGR에 적용하는 편집 가능한 10년 자본 CAGR">시장 평가 ✎</th>
         </tr>
       </thead>
       <tbody id="kr-body"></tbody>
@@ -84,6 +79,6 @@
   요구수익률·시장 평가 수정 후 <strong style="color:#2563eb">저장</strong> 클릭
 </div>
 
-<script src="app.js?v=market-eval-reset-v1-20260804"></script>
+<script src="app.js?v=global-cagr-v1-20260804"></script>
 </body>
 </html>
