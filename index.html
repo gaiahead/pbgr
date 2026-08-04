@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PBGR 가치평가 모니터</title>
-  <link rel="stylesheet" href="style.css?v=power5b-20260803"/>
+  <link rel="stylesheet" href="style.css?v=market-eval-edit-v3-20260804"/>
 </head>
 <body>
 
@@ -24,7 +24,7 @@
     <span class="param">
       <span class="param-label">요구수익률</span>
       <span class="param-input-box">
-        <input class="req-input" id="req-kr" type="number" step="0.1" value="10" oninput="markDirty()">
+        <input class="req-input" id="req-kr" type="number" step="0.1" value="10">
         <span class="unit">%</span>
       </span>
       <span class="discount-box">
@@ -70,7 +70,7 @@
           <th>+10년</th>
           <th>5년 실적</th>
           <th>3년 기대</th>
-          <th title="현재 종가가 내포한 10년 자본 CAGR">시장 평가</th>
+          <th title="괴리율·적정가·PBGR에 적용하는 편집 가능한 10년 자본 CAGR">시장 평가 ✎</th>
         </tr>
       </thead>
       <tbody id="kr-body"></tbody>
@@ -79,11 +79,11 @@
 </div>
 
 <div class="note">
-  PBGR · 적정가 · 괴리율 = 5년 실적 자본 CAGR 기준 &nbsp;|&nbsp;
-  시장 평가 = 현재 종가가 내포한 10년 자본 CAGR &nbsp;|&nbsp;
-  요구수익률 수정 후 <strong style="color:#2563eb">저장</strong> 클릭
+  PBGR · 적정가 · 괴리율 = 시장 평가 자본 CAGR 기준 &nbsp;|&nbsp;
+  시장 평가 초기값 = 현재 종가가 내포한 10년 자본 CAGR, 종목별 수정 가능 &nbsp;|&nbsp;
+  요구수익률·시장 평가 수정 후 <strong style="color:#2563eb">저장</strong> 클릭
 </div>
 
-<script src="app.js?v=power5-20260803"></script>
+<script src="app.js?v=market-eval-edit-v3-20260804"></script>
 </body>
 </html>

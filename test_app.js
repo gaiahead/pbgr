@@ -1,5 +1,10 @@
 const assert = require('node:assert/strict');
-const { recalcKR, impliedCagrKR } = require('./app.js');
+const {
+  recalcKR,
+  impliedCagrKR,
+  normalizeMarketCagrOverrides,
+  resolveMarketCagrKR,
+} = require('./app.js');
 
 const today = new Date(2026, 7, 3);
 const fixture = {
@@ -53,4 +58,56 @@ assert.ok(actualCalc);
 assert.ok(expectedCalc);
 assert.notEqual(actualCalc.fair_price, expectedCalc.fair_price);
 
-console.log(JSON.stringify({ marketCagr, actualCalc, expectedCalc }, null, 2));
+const asset = {
+  ticker: '058610',
+  price: fixture.price,
+  equity_y0_100m: fixture.equity,
+  shares: fixture.shares,
+  base_date: fixture.baseDate,
+};
+const noOverrides = normalizeMarketCagrOverrides({});
+const defaultMarketCagr = resolveMarketCagrKR(
+  asset,
+  fixture.requiredReturnPct,
+  noOverrides,
+  today,
+);
+assert.ok(Math.abs(defaultMarketCagr - marketCagr) < 1e-10);
+const defaultCalc = recalcKR(
+  asset.price,
+  asset.equity_y0_100m,
+  defaultMarketCagr,
+  asset.shares,
+  asset.base_date,
+  fixture.requiredReturnPct,
+  today,
+);
+assert.ok(Math.abs(defaultCalc.pbgr - 1) < 1e-10);
+
+const editedOverrides = normalizeMarketCagrOverrides({
+  '058610': '15.25',
+  invalid: 'not-a-number',
+  impossible: -100,
+});
+assert.deepEqual(editedOverrides, { '058610': 15.25 });
+const editedMarketCagr = resolveMarketCagrKR(
+  asset,
+  fixture.requiredReturnPct,
+  editedOverrides,
+  today,
+);
+assert.equal(editedMarketCagr, 15.25);
+const editedCalc = recalcKR(
+  asset.price,
+  asset.equity_y0_100m,
+  editedMarketCagr,
+  asset.shares,
+  asset.base_date,
+  fixture.requiredReturnPct,
+  today,
+);
+assert.ok(editedCalc);
+assert.notEqual(editedCalc.pbgr, defaultCalc.pbgr);
+assert.notEqual((1 / editedCalc.pbgr) - 1, 0);
+
+console.log(JSON.stringify({ marketCagr, actualCalc, expectedCalc, defaultCalc, editedCalc }, null, 2));

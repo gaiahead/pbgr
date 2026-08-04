@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 
 from gen_pbgr_data import calc_kr, implied_cagr_kr
 
@@ -47,6 +48,18 @@ class PbgrCalculationTest(unittest.TestCase):
             (actual_calc["fair_price"] / price - 1) * 100,
             delta=0.1,
         )
+
+
+class PbgrUiContractTest(unittest.TestCase):
+    def test_market_evaluation_is_editable_and_drives_valuation(self):
+        app = Path("app.js").read_text(encoding="utf-8")
+        html = Path("index.html").read_text(encoding="utf-8")
+
+        self.assertIn('class="market-cagr-input"', app)
+        self.assertIn("resolveMarketCagrKR", app)
+        self.assertIn("market_cagr_overrides", app)
+        self.assertIn("PBGR · 적정가 · 괴리율 = 시장 평가 자본 CAGR 기준", html)
+        self.assertNotIn("PBGR · 적정가 · 괴리율 = 5년 실적 자본 CAGR 기준", html)
 
 
 if __name__ == "__main__":

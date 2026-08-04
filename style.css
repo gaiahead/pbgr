@@ -191,11 +191,28 @@ tbody td:nth-child(13) { border-right: 1px solid var(--line-soft) }
 .cagr-actual { color: var(--subtle); font-weight: 560 }
 .cagr-expected { color: #1d4ed8; font-weight: 650 }
 .cagr-market { color: #0f172a; font-weight: 650 }
+.market-cagr-editor { display: flex; align-items: center; justify-content: flex-end; gap: 4px }
+.market-cagr-input {
+  -moz-appearance: textfield;
+  width: 58px; height: 27px; padding: 0 6px;
+  border: 1px solid #f0c36d; border-radius: 6px;
+  background: #fffbeb; color: #0f172a;
+  font: inherit; font-weight: 680; text-align: right;
+  outline: none; font-variant-numeric: tabular-nums;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.market-cagr-input::-webkit-inner-spin-button,
+.market-cagr-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
+.market-cagr-input:focus {
+  border-color: #f59e0b; background: #fff7d6;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, .14);
+}
 
 .pbgr-val,
 .gap-val { font-weight: 720; font-size: 0.84rem }
 .under, .positive { color: var(--green) }
 .over, .negative { color: var(--red) }
+.neutral { color: var(--muted) }
 
 .unit { color: var(--muted); font-size: 0.76rem; line-height: 26px }
 

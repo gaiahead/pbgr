@@ -1,6 +1,7 @@
 /* PBGR 가치평가 모니터 — app.js */
 
 const LS_KEY = 'pbgr_settings_v2';
+let marketCagrOverrides = {};
 
 /* ─── LocalStorage ─── */
 
@@ -9,7 +10,11 @@ function loadSettings() {
 }
 
 function saveSettings() {
-  const s = { req_kr: parseFloat(document.getElementById('req-kr').value) || 10 };
+  const s = {
+    req_kr: parseFloat(document.getElementById('req-kr').value) || 10,
+    market_cagr_overrides: normalizeMarketCagrOverrides(marketCagrOverrides),
+  };
+  marketCagrOverrides = s.market_cagr_overrides;
   localStorage.setItem(LS_KEY, JSON.stringify(s));
   setStatus('✓ 저장됨', '#16a34a');
   const btn = document.getElementById('save-btn');
@@ -26,12 +31,12 @@ function setStatus(msg, color = '#475569') {
   el.style.color = color;
 }
 
-function markDirty() {
+function markDirty(shouldRender = true) {
   updateRequiredReturnHint();
   document.getElementById('save-btn').className = 'save-btn unsaved';
   document.getElementById('save-btn').textContent = '● 저장';
   setStatus('수정됨', '#c2410c');
-  renderTable();
+  if (shouldRender) renderTable();
 }
 
 /* ─── Config ─── */
@@ -96,14 +101,17 @@ function updateRequiredReturnHint() {
 
 function gap(pbgr) {
   if (!pbgr) return '—';
-  const pct = ((1 / pbgr) - 1) * 100;
-  const cls = pct >= 0 ? 'positive' : 'negative';
-  return `<span class="gap-val ${cls}">${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%</span>`;
+  const rawPct = ((1 / pbgr) - 1) * 100;
+  const pct = Math.abs(rawPct) < 0.05 ? 0 : rawPct;
+  const cls = pct > 0 ? 'positive' : pct < 0 ? 'negative' : 'neutral';
+  const sign = pct > 0 ? '+' : '';
+  return `<span class="gap-val ${cls}">${sign}${pct.toFixed(1)}%</span>`;
 }
 
 function pbgrHtml(pbgr) {
   if (!pbgr) return '—';
-  const cls = pbgr < 1 ? 'under' : 'over';
+  const delta = pbgr - 1;
+  const cls = Math.abs(delta) < 0.0005 ? 'neutral' : delta < 0 ? 'under' : 'over';
   return `<span class="pbgr-val ${cls}">${pbgr.toFixed(3)}</span>`;
 }
 
@@ -160,9 +168,49 @@ function impliedCagrKR(price, equity_100m, shares, base_date, req_pct, today = n
   return Number.isFinite(implied) ? implied * 100 : null;
 }
 
+function isValidCagrPct(value) {
+  if (value == null || String(value).trim() === '') return false;
+  return Number.isFinite(Number(value)) && Number(value) > -100;
+}
+
+function normalizeMarketCagrOverrides(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const clean = {};
+  Object.entries(raw).forEach(([ticker, value]) => {
+    if (!/^[0-9A-Z.-]+$/.test(ticker) || !isValidCagrPct(value)) return;
+    clean[ticker] = Number(value);
+  });
+  return clean;
+}
+
+function resolveMarketCagrKR(asset, reqPct, overrides = {}, today = new Date()) {
+  const saved = Object.prototype.hasOwnProperty.call(overrides, asset.ticker)
+    ? overrides[asset.ticker]
+    : null;
+  if (isValidCagrPct(saved)) return Number(saved);
+  return impliedCagrKR(
+    asset.price,
+    asset.equity_y0_100m,
+    asset.shares,
+    asset.base_date,
+    reqPct,
+    today,
+  );
+}
+
 /* ─── Table Rendering ─── */
 
 let rawData = null;
+
+function updateRowValuation(tr, asset, calc) {
+  const field = name => tr.querySelector(`[data-field="${name}"]`);
+  field('fair-marketcap').textContent = calc ? fmtMarketCapKR(calc.fair_price, asset.shares) : '—';
+  field('pbgr').innerHTML = pbgrHtml(calc?.pbgr);
+  field('gap').innerHTML = gap(calc?.pbgr);
+  field('fair-price').textContent = calc ? fmtKR(calc.fair_price) : '—';
+  field('equity-now').textContent = fmtEquity(calc?.equity_now_100m ?? null);
+  field('equity-10').textContent = fmtEquity(calc?.equity10_100m ?? null);
+}
 
 function renderTable() {
   const reqKR = parseFloat(document.getElementById('req-kr').value) || 10;
@@ -172,37 +220,70 @@ function renderTable() {
   const assets = rawData.assets.filter(a => a.market === 'KR');
 
   assets.forEach(a => {
-    const valuationCagr = a.actual_equity_cagr_pct;
+    const marketCagr = resolveMarketCagrKR(a, reqKR, marketCagrOverrides);
     const calc = recalcKR(
-      a.price, a.equity_y0_100m, valuationCagr, a.shares, a.base_date, reqKR
+      a.price, a.equity_y0_100m, marketCagr, a.shares, a.base_date, reqKR
     );
-    const marketImpliedCagr = impliedCagrKR(
-      a.price, a.equity_y0_100m, a.shares, a.base_date, reqKR
-    );
-    const equityNow = calc?.equity_now_100m ?? null;
 
     // 자본총계 시리즈
     const eqSeries = a.equity_series || {};
     const actualEqKeys = Object.keys(eqSeries).filter(k => !k.includes('(E)')).sort();
     const eqActual = actualEqKeys.length ? eqSeries[actualEqKeys[actualEqKeys.length - 1]] : null;
-    const eq10 = calc?.equity10_100m ?? null;
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><div class="name">${a.name}</div><div class="ticker">${a.ticker}</div></td>
       <td class="metric-cell marketcap-cell">${fmtMarketCapKR(a.price, a.shares)}</td>
-      <td class="metric-cell fair-marketcap-cell">${calc ? fmtMarketCapKR(calc.fair_price, a.shares) : '—'}</td>
-      <td>${pbgrHtml(calc?.pbgr)}</td>
-      <td>${gap(calc?.pbgr)}</td>
+      <td class="metric-cell fair-marketcap-cell" data-field="fair-marketcap">${calc ? fmtMarketCapKR(calc.fair_price, a.shares) : '—'}</td>
+      <td data-field="pbgr">${pbgrHtml(calc?.pbgr)}</td>
+      <td data-field="gap">${gap(calc?.pbgr)}</td>
       <td>${fmtKR(a.price)}</td>
-      <td>${calc ? fmtKR(calc.fair_price) : '—'}</td>
+      <td data-field="fair-price">${calc ? fmtKR(calc.fair_price) : '—'}</td>
       <td class="metric-cell equity-cell">${fmtEquity(eqActual)}</td>
-      <td class="metric-cell equity-cell">${fmtEquity(equityNow)}</td>
-      <td class="metric-cell equity-cell">${fmtEquity(eq10)}</td>
+      <td class="metric-cell equity-cell" data-field="equity-now">${fmtEquity(calc?.equity_now_100m ?? null)}</td>
+      <td class="metric-cell equity-cell" data-field="equity-10">${fmtEquity(calc?.equity10_100m ?? null)}</td>
       <td class="metric-cell cagr-cell cagr-actual">${fmtPct(a.actual_equity_cagr_pct)}</td>
       <td class="metric-cell cagr-cell cagr-expected">${fmtPct(a.equity_cagr_pct)}</td>
-      <td class="metric-cell cagr-cell cagr-market">${fmtPct(marketImpliedCagr)}</td>
+      <td class="metric-cell cagr-cell cagr-market">
+        <span class="market-cagr-editor">
+          <input class="market-cagr-input" type="number" step="0.01"
+            value="${isValidCagrPct(marketCagr) ? Number(marketCagr).toFixed(2) : ''}"
+            aria-label="${a.name} 시장 평가 CAGR"
+            title="괴리율·적정가·PBGR에 적용됩니다. 값을 비우면 종가 역산값으로 복원됩니다.">
+          <span class="unit">%</span>
+        </span>
+      </td>
     `;
+
+    const marketInput = tr.querySelector('.market-cagr-input');
+    marketInput.addEventListener('input', () => {
+      const raw = marketInput.value.trim();
+      const value = raw === '' ? null : Number(raw);
+      let editedCalc = null;
+      if (isValidCagrPct(value)) {
+        marketCagrOverrides[a.ticker] = value;
+        const currentReq = parseFloat(document.getElementById('req-kr').value) || 10;
+        editedCalc = recalcKR(
+          a.price, a.equity_y0_100m, value, a.shares, a.base_date, currentReq
+        );
+      } else {
+        delete marketCagrOverrides[a.ticker];
+      }
+      updateRowValuation(tr, a, editedCalc);
+      markDirty(false);
+    });
+    marketInput.addEventListener('change', () => {
+      if (isValidCagrPct(marketInput.value.trim())) return;
+      delete marketCagrOverrides[a.ticker];
+      const currentReq = parseFloat(document.getElementById('req-kr').value) || 10;
+      const fallback = resolveMarketCagrKR(a, currentReq, marketCagrOverrides);
+      marketInput.value = isValidCagrPct(fallback) ? Number(fallback).toFixed(2) : '';
+      updateRowValuation(
+        tr,
+        a,
+        recalcKR(a.price, a.equity_y0_100m, fallback, a.shares, a.base_date, currentReq),
+      );
+    });
 
     // 주식수 컬럼
     const sharesTd = document.createElement('td');
@@ -228,12 +309,13 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=20260803-power5').then(r => r.json()),
+    fetch('pbgr_data.json?v=market-eval-edit-v3-20260804').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;
   document.getElementById('updated').textContent = rawData.updated;
   const s = loadSettings();
+  marketCagrOverrides = normalizeMarketCagrOverrides(s.market_cagr_overrides);
   document.getElementById('req-kr').value = s.req_kr ?? (configData.kr.required_return * 100).toFixed(1);
   updateRequiredReturnHint();
   document.getElementById('req-kr').addEventListener('input', markDirty);
@@ -241,6 +323,12 @@ async function init() {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { dateValueMonths, recalcKR, impliedCagrKR };
+  module.exports = {
+    dateValueMonths,
+    recalcKR,
+    impliedCagrKR,
+    normalizeMarketCagrOverrides,
+    resolveMarketCagrKR,
+  };
 }
 if (typeof document !== 'undefined') init();
