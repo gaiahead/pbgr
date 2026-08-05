@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const {
+  dateValueMonths,
   recalcKR,
   impliedCagrKR,
   normalizeMarketCagrOverrides,
@@ -7,7 +8,15 @@ const {
   resolveMarketCagrKR,
 } = require('./app.js');
 
-const today = new Date(2026, 7, 3);
+const today = new Date(2026, 7, 5);
+const expectedElapsedMonths = (
+  Date.UTC(2026, 7, 5) - Date.UTC(2025, 11, 31)
+) / 86400000 / (365.2425 / 12);
+assert.ok(
+  Math.abs(dateValueMonths('2025.12', today) - expectedElapsedMonths) < 1e-12,
+  '2025.12 월말부터 현재까지의 실제 경과기간을 사용해야 한다',
+);
+
 const fixture = {
   price: 108700,
   equity: 2580,
@@ -36,6 +45,13 @@ const marketCalc = recalcKR(
 assert.ok(marketCalc);
 assert.ok(Math.abs(marketCalc.pbgr - 1) < 1e-10);
 assert.equal(marketCalc.fair_price, fixture.price);
+assert.ok(
+  Math.abs(
+    marketCalc.equity10_100m
+      - marketCalc.equity_now_100m * Math.pow(1 + marketCagr / 100, 10)
+  ) < 1e-6,
+  '자본총계 +10년은 표시된 현재 자본총계에서 정확히 10년 성장한 값이어야 한다',
+);
 
 const conservativeCalc = recalcKR(
   fixture.price,

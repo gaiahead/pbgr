@@ -114,14 +114,21 @@ function pbgrHtml(pbgr) {
 /* ─── PBGR Calculation ─── */
 
 function dateValueMonths(baseDate, today = new Date()) {
-  const match = String(baseDate || '').match(/^(\d{4})[.-](\d{1,2})/);
+  const match = String(baseDate || '').match(/^(\d{4})[.-](\d{1,2})(?:[.-](\d{1,2}))?/);
   if (!match) return null;
   const baseYear = Number(match[1]);
   const baseMonth = Number(match[2]) - 1;
   if (baseMonth < 0 || baseMonth > 11) return null;
-  const months = (today.getFullYear() - baseYear) * 12 + (today.getMonth() - baseMonth);
-  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  return months + (today.getDate() - 1) / daysInMonth;
+
+  const baseDay = match[3]
+    ? Number(match[3])
+    : new Date(Date.UTC(baseYear, baseMonth + 1, 0)).getUTCDate();
+  const baseUtc = Date.UTC(baseYear, baseMonth, baseDay);
+  const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  if (!Number.isFinite(baseUtc) || !Number.isFinite(todayUtc)) return null;
+
+  const elapsedDays = (todayUtc - baseUtc) / 86400000;
+  return elapsedDays / (365.2425 / 12);
 }
 
 function recalcKR(price, equity_100m, cagr_pct, shares, base_date, req_pct, today = new Date()) {
@@ -131,14 +138,11 @@ function recalcKR(price, equity_100m, cagr_pct, shares, base_date, req_pct, toda
   const dv = dateValueMonths(base_date, today);
   if (dv == null) return null;
   const cagr = cagr_pct / 100, r = req_pct / 100;
-  const y10FromBase = equity_100m * Math.pow(1 + cagr, 10);
-  const y11FromBase = equity_100m * Math.pow(1 + cagr, 11);
-  const monthlyGrowth = Math.pow(y11FromBase / y10FromBase, 1 / 12) - 1;
-  // 자본총계 (+10년)는 최근 실적 기준 +10년이 아니라, 현 시점에서 +10년 값이다.
-  // 따라서 적정가 계산에 쓰는 현재시점 보정 후 10년 자본과 화면 표시값을 일치시킨다.
-  const equity10FromNow = y10FromBase * Math.pow(1 + monthlyGrowth, dv - 1);
+  const elapsedYears = dv / 12;
+  const equityNow = equity_100m * Math.pow(1 + cagr, elapsedYears);
+  // 최신 실제 자본에서 현재까지 성장한 뒤, 같은 현재값에서 정확히 10년을 성장시킨다.
+  const equity10FromNow = equityNow * Math.pow(1 + cagr, 10);
   const bps = equity10FromNow / Math.pow(1 + r, 10) * 1e8 / shares;
-  const equityNow = equity_100m * Math.pow(1 + cagr, dv / 12);
   return bps > 0 ? {
     pbgr: price / bps,
     fair_price: Math.round(bps),
@@ -153,7 +157,7 @@ function impliedCagrKR(price, equity_100m, shares, base_date, req_pct, today = n
   if (price <= 0 || equity_100m <= 0 || shares <= 0 || req_pct <= -100) return null;
   const dv = dateValueMonths(base_date, today);
   if (dv == null) return null;
-  const projectionYears = 10 + (dv - 1) / 12;
+  const projectionYears = 10 + dv / 12;
   if (projectionYears <= 0) return null;
 
   const req = req_pct / 100;
@@ -330,7 +334,7 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=market-eval-reset-v1-20260804').then(r => r.json()),
+    fetch('pbgr_data.json?v=timeline-v1-20260805').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;

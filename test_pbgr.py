@@ -1,10 +1,16 @@
 import unittest
+from datetime import datetime
 from pathlib import Path
 
-from gen_pbgr_data import calc_kr, implied_cagr_kr
+from gen_pbgr_data import calc_kr, date_value, implied_cagr_kr
 
 
 class PbgrCalculationTest(unittest.TestCase):
+    def test_month_end_base_uses_actual_elapsed_period(self):
+        today = datetime(2026, 8, 5)
+        expected_months = (today - datetime(2025, 12, 31)).days / (365.2425 / 12)
+        self.assertAlmostEqual(date_value("2025.12", today), expected_months, places=12)
+
     def test_market_implied_cagr_reprices_to_current_price(self):
         price = 108_700
         equity_100m = 2_580
@@ -15,6 +21,8 @@ class PbgrCalculationTest(unittest.TestCase):
         implied_pct = implied_cagr_kr(
             price, equity_100m, shares, dv, required_return
         )
+        self.assertIsNotNone(implied_pct)
+        assert implied_pct is not None
         calc = calc_kr(
             price, equity_100m, implied_pct, shares, dv, required_return
         )
@@ -23,6 +31,11 @@ class PbgrCalculationTest(unittest.TestCase):
         assert calc is not None
         self.assertAlmostEqual(calc["pbgr"], 1.0, places=3)
         self.assertAlmostEqual(calc["fair_price"], price, delta=1)
+        self.assertAlmostEqual(
+            calc["equity10_100m"],
+            calc["equity_now_100m"] * (1 + implied_pct / 100) ** 10,
+            places=6,
+        )
 
     def test_selected_market_cagr_drives_valuation(self):
         price = 108_700
@@ -62,6 +75,8 @@ class PbgrUiContractTest(unittest.TestCase):
         self.assertIn("시장 평가 초기화", app)
         self.assertIn("resolveMarketCagrKR", app)
         self.assertIn("market_cagr_overrides", app)
+        self.assertIn("pbgr_data.json?v=timeline-v1-20260805", app)
+        self.assertIn("app.js?v=timeline-v1-20260805", html)
         self.assertIn("PBGR · 적정가 · 괴리율 = 시장 평가 자본 CAGR 기준", html)
         self.assertNotIn("PBGR · 적정가 · 괴리율 = 5년 실적 자본 CAGR 기준", html)
         self.assertNotIn("5년 실적", html)

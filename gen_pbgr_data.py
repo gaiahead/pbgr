@@ -55,20 +55,18 @@ def load_previous_assets() -> dict[str, dict[str, Any]]:
 
 # ─── Date Helpers ─────────────────────────────────────────
 def date_value(base_date_str: str, today: Optional[datetime] = None) -> float:
-    """기준일(YYYY-MM-DD 또는 YYYY.MM)로부터 경과 월 (일할 포함)"""
+    """기준일로부터 경과한 월수. 월 단위 기준일은 해당 월말로 해석한다."""
     if today is None:
         today = datetime.now()
 
     if "." in base_date_str:
         y, m = (int(x) for x in base_date_str.split(".")[:2])
-        last_day = calendar.monthrange(y, m)[1]
-        base = datetime(y, m, last_day)
+        base = datetime(y, m, calendar.monthrange(y, m)[1])
     else:
         base = datetime.strptime(base_date_str, "%Y-%m-%d")
 
-    months = (today.year - base.year) * 12 + (today.month - base.month)
-    days_in_month = calendar.monthrange(today.year, today.month)[1]
-    return months + (today.day - 1) / days_in_month
+    elapsed_days = (today.date() - base.date()).days
+    return elapsed_days / (365.2425 / 12)
 
 
 # ─── HTTP Helpers ─────────────────────────────────────────
@@ -422,17 +420,19 @@ def calc_kr(price: int, equity_100m: float, cagr_pct: float,
     if price <= 0 or equity_100m <= 0 or shares <= 0 or cagr_pct <= -100 or req_return <= -1:
         return None
     cagr = cagr_pct / 100
-    y10 = equity_100m * (1 + cagr) ** 10
-    y11 = equity_100m * (1 + cagr) ** 11
-    if y10 <= 0:
-        return None
-    r_t = (y11 / y10) ** (1 / 12) - 1
-    trailing = y10 * (1 + r_t) ** (dv - 1)
-    expected_bv = trailing / (1 + req_return) ** 10
+    elapsed_years = dv / 12
+    equity_now = equity_100m * (1 + cagr) ** elapsed_years
+    equity_10 = equity_now * (1 + cagr) ** 10
+    expected_bv = equity_10 / (1 + req_return) ** 10
     bps = expected_bv * 1e8 / shares
     if bps <= 0:
         return None
-    return {"pbgr": round(price / bps, 4), "fair_price": round(bps, 0)}
+    return {
+        "pbgr": round(price / bps, 4),
+        "fair_price": round(bps, 0),
+        "equity_now_100m": equity_now,
+        "equity10_100m": equity_10,
+    }
 
 
 def implied_cagr_kr(price: int, equity_100m: float, shares: int,
@@ -444,7 +444,7 @@ def implied_cagr_kr(price: int, equity_100m: float, shares: int,
     if price <= 0 or equity_100m <= 0 or shares <= 0 or req_return <= -1:
         return None
 
-    projection_years = 10 + (dv - 1) / 12
+    projection_years = 10 + dv / 12
     if projection_years <= 0:
         return None
 
@@ -454,7 +454,7 @@ def implied_cagr_kr(price: int, equity_100m: float, shares: int,
         return None
 
     implied = ratio ** (1 / projection_years) - 1
-    return round(implied * 100, 4) if math.isfinite(implied) else None
+    return implied * 100 if math.isfinite(implied) else None
 
 
 # ─── ROE Resolution ──────────────────────────────────────
@@ -545,7 +545,9 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
         "actual_equity_cagr_pct": actual_equity_cagr,
         "equity_cagr_pct": equity_cagr,
         "valuation_cagr_pct": valuation_cagr_pct,
-        "market_implied_cagr_pct": market_implied_cagr,
+        "market_implied_cagr_pct": (
+            round(market_implied_cagr, 4) if market_implied_cagr is not None else None
+        ),
         "equity_series": equity_series,
         "roe_ref": roe_hist,
         "required_return_pct": round(req_kr * 100, 1),
