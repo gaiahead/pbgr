@@ -1,3 +1,4 @@
+import json
 import unittest
 from datetime import datetime
 from pathlib import Path
@@ -65,6 +66,34 @@ class PbgrCalculationTest(unittest.TestCase):
         )
 
 
+class PbgrMarketCoverageTest(unittest.TestCase):
+    KR_TICKERS = [
+        "005930", "009150", "000660", "042700", "058470", "000100",
+        "035420", "357780", "064760", "079940", "093320", "108320",
+        "005290", "086450", "112610", "030190", "058610", "010120",
+        "298040", "267260", "006260", "001440", "475150",
+    ]
+
+    def test_config_and_generated_payload_include_sk_eternix(self):
+        config = json.loads(Path("config.json").read_text(encoding="utf-8"))
+        payload = json.loads(Path("pbgr_data.json").read_text(encoding="utf-8"))
+        self.assertEqual(list(config["kr"]["assets"]), self.KR_TICKERS)
+        self.assertEqual([asset["ticker"] for asset in payload["assets"]], self.KR_TICKERS)
+        asset = payload["assets"][-1]
+        self.assertEqual(asset["name"], "SK이터닉스")
+        self.assertGreater(asset["price"], 0)
+        self.assertGreater(asset["shares"], 0)
+        self.assertTrue(asset["equity_series"])
+        self.assertTrue(all(asset.get(field) is not None for field in (
+            "equity_y0_100m", "valuation_cagr_pct", "market_implied_cagr_pct",
+            "equity_now_100m", "pbgr", "fair_price",
+        )))
+        if asset["actual_equity_cagr_pct"] is None:
+            self.assertAlmostEqual(
+                asset["valuation_cagr_pct"], asset["market_implied_cagr_pct"], places=4
+            )
+
+
 class PbgrUiContractTest(unittest.TestCase):
     def test_market_evaluation_is_the_single_cagr_field_after_market_cap(self):
         app = Path("app.js").read_text(encoding="utf-8")
@@ -75,8 +104,9 @@ class PbgrUiContractTest(unittest.TestCase):
         self.assertIn("시장 평가 초기화", app)
         self.assertIn("resolveMarketCagrKR", app)
         self.assertIn("market_cagr_overrides", app)
-        self.assertIn("pbgr_data.json?v=timeline-v1-20260805", app)
-        self.assertIn("app.js?v=timeline-v1-20260805", html)
+        self.assertIn(": (a.equity_y0_100m ?? null)", app)
+        self.assertIn("pbgr_data.json?v=add-sketernix-20260806", app)
+        self.assertIn("app.js?v=add-sketernix-20260806", html)
         self.assertIn("PBGR · 적정가 · 괴리율 = 시장 평가 자본 CAGR 기준", html)
         self.assertNotIn("PBGR · 적정가 · 괴리율 = 5년 실적 자본 CAGR 기준", html)
         self.assertNotIn("5년 실적", html)

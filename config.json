@@ -23,7 +23,8 @@
       "298040": { "name": "효성중공업",    "roe": null, "preferred_ticker": null },
       "267260": { "name": "HD현대일렉트릭", "roe": null, "preferred_ticker": null },
       "006260": { "name": "LS",           "roe": null, "preferred_ticker": null },
-      "001440": { "name": "대한전선",      "roe": null, "preferred_ticker": null }
+      "001440": { "name": "대한전선",      "roe": null, "preferred_ticker": null },
+      "475150": { "name": "SK이터닉스",    "roe": null, "preferred_ticker": null }
     }
   }
 }

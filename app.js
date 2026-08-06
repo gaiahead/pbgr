@@ -238,7 +238,9 @@ function renderTable() {
     // 자본총계 시리즈
     const eqSeries = a.equity_series || {};
     const actualEqKeys = Object.keys(eqSeries).filter(k => !k.includes('(E)')).sort();
-    const eqActual = actualEqKeys.length ? eqSeries[actualEqKeys[actualEqKeys.length - 1]] : null;
+    const eqActual = actualEqKeys.length
+      ? eqSeries[actualEqKeys[actualEqKeys.length - 1]]
+      : (a.equity_y0_100m ?? null);
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -334,7 +336,7 @@ function renderTable() {
 
 async function init() {
   const [dataRes] = await Promise.all([
-    fetch('pbgr_data.json?v=timeline-v1-20260805').then(r => r.json()),
+    fetch('pbgr_data.json?v=add-sketernix-20260806').then(r => r.json()),
     loadConfig()
   ]);
   rawData = dataRes;

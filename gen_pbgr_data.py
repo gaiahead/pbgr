@@ -513,20 +513,26 @@ def process_asset(ticker: str, cfg: dict[str, Any], req_kr: float,
     equity_100m = resolve_equity(equity_series, bps_actual, shares)
     dv = date_value(latest_yr, today) if latest_yr else 0
 
-    # 가치평가·괴리율은 5년 실적 자본 CAGR만 사용한다.
-    valuation_cagr_pct = actual_equity_cagr
-
-    # 현재 시점 자본 추정
-    equity_now = None
-    if equity_100m and valuation_cagr_pct is not None and valuation_cagr_pct > -100:
-        equity_now = round(equity_100m * (1 + valuation_cagr_pct / 100) ** (dv / 12), 1)
-
     calc = None
     market_implied_cagr = None
     if equity_100m is not None and shares is not None:
         market_implied_cagr = implied_cagr_kr(price, equity_100m, shares, dv, req_kr)
-        if valuation_cagr_pct is not None:
-            calc = calc_kr(price, equity_100m, valuation_cagr_pct, shares, dv, req_kr)
+
+    # 실적 자본 CAGR이 없는 신규 상장 종목은 화면 기본값과 동일하게
+    # 현재가 내재 자본 CAGR을 사용해 생성 시점 가치평가를 완성한다.
+    valuation_cagr_pct = (
+        actual_equity_cagr
+        if actual_equity_cagr is not None
+        else market_implied_cagr
+    )
+
+    equity_now = None
+    if (
+        equity_100m and shares is not None
+        and valuation_cagr_pct is not None and valuation_cagr_pct > -100
+    ):
+        equity_now = round(equity_100m * (1 + valuation_cagr_pct / 100) ** (dv / 12), 1)
+        calc = calc_kr(price, equity_100m, valuation_cagr_pct, shares, dv, req_kr)
 
     return {
         "name": cfg["name"],
