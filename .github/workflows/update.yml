@@ -19,10 +19,10 @@ jobs:
       TZ: Asia/Seoul
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
           # cache: 'pip'  # requirements.txt 없으면 실패하므로 비활성화
@@ -32,8 +32,21 @@ jobs:
           pip install yfinance scipy playwright
           playwright install chromium --with-deps
 
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - name: Test valuation engines
+        run: |
+          python -m unittest -v test_pbgr.py
+          node --check app.js
+          node test_app.js
+
       - name: Generate PBGR data
-        run: python gen_pbgr_data.py
+        run: |
+          python gen_pbgr_data.py
+          python -m json.tool pbgr_data.json >/dev/null
 
       - name: Commit and push
         run: |
