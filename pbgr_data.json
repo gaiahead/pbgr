@@ -1,16 +1,16 @@
 {
-  "updated": "2026-08-30 09:04",
+  "updated": "2026-08-31 09:22",
   "kr_required_return": 0.1,
   "assets": [
     {
       "name": "삼성전자",
       "ticker": "005930",
       "market": "KR",
-      "price": 257000,
+      "price": 251000,
       "base_date": "2025.12",
       "bps_actual": 63997,
       "equity_y0_100m": 4243133,
-      "equity_now_100m": 4503378.9,
+      "equity_now_100m": 4504486.8,
       "shares": 6648649811,
       "shares_common": 5846278608,
       "shares_preferred": 802371203,
@@ -19,7 +19,7 @@
       "actual_equity_cagr_pct": 9.4,
       "equity_cagr_pct": 52.459999999999994,
       "valuation_cagr_pct": 9.4,
-      "market_implied_cagr_pct": 24.6118,
+      "market_implied_cagr_pct": 24.3291,
       "equity_series": {
         "2021/12": 2962377,
         "2022/12": 3451861,
@@ -71,18 +71,18 @@
         "estimate_avg": 46.28
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.0076,
-      "fair_price": 64129.0
+      "pbgr": 3.9131,
+      "fair_price": 64144.0
     },
     {
       "name": "삼성전기",
       "ticker": "009150",
       "market": "KR",
-      "price": 1421000,
+      "price": 1381000,
       "base_date": "2025.12",
       "bps_actual": 126302,
       "equity_y0_100m": 95418,
-      "equity_now_100m": 101123.1,
+      "equity_now_100m": 101147.3,
       "shares": 74693696,
       "shares_common": 74693696,
       "shares_preferred": null,
@@ -91,7 +91,7 @@
       "actual_equity_cagr_pct": 9.16,
       "equity_cagr_pct": 23.51,
       "valuation_cagr_pct": 9.16,
-      "market_implied_cagr_pct": 37.0705,
+      "market_implied_cagr_pct": 36.6929,
       "equity_series": {
         "2021/12": 67189,
         "2022/12": 75385,
@@ -143,18 +143,18 @@
         "estimate_avg": 22.29
       },
       "required_return_pct": 10.0,
-      "pbgr": 11.3323,
-      "fair_price": 125393.0
+      "pbgr": 11.0107,
+      "fair_price": 125423.0
     },
     {
       "name": "SK하이닉스",
       "ticker": "000660",
       "market": "KR",
-      "price": 1653000,
+      "price": 1614000,
       "base_date": "2025.12",
       "bps_actual": 171751,
       "equity_y0_100m": 1205162,
-      "equity_now_100m": 1344846.0,
+      "equity_now_100m": 1345455.5,
       "shares": 730492365,
       "shares_common": 730492365,
       "shares_preferred": null,
@@ -163,7 +163,7 @@
       "actual_equity_cagr_pct": 18.0,
       "equity_cagr_pct": 102.13000000000001,
       "valuation_cagr_pct": 18.0,
-      "market_implied_cagr_pct": 35.733,
+      "market_implied_cagr_pct": 35.4189,
       "equity_series": {
         "2021/12": 621571,
         "2022/12": 632664,
@@ -215,18 +215,18 @@
         "estimate_avg": 66.94
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.4496,
-      "fair_price": 371493.0
+      "pbgr": 4.3427,
+      "fair_price": 371661.0
     },
     {
       "name": "한미반도체",
       "ticker": "042700",
       "market": "KR",
-      "price": 219500,
+      "price": 212000,
       "base_date": "2025.12",
       "bps_actual": 7278,
       "equity_y0_100m": 6903,
-      "equity_now_100m": 7736.8,
+      "equity_now_100m": 7740.4,
       "shares": 95312200,
       "shares_common": 95312200,
       "shares_preferred": null,
@@ -235,7 +235,7 @@
       "actual_equity_cagr_pct": 18.78,
       "equity_cagr_pct": 41.48,
       "valuation_cagr_pct": 18.78,
-      "market_implied_cagr_pct": 50.5805,
+      "market_implied_cagr_pct": 50.0747,
       "equity_series": {
         "2021/12": 3468,
         "2022/12": 3901,
@@ -287,18 +287,18 @@
         "estimate_avg": 41.77
       },
       "required_return_pct": 10.0,
-      "pbgr": 12.5463,
-      "fair_price": 17495.0
+      "pbgr": 12.1119,
+      "fair_price": 17503.0
     },
     {
       "name": "리노공업",
       "ticker": "058470",
       "market": "KR",
-      "price": 66800,
+      "price": 64700,
       "base_date": "2025.12",
       "bps_actual": 9635,
       "equity_y0_100m": 7312,
-      "equity_now_100m": 8022.8,
+      "equity_now_100m": 8025.9,
       "shares": 76211850,
       "shares_common": 76211850,
       "shares_preferred": null,
@@ -307,7 +307,7 @@
       "actual_equity_cagr_pct": 15.03,
       "equity_cagr_pct": 17.47,
       "valuation_cagr_pct": 15.03,
-      "market_implied_cagr_pct": 31.1777,
+      "market_implied_cagr_pct": 30.7763,
       "equity_series": {
         "2021/12": 4177,
         "2022/12": 4932,
@@ -359,18 +359,18 @@
         "estimate_avg": 23.7
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.0578,
-      "fair_price": 16462.0
+      "pbgr": 3.9287,
+      "fair_price": 16469.0
     },
     {
       "name": "유한양행",
       "ticker": "000100",
       "market": "KR",
-      "price": 84900,
+      "price": 82400,
       "base_date": "2025.12",
       "bps_actual": 30855,
       "equity_y0_100m": 23068,
-      "equity_now_100m": 23765.7,
+      "equity_now_100m": 23768.7,
       "shares": 74764121,
       "shares_common": 73615781,
       "shares_preferred": 1148340,
@@ -379,7 +379,7 @@
       "actual_equity_cagr_pct": 4.6,
       "equity_cagr_pct": 7.969999999999999,
       "valuation_cagr_pct": 4.6,
-      "market_implied_cagr_pct": 20.2397,
+      "market_implied_cagr_pct": 19.8976,
       "equity_series": {
         "2021/12": 19269,
         "2022/12": 19858,
@@ -431,18 +431,18 @@
         "estimate_avg": 9.24
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.4183,
-      "fair_price": 19215.0
+      "pbgr": 4.2877,
+      "fair_price": 19218.0
     },
     {
       "name": "NAVER",
       "ticker": "035420",
       "market": "KR",
-      "price": 220500,
+      "price": 213500,
       "base_date": "2025.12",
       "bps_actual": 184396,
       "equity_y0_100m": 275820,
-      "equity_now_100m": 283171.7,
+      "equity_now_100m": 283202.5,
       "shares": 152076491,
       "shares_common": 152076491,
       "shares_preferred": null,
@@ -451,7 +451,7 @@
       "actual_equity_cagr_pct": 4.05,
       "equity_cagr_pct": 8.25,
       "valuation_cagr_pct": 4.05,
-      "market_implied_cagr_pct": 11.3725,
+      "market_implied_cagr_pct": 11.033,
       "equity_series": {
         "2021/12": 235356,
         "2022/12": 227441,
@@ -503,18 +503,18 @@
         "estimate_avg": 7.26
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.065,
-      "fair_price": 106778.0
+      "pbgr": 1.9993,
+      "fair_price": 106790.0
     },
     {
       "name": "솔브레인",
       "ticker": "357780",
       "market": "KR",
-      "price": 346500,
+      "price": 336000,
       "base_date": "2025.12",
       "bps_actual": 137853,
       "equity_y0_100m": 10558,
-      "equity_now_100m": 11484.8,
+      "equity_now_100m": 11488.8,
       "shares": 7778566,
       "shares_common": 7778566,
       "shares_preferred": null,
@@ -523,7 +523,7 @@
       "actual_equity_cagr_pct": 13.54,
       "equity_cagr_pct": 16.48,
       "valuation_cagr_pct": 13.54,
-      "market_implied_cagr_pct": 19.397,
+      "market_implied_cagr_pct": 19.0476,
       "equity_series": {
         "2021/12": 6352,
         "2022/12": 7787,
@@ -575,18 +575,18 @@
         "estimate_avg": 16.66
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.7097,
-      "fair_price": 202668.0
+      "pbgr": 1.6573,
+      "fair_price": 202738.0
     },
     {
       "name": "티씨케이",
       "ticker": "064760",
       "market": "KR",
-      "price": 238500,
+      "price": 232500,
       "base_date": "2025.12",
       "bps_actual": 46452,
       "equity_y0_100m": 5193,
-      "equity_now_100m": 5571.8,
+      "equity_now_100m": 5573.4,
       "shares": 11179416,
       "shares_common": 11179416,
       "shares_preferred": null,
@@ -595,7 +595,7 @@
       "actual_equity_cagr_pct": 11.21,
       "equity_cagr_pct": 19.03,
       "valuation_cagr_pct": 11.21,
-      "market_implied_cagr_pct": 27.4836,
+      "market_implied_cagr_pct": 27.1715,
       "equity_series": {
         "2021/12": 3395,
         "2022/12": 4169,
@@ -647,18 +647,18 @@
         "estimate_avg": 20.96
       },
       "required_return_pct": 10.0,
-      "pbgr": 4.2895,
-      "fair_price": 55601.0
+      "pbgr": 4.1803,
+      "fair_price": 55617.0
     },
     {
       "name": "가비아",
       "ticker": "079940",
       "market": "KR",
-      "price": 45850,
+      "price": 45750,
       "base_date": "2025.12",
       "bps_actual": 13565,
       "equity_y0_100m": 1769,
-      "equity_now_100m": 1943.3,
+      "equity_now_100m": 1944.1,
       "shares": 13420684,
       "shares_common": 13420684,
       "shares_preferred": null,
@@ -667,7 +667,7 @@
       "actual_equity_cagr_pct": 15.24,
       "equity_cagr_pct": null,
       "valuation_cagr_pct": 15.24,
-      "market_implied_cagr_pct": 22.9122,
+      "market_implied_cagr_pct": 22.8805,
       "equity_series": {
         "2021/12": 1003,
         "2022/12": 1262,
@@ -703,18 +703,18 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.9882,
-      "fair_price": 23061.0
+      "pbgr": 1.9831,
+      "fair_price": 23070.0
     },
     {
       "name": "케이아이엔엑스",
       "ticker": "093320",
       "market": "KR",
-      "price": 152300,
+      "price": 147000,
       "base_date": "2025.12",
       "bps_actual": 42214,
       "equity_y0_100m": 2042,
-      "equity_now_100m": 2215.8,
+      "equity_now_100m": 2216.5,
       "shares": 4880000,
       "shares_common": 4880000,
       "shares_preferred": null,
@@ -723,7 +723,7 @@
       "actual_equity_cagr_pct": 13.120000000000001,
       "equity_cagr_pct": null,
       "valuation_cagr_pct": 13.120000000000001,
-      "market_implied_cagr_pct": 23.4356,
+      "market_implied_cagr_pct": 23.0197,
       "equity_series": {
         "2021/12": 1247,
         "2022/12": 1456,
@@ -759,18 +759,18 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.5358,
-      "fair_price": 60059.0
+      "pbgr": 2.4468,
+      "fair_price": 60079.0
     },
     {
       "name": "LX세미콘",
       "ticker": "108320",
       "market": "KR",
-      "price": 37200,
+      "price": 36300,
       "base_date": "2025.12",
       "bps_actual": 69207,
       "equity_y0_100m": 11256,
-      "equity_now_100m": 11910.2,
+      "equity_now_100m": 11912.9,
       "shares": 16264300,
       "shares_common": 16264300,
       "shares_preferred": null,
@@ -779,7 +779,7 @@
       "actual_equity_cagr_pct": 8.9,
       "equity_cagr_pct": 4.08,
       "valuation_cagr_pct": 8.9,
-      "market_implied_cagr_pct": 3.1657,
+      "market_implied_cagr_pct": 2.9282,
       "equity_series": {
         "2021/12": 8003,
         "2022/12": 9504,
@@ -831,18 +831,18 @@
         "estimate_avg": 6.1
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.5617,
-      "fair_price": 66227.0
+      "pbgr": 0.548,
+      "fair_price": 66242.0
     },
     {
       "name": "동진쎄미켐",
       "ticker": "005290",
       "market": "KR",
-      "price": 42400,
+      "price": 41250,
       "base_date": "2025.12",
       "bps_actual": 21091,
       "equity_y0_100m": 10838,
-      "equity_now_100m": 12114.5,
+      "equity_now_100m": 12120.1,
       "shares": 50970126,
       "shares_common": 50970126,
       "shares_preferred": null,
@@ -851,7 +851,7 @@
       "actual_equity_cagr_pct": 18.3,
       "equity_cagr_pct": null,
       "valuation_cagr_pct": 18.3,
-      "market_implied_cagr_pct": 16.6625,
+      "market_implied_cagr_pct": 16.3575,
       "equity_series": {
         "2021/12": 5534,
         "2022/12": 6968,
@@ -887,18 +887,18 @@
         "estimate_avg": null
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.8619,
-      "fair_price": 49194.0
+      "pbgr": 0.8381,
+      "fair_price": 49217.0
     },
     {
       "name": "동국제약",
       "ticker": "086450",
       "market": "KR",
-      "price": 21500,
+      "price": 21650,
       "base_date": "2025.12",
       "bps_actual": 14714,
       "equity_y0_100m": 6637,
-      "equity_now_100m": 7066.2,
+      "equity_now_100m": 7068.1,
       "shares": 45230420,
       "shares_common": 45230420,
       "shares_preferred": null,
@@ -907,7 +907,7 @@
       "actual_equity_cagr_pct": 9.92,
       "equity_cagr_pct": 11.49,
       "valuation_cagr_pct": 9.92,
-      "market_implied_cagr_pct": 13.339,
+      "market_implied_cagr_pct": 13.4093,
       "equity_series": {
         "2021/12": 4546,
         "2022/12": 5019,
@@ -959,18 +959,18 @@
         "estimate_avg": 12.28
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.3862,
-      "fair_price": 15510.0
+      "pbgr": 1.3956,
+      "fair_price": 15514.0
     },
     {
       "name": "씨에스윈드",
       "ticker": "112610",
       "market": "KR",
-      "price": 49400,
+      "price": 48850,
       "base_date": "2025.12",
       "bps_actual": 27826,
       "equity_y0_100m": 11531,
-      "equity_now_100m": 12026.8,
+      "equity_now_100m": 12028.9,
       "shares": 42171403,
       "shares_common": 42171403,
       "shares_preferred": null,
@@ -979,7 +979,7 @@
       "actual_equity_cagr_pct": 6.5600000000000005,
       "equity_cagr_pct": 11.57,
       "valuation_cagr_pct": 6.5600000000000005,
-      "market_implied_cagr_pct": 15.5878,
+      "market_implied_cagr_pct": 15.4623,
       "equity_series": {
         "2021/12": 8942,
         "2022/12": 8795,
@@ -1031,18 +1031,18 @@
         "estimate_avg": 13.92
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.38,
-      "fair_price": 20756.0
+      "pbgr": 2.3531,
+      "fair_price": 20760.0
     },
     {
       "name": "NICE평가정보",
       "ticker": "030190",
       "market": "KR",
-      "price": 16010,
+      "price": 15850,
       "base_date": "2025.12",
       "bps_actual": 7931,
       "equity_y0_100m": 4639,
-      "equity_now_100m": 4982.1,
+      "equity_now_100m": 4983.6,
       "shares": 58911527,
       "shares_common": 58911527,
       "shares_preferred": null,
@@ -1051,7 +1051,7 @@
       "actual_equity_cagr_pct": 11.37,
       "equity_cagr_pct": 12.920000000000002,
       "valuation_cagr_pct": 11.37,
-      "market_implied_cagr_pct": 16.8752,
+      "market_implied_cagr_pct": 16.7605,
       "equity_series": {
         "2021/12": 3015,
         "2022/12": 3416,
@@ -1103,18 +1103,18 @@
         "estimate_avg": 18.89
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.6727,
-      "fair_price": 9571.0
+      "pbgr": 1.6555,
+      "fair_price": 9574.0
     },
     {
       "name": "에스피지",
       "ticker": "058610",
       "market": "KR",
-      "price": 92700,
+      "price": 91000,
       "base_date": "2025.12",
       "bps_actual": 11633,
       "equity_y0_100m": 2580,
-      "equity_now_100m": 2706.8,
+      "equity_now_100m": 2707.3,
       "shares": 22177360,
       "shares_common": 22177360,
       "shares_preferred": null,
@@ -1123,7 +1123,7 @@
       "actual_equity_cagr_pct": 7.51,
       "equity_cagr_pct": 6.78,
       "valuation_cagr_pct": 7.51,
-      "market_implied_cagr_pct": 32.8484,
+      "market_implied_cagr_pct": 32.6084,
       "equity_series": {
         "2021/12": 1931,
         "2022/12": 2135,
@@ -1175,18 +1175,18 @@
         "estimate_avg": 7.58
       },
       "required_return_pct": 10.0,
-      "pbgr": 9.5493,
-      "fair_price": 9708.0
+      "pbgr": 9.3723,
+      "fair_price": 9709.0
     },
     {
       "name": "LS ELECTRIC",
       "ticker": "010120",
       "market": "KR",
-      "price": 214500,
+      "price": 205500,
       "base_date": "2025.12",
       "bps_actual": 13920,
       "equity_y0_100m": 20698,
-      "equity_now_100m": 21876.9,
+      "equity_now_100m": 21881.9,
       "shares": 150000000,
       "shares_common": 150000000,
       "shares_preferred": null,
@@ -1195,7 +1195,7 @@
       "actual_equity_cagr_pct": 8.72,
       "equity_cagr_pct": 23.29,
       "valuation_cagr_pct": 8.72,
-      "market_implied_cagr_pct": 41.4409,
+      "market_implied_cagr_pct": 40.8611,
       "equity_series": {
         "2021/12": 14816,
         "2022/12": 15535,
@@ -1247,18 +1247,18 @@
         "estimate_avg": 26.86
       },
       "required_return_pct": 10.0,
-      "pbgr": 16.5335,
-      "fair_price": 12974.0
+      "pbgr": 15.8362,
+      "fair_price": 12977.0
     },
     {
       "name": "효성중공업",
       "ticker": "298040",
       "market": "KR",
-      "price": 3153000,
+      "price": 3051000,
       "base_date": "2025.12",
       "bps_actual": 252555,
       "equity_y0_100m": 23517,
-      "equity_now_100m": 27412.8,
+      "equity_now_100m": 27430.2,
       "shares": 9324548,
       "shares_common": 9324548,
       "shares_preferred": null,
@@ -1267,7 +1267,7 @@
       "actual_equity_cagr_pct": 26.029999999999998,
       "equity_cagr_pct": 32.629999999999995,
       "valuation_cagr_pct": 26.029999999999998,
-      "market_implied_cagr_pct": 38.5801,
+      "market_implied_cagr_pct": 38.1419,
       "equity_series": {
         "2021/12": 9322,
         "2022/12": 9746,
@@ -1319,18 +1319,18 @@
         "estimate_avg": 30.86
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.7516,
-      "fair_price": 1145877.0
+      "pbgr": 2.6609,
+      "fair_price": 1146603.0
     },
     {
       "name": "HD현대일렉트릭",
       "ticker": "267260",
       "market": "KR",
-      "price": 814000,
+      "price": 792000,
       "base_date": "2025.12",
       "bps_actual": 56366,
       "equity_y0_100m": 20288,
-      "equity_now_100m": 24521.0,
+      "equity_now_100m": 24540.2,
       "shares": 36047135,
       "shares_common": 36047135,
       "shares_preferred": null,
@@ -1339,7 +1339,7 @@
       "actual_equity_cagr_pct": 33.11,
       "equity_cagr_pct": 31.39,
       "valuation_cagr_pct": 33.11,
-      "market_implied_cagr_pct": 40.487,
+      "market_implied_cagr_pct": 40.1144,
       "equity_series": {
         "2021/12": 6462,
         "2022/12": 8226,
@@ -1391,18 +1391,18 @@
         "estimate_avg": 38.26
       },
       "required_return_pct": 10.0,
-      "pbgr": 1.7774,
-      "fair_price": 457981.0
+      "pbgr": 1.728,
+      "fair_price": 458339.0
     },
     {
       "name": "LS",
       "ticker": "006260",
       "market": "KR",
-      "price": 313000,
+      "price": 303000,
       "base_date": "2025.12",
       "bps_actual": 182946,
       "equity_y0_100m": 50031,
-      "equity_now_100m": 52964.4,
+      "equity_now_100m": 52976.9,
       "shares": 31200000,
       "shares_common": 31200000,
       "shares_preferred": null,
@@ -1411,7 +1411,7 @@
       "actual_equity_cagr_pct": 8.98,
       "equity_cagr_pct": 12.629999999999999,
       "valuation_cagr_pct": 8.98,
-      "market_implied_cagr_pct": 16.4291,
+      "market_implied_cagr_pct": 16.0707,
       "equity_series": {
         "2021/12": 35466,
         "2022/12": 43198,
@@ -1463,18 +1463,18 @@
         "estimate_avg": 13.09
       },
       "required_return_pct": 10.0,
-      "pbgr": 2.0238,
-      "fair_price": 154657.0
+      "pbgr": 1.9587,
+      "fair_price": 154694.0
     },
     {
       "name": "대한전선",
       "ticker": "001440",
       "market": "KR",
-      "price": 29700,
+      "price": 29500,
       "base_date": "2025.12",
       "bps_actual": 8622,
       "equity_y0_100m": 16016,
-      "equity_now_100m": 20385.5,
+      "equity_now_100m": 20405.8,
       "shares": 195992596,
       "shares_common": 195992596,
       "shares_preferred": null,
@@ -1483,7 +1483,7 @@
       "actual_equity_cagr_pct": 43.919999999999995,
       "equity_cagr_pct": 11.74,
       "valuation_cagr_pct": 43.919999999999995,
-      "market_implied_cagr_pct": 23.419,
+      "market_implied_cagr_pct": 23.3342,
       "equity_series": {
         "2021/12": 3733,
         "2022/12": 8664,
@@ -1535,18 +1535,18 @@
         "estimate_avg": 8.49
       },
       "required_return_pct": 10.0,
-      "pbgr": 0.1943,
-      "fair_price": 152885.0
+      "pbgr": 0.1928,
+      "fair_price": 153038.0
     },
     {
       "name": "SK이터닉스",
       "ticker": "475150",
       "market": "KR",
-      "price": 55800,
+      "price": 54300,
       "base_date": "2025.12",
       "bps_actual": 8095,
       "equity_y0_100m": 2757.7,
-      "equity_now_100m": 3298.9,
+      "equity_now_100m": 3295.6,
       "shares": 34067004,
       "shares_common": 34067004,
       "shares_preferred": null,
@@ -1554,8 +1554,8 @@
       "roe_note": "실적 평균 ROE 자동",
       "actual_equity_cagr_pct": null,
       "equity_cagr_pct": null,
-      "valuation_cagr_pct": 31.054621070562362,
-      "market_implied_cagr_pct": 31.0546,
+      "valuation_cagr_pct": 30.71113163662553,
+      "market_implied_cagr_pct": 30.7111,
       "equity_series": {
         "2026/12(E)": 2420,
         "2027/12(E)": 2730,
@@ -1587,7 +1587,7 @@
       },
       "required_return_pct": 10.0,
       "pbgr": 1.0,
-      "fair_price": 55800.0
+      "fair_price": 54300.0
     }
   ]
 }
