@@ -46,7 +46,7 @@ jobs:
       - name: Generate PBGR data
         run: |
           python gen_pbgr_data.py
-          python -m json.tool pbgr_data.json >/dev/null
+          python gen_pbgr_data.py --validate
 
       - name: Commit and push
         run: |

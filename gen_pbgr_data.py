@@ -34,11 +34,7 @@ def load_config() -> dict[str, Any]:
 
 
 def load_previous_assets() -> dict[str, dict[str, Any]]:
-    """기존 pbgr_data.json의 종목별 데이터를 로드.
-
-    WiseReport가 일시적으로 timeout 나는 경우에도 이미 검증된 자본총계
-    시계열을 잃지 않기 위한 안전장치다.
-    """
+    """기존 종목 데이터를 로드. 재사용 전에는 출력 계약을 검증한다."""
     if not OUTPUT_PATH.exists():
         return {}
     try:
@@ -46,10 +42,12 @@ def load_previous_assets() -> dict[str, dict[str, Any]]:
             data = json.load(f)
     except (OSError, json.JSONDecodeError):
         return {}
+    if not isinstance(data, dict) or not isinstance(data.get("assets"), list):
+        return {}
     return {
         a["ticker"]: a
         for a in data.get("assets", [])
-        if isinstance(a, dict) and a.get("ticker")
+        if isinstance(a, dict) and isinstance(a.get("ticker"), str) and a["ticker"]
     }
 
 
@@ -67,6 +65,64 @@ def date_value(base_date_str: str, today: Optional[datetime] = None) -> float:
 
     elapsed_days = (today.date() - base.date()).days
     return elapsed_days / (365.2425 / 12)
+
+
+# ─── Output Validation ────────────────────────────────────
+def validate_asset(asset: Any, ticker: str, cfg: dict[str, Any]) -> None:
+    """수집 결과와 이전 행에 동일한 KR 출력 계약 적용."""
+    if not isinstance(asset, dict):
+        raise ValueError(f"{ticker}: missing asset row")
+    if asset.get("ticker") != ticker or asset.get("market") != "KR":
+        raise ValueError(f"{ticker}: invalid ticker/market")
+    if not isinstance(asset.get("name"), str) or not asset["name"].strip() or "error" in asset:
+        raise ValueError(f"{ticker}: invalid name/error row")
+
+    def require_number(field: str, *, positive: bool = False) -> None:
+        value = asset.get(field)
+        if (type(value) not in (int, float) or not math.isfinite(value)
+                or (positive and value <= 0)):
+            raise ValueError(f"{ticker}: invalid {field}: {value!r}")
+
+    for field in ("price", "shares", "shares_common", "equity_y0_100m", "fair_price", "pbgr"):
+        require_number(field, positive=True)
+    for field in ("market_implied_cagr_pct", "equity_now_100m", "valuation_cagr_pct",
+                  "required_return_pct"):
+        require_number(field)
+
+    base_date = asset.get("base_date")
+    if not isinstance(base_date, str) or not re.fullmatch(r"\d{4}(?:\.\d{2}|-\d{2}-\d{2})", base_date):
+        raise ValueError(f"{ticker}: invalid base_date: {base_date!r}")
+    try:
+        date_value(base_date)
+    except ValueError as e:
+        raise ValueError(f"{ticker}: invalid base_date: {base_date!r}") from e
+
+    preferred = asset.get("shares_preferred")
+    if cfg.get("preferred_ticker") or preferred is not None:
+        require_number("shares_preferred", positive=bool(cfg.get("preferred_ticker")))
+        if preferred < 0:
+            raise ValueError(f"{ticker}: negative shares_preferred")
+    if asset["shares"] != asset["shares_common"] + (preferred or 0):
+        raise ValueError(f"{ticker}: shares must equal common + preferred")
+    json.dumps(asset, allow_nan=False)
+
+
+def validate_payload(payload: Any, config: dict[str, Any]) -> None:
+    """All configured KR assets must be present exactly once and valid."""
+    if not isinstance(payload, dict) or not isinstance(payload.get("assets"), list):
+        raise ValueError("Invalid assets payload")
+    configured = config["kr"]["assets"]
+    seen: set[str] = set()
+    for asset in payload["assets"]:
+        ticker = asset.get("ticker") if isinstance(asset, dict) else None
+        if not isinstance(ticker, str) or ticker not in configured or ticker in seen:
+            raise ValueError(f"Unexpected or duplicate asset: {ticker!r}")
+        validate_asset(asset, ticker, configured[ticker])
+        seen.add(ticker)
+    if seen != set(configured):
+        raise ValueError(f"Missing configured assets: {sorted(set(configured) - seen)}")
+    # Reject non-JSON values (including NaN/Infinity in optional data) before opening output.
+    json.dumps(payload, allow_nan=False)
 
 
 # ─── HTTP Helpers ─────────────────────────────────────────
@@ -121,6 +177,8 @@ def get_naver_financials(code: str) -> dict[str, dict[str, Any]]:
     # cop_analysis 섹션에서 연간 연도 헤더 추출
     start = html.find("cop_analysis")
     end = html.find("</table>", start)
+    if start < 0 or end < 0:
+        return {}
     section = html[start:end]
     ths = re.findall(r"<th[^>]*>(.*?)</th>", section, re.DOTALL)
     annual_years: list[str] = []
@@ -583,23 +641,25 @@ def main() -> None:
     for ticker, cfg in kr_cfg["assets"].items():
         name = cfg["name"]
         print(f"  [KR] {name} ({ticker}) ...", end=" ", flush=True)
+        previous_asset = previous_assets.get(ticker)
         try:
-            asset = process_asset(ticker, cfg, req_kr, today, previous_assets.get(ticker))
-            result["assets"].append(asset)
-            calc = asset
-            if calc["pbgr"]:
-                print(
-                    f"PBGR={calc['pbgr']:.3f} | 현재가={calc['price']:,} | "
-                    f"적정가={calc['fair_price']:,.0f} | "
-                    f"자본={calc['equity_y0_100m']:.0f}억 ({calc['base_date']})"
-                )
-            else:
-                print("계산 실패")
+            validate_asset(previous_asset, ticker, cfg)
+        except ValueError:
+            previous_asset = None
+        try:
+            asset = process_asset(ticker, cfg, req_kr, today, previous_asset)
+            validate_asset(asset, ticker, cfg)
         except Exception as e:
-            print(f"오류: {e}")
-            result["assets"].append({
-                "name": name, "ticker": ticker, "market": "KR", "error": str(e),
-            })
+            if previous_asset is None:
+                raise RuntimeError(f"{ticker}: generation failed; no valid previous asset: {e}") from e
+            print(f"[WARN] {ticker}: fallback to complete previous asset ({e})", end=" ")
+            asset = previous_asset
+        result["assets"].append(asset)
+        print(
+            f"PBGR={asset['pbgr']:.3f} | 현재가={asset['price']:,} | "
+            f"적정가={asset['fair_price']:,.0f} | "
+            f"자본={asset['equity_y0_100m']:.0f}억 ({asset['base_date']})"
+        )
 
     missing_equity = []
     for asset in result["assets"]:
@@ -613,11 +673,17 @@ def main() -> None:
             + ", ".join(missing_equity)
         )
 
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
+    validate_payload(result, config)
+    serialized = json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False)
+    OUTPUT_PATH.write_text(serialized, encoding="utf-8")
 
     print(f"\n✅ {OUTPUT_PATH} 저장 완료 ({len(result['assets'])}개 종목)")
 
 
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:] == ["--validate"]:
+        payload = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+        validate_payload(payload, load_config())
+        print(f"Validated {len(payload['assets'])} KR assets in {OUTPUT_PATH}")
+    else:
+        main()
